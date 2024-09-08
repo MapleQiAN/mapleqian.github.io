@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/04/21/汇编冒泡排序/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="第一次汇编作业，纯手搓汇编代码，也是我第一篇正经博客哈哈哈哈哈哈哈">
+<meta property="og:type" content="article">
+<meta property="og:title" content="汇编冒泡排序">
+<meta property="og:url" content="http://example.com/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="第一次汇编作业，纯手搓汇编代码，也是我第一篇正经博客哈哈哈哈哈哈哈">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/image-20230422162954586.png">
+<meta property="og:image" content="http://example.com/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/image-20230422162829463.png">
+<meta property="article:published_time" content="2023-04-21T03:32:51.000Z">
+<meta property="article:modified_time" content="2023-05-10T01:58:02.745Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="汇编逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/image-20230422162954586.png">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/300.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/300.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/300.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            汇编冒泡排序 -
+        
+        SerendyLin Empire
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":true,"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"IF YOU CAN NOT BE A POET, BE THE POEM","subtitle":{"text":["做不了李白 就活成明月"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":false,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.7.1","navbar":{"auto_hide":false,"color":{"left":"#bd7ba7","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/300.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    CATEGORIES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    FRIENDS
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                CATEGORIES
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                FRIENDS
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">23</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://w.wallhaven.cc/full/zy/wallhaven-zyzj1w.jpg" alt="汇编冒泡排序" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-center">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">汇编冒泡排序</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/po5.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-04-21 11:32:51</span>
+        <span class="mobile">2023-04-21 11:32:51</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-05-10 09:58:02</span>
+            <span class="mobile">2023-05-10 09:58:02</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Project/">Project</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">汇编逆向</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>7.6k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>32 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <p>PS：由于Redefine主题和Butterfly主题目前都不支持汇编代码高亮，所以如果想要看到更好看的代码可以联系我拿博文的PDF版本</p>
+<h2 id="原题"><a href="#原题" class="headerlink" title="原题"></a>原题</h2><h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>请理解给定的<strong>do_swap</strong>汇编函数功能，写出等价的 C 语言函数代码；提示需注意数据类型，如长度、有无符号等（unsigned char ？无符号 1 Byte 长的变量？）</p>
+<h3 id="问题3"><a href="#问题3" class="headerlink" title="问题3"></a>问题3</h3><p><strong>请用汇编语言实现冒泡排序函数（需要有详尽的代码注释）</strong>；提示会调用到已给定的<strong>do_swap</strong>汇编函数</p>
+<p>（提示会自动对所实现的冒泡排序函数进行重复测试，无需自行输入字符串）</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/image-20230422162954586.png" class title="image-20230422162954586">
+
+<h3 id="初始代码"><a href="#初始代码" class="headerlink" title="初始代码"></a>初始代码</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br></pre></td><td class="code"><pre><span class="line">.arch i386</span><br><span class="line">.intel_syntax noprefix</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">.globl	_char_list</span><br><span class="line">.globl	_char_list_len</span><br><span class="line">.globl	_check_flag</span><br><span class="line">.globl	_test_no</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">_char_list_len:</span><br><span class="line">	.byte	10</span><br><span class="line">	.bss</span><br><span class="line">	.align 4</span><br><span class="line">_char_list:</span><br><span class="line">	.space 11</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">_check_flag:</span><br><span class="line">	.byte	1</span><br><span class="line">_test_no:</span><br><span class="line">	.byte	1</span><br><span class="line">	.section .rdata,"dr"</span><br><span class="line">	.align 4</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">hint_test_no:</span><br><span class="line">	.ascii "\12-----------------------------test-%d\12\0"</span><br><span class="line">hint_given_array:</span><br><span class="line">	.ascii "The given array:  %s\12\0"</span><br><span class="line">hint_sorted_array:</span><br><span class="line">	.ascii "The sorted array: %s\12\0"</span><br><span class="line"></span><br><span class="line">hint_test_error_bar:</span><br><span class="line">	.ascii "\12--!--!--!--!--!--!--!--!--!--test-%d\12\12\0"</span><br><span class="line">hint_test_error:</span><br><span class="line">	.ascii "Sorry but try it again!\12\0"</span><br><span class="line">	.align 4</span><br><span class="line">hint_test_success_bar:</span><br><span class="line">	.ascii "\12--*--*--*--*--*--*--*--*--*--passed!\12\12\0"</span><br><span class="line">hint_test_success:</span><br><span class="line">	.ascii "Well done!\12\0"</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.extern _printf</span><br><span class="line">.extern _puts</span><br><span class="line">.extern _time    # C标准库函数：获取系统时间；可以用于设定随机数种子</span><br><span class="line">.extern _srand   # C标准库函数：用于设定随机数种子</span><br><span class="line">.extern _rand    # C标准库函数：生成随机数</span><br><span class="line"></span><br><span class="line">.globl	gen_random_list</span><br><span class="line">.globl	do_swap</span><br><span class="line">.globl	do_bubble_sort</span><br><span class="line">.globl	check_sort</span><br><span class="line">.globl	_main</span><br><span class="line"></span><br><span class="line">#Function-1# 根据时间种子，随机生成由大小写英文字母构成的字符数组</span><br><span class="line">gen_random_list:</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 12</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR [ebp-1], 0</span><br><span class="line">in_gen_random_list_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _char_list_len</span><br><span class="line">	cmp	BYTE PTR [ebp-1], al</span><br><span class="line">	jnb	end_gen_random_list</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], 0</span><br><span class="line">	call	_time</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	add	eax, edx</span><br><span class="line">	mov	DWORD PTR [esp], eax</span><br><span class="line">	call	_srand</span><br><span class="line"></span><br><span class="line">	call	_rand</span><br><span class="line">	and	eax, 1</span><br><span class="line">	test	eax, eax</span><br><span class="line">	setne	al</span><br><span class="line">	test	al, al</span><br><span class="line">	je	in_gen_lower_letter</span><br><span class="line"></span><br><span class="line">	call	_rand</span><br><span class="line">	mov	ecx, eax</span><br><span class="line">	mov	edx, 0x4EC4EC4F</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	imul	edx</span><br><span class="line">	sar	edx, 3</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	sar	eax, 31  # 算数右移指令；其中，与逻辑右移shr 补 0 不同，sar 补位时，最高位保持不变</span><br><span class="line">	sub	edx, eax</span><br><span class="line">	mov	eax, edx</span><br><span class="line">	imul	eax, eax, 26  # 有符号乘法指令，eax * 26 --所得乘积放入--&gt; eax</span><br><span class="line">	sub	ecx, eax</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, 65</span><br><span class="line">	mov	BYTE PTR _char_list[eax], dl</span><br><span class="line"></span><br><span class="line">	jmp	in_gen_upper_letter</span><br><span class="line"></span><br><span class="line">in_gen_lower_letter:</span><br><span class="line">	call	_rand</span><br><span class="line">	mov	ecx, eax</span><br><span class="line">	mov	edx, 0x4EC4EC4F</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	imul	edx</span><br><span class="line">	sar	edx, 3   # 算数右移指令；其中，与逻辑右移shr 补 0 不同，sar 补位时，最高位保持不变</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	sar	eax, 31</span><br><span class="line">	sub	edx, eax</span><br><span class="line">	mov	eax, edx</span><br><span class="line">	imul	eax, eax, 26</span><br><span class="line">	sub	ecx, eax</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, 97</span><br><span class="line">	mov	BYTE PTR _char_list[eax], dl</span><br><span class="line"></span><br><span class="line">in_gen_upper_letter:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line">	jmp	in_gen_random_list_loop</span><br><span class="line"></span><br><span class="line">end_gen_random_list:</span><br><span class="line">	movzx	eax, BYTE PTR _char_list_len</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	mov	BYTE PTR _char_list[eax], 0  # 字符数组末尾置零，方便按字符串进行一次性整体打印</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], eax</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_no</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], OFFSET FLAT:_char_list</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_given_array</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-2# 实现交换两个指针各自指向的数据内容</span><br><span class="line">do_swap:                          #*# 问题-2：请理解已给定的do_swap汇编函数功能，写出等价的 C 语言函数代码</span><br><span class="line">                                  #          提示需注意数据类型，如长度、有无符号等</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 4</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	movzx	eax, BYTE PTR [eax]</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [eax]</span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [ebp-1]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-3# 对排序结果得正确性进行检查</span><br><span class="line">check_sort:</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 12</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], OFFSET FLAT:_char_list</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_sorted_array</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR [ebp-1], 0</span><br><span class="line"></span><br><span class="line">in_check_loop:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	edx, BYTE PTR _char_list_len</span><br><span class="line">	movzx	edx, dl</span><br><span class="line">	sub	edx, 1</span><br><span class="line">	cmp	eax, edx</span><br><span class="line">	jge	end_check_sort</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	edx, BYTE PTR _char_list[eax]</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	dl, al</span><br><span class="line">	jbe	in_error_check</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 96</span><br><span class="line">	jbe	in_error_marked</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 90</span><br><span class="line">	jbe	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">in_error_marked:</span><br><span class="line">	mov	BYTE PTR _check_flag, 0</span><br><span class="line">	jmp	end_check_sort</span><br><span class="line"></span><br><span class="line">in_error_check:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 90</span><br><span class="line">	ja	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 96</span><br><span class="line">	jbe	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR _check_flag, 0</span><br><span class="line">	jmp	end_check_sort</span><br><span class="line"></span><br><span class="line">continue_in_check_loop:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line">	jmp	in_check_loop</span><br><span class="line"></span><br><span class="line">end_check_sort:</span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-4# 冒泡排序函数</span><br><span class="line">do_bubble_sort:                          #*# 问题-3：请用汇编语言实现冒泡排序函数；</span><br><span class="line">                                         #          提示会调用到已给定的do_swap汇编函数</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 16</span><br><span class="line"></span><br><span class="line">### ------------------------------------冒泡排序正文----------------------------------------开始</span><br><span class="line">    nop     # 为 No Operation 缩写，表示不进行任何有效操作的汇编指令</span><br><span class="line">    nop</span><br><span class="line">    nop</span><br><span class="line">### ------------------------------------冒泡排序正文----------------------------------------结束</span><br><span class="line"></span><br><span class="line">end_bubble_sort:</span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-5# 主函数 main</span><br><span class="line">_main:</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 8</span><br><span class="line"></span><br><span class="line">test_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	cmp	al, 100       # 对排序函数进行测试的总次数；提示：调试时可以将这里改小一点，如改为 2</span><br><span class="line">	ja end_test_loop  # 通过判断两个无符号数之间的大小关系，如果 CF &amp; ZF = 0，说明大于，则转移</span><br><span class="line"></span><br><span class="line">	call	gen_random_list</span><br><span class="line">	call	do_bubble_sort</span><br><span class="line">	call	check_sort</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _check_flag                                 </span><br><span class="line">	test	al, al</span><br><span class="line">	jne	continue_test</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	mov	DWORD PTR [esp+4], eax</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_error_bar</span><br><span class="line">	call	_printf</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_error</span><br><span class="line">	call	_puts</span><br><span class="line">	jmp	end_test_loop</span><br><span class="line"></span><br><span class="line">continue_test:</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR _test_no, al</span><br><span class="line">	jmp	test_loop</span><br><span class="line"></span><br><span class="line">end_test_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _check_flag</span><br><span class="line">	test	al, al</span><br><span class="line">	je	_end_main</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_success_bar</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_success</span><br><span class="line">	call	_puts</span><br><span class="line"></span><br><span class="line">_end_main:                                     </span><br><span class="line">	mov	eax, 0</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题2-1"><a href="#问题2-1" class="headerlink" title="问题2"></a>问题2</h3><h4 id="原题重现"><a href="#原题重现" class="headerlink" title="原题重现"></a>原题重现</h4><p>请理解给定的<strong>do_swap</strong>汇编函数功能，写出等价的 C 语言函数代码；提示需注意数据类型，如长度、有无符号等（unsigned char ？无符号 1 Byte 长的变量？）</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#Function-2# 实现交换两个指针各自指向的数据内容</span><br><span class="line">do_swap:                          </span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 4</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	movzx	eax, BYTE PTR [eax]</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [eax]</span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [ebp-1]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h4><p>其实在做这个作业的过程中读了很多很多汇编代码了，过了一开始的入门阶段之后再来读这段汇编代码其实不太难的 </p>
+<p>我往代码里加点注释，就能把这段代码读懂了</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#Function-2# 实现交换两个指针各自指向的数据内容</span><br><span class="line">do_swap:                          </span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 4</span><br><span class="line"></span><br><span class="line">    mov	eax, DWORD PTR [ebp+8]    ; 将第一个指针地址从函数参数中加载到EAX寄存器</span><br><span class="line">    movzx	eax, BYTE PTR [eax]    ; 将指针所指的地址中的字节数据加载到EAX寄存器</span><br><span class="line">    mov	BYTE PTR [ebp-1], al    ; 将EAX寄存器的低字节内容保存到新分配的栈空间中</span><br><span class="line"></span><br><span class="line">    mov	eax, DWORD PTR [ebp+12]    ; 将第二个指针地址从函数参数中加载到EAX寄存器</span><br><span class="line">    movzx	edx, BYTE PTR [eax]    ; 将指针所指的地址中的字节数据加载到EDX寄存器</span><br><span class="line">    mov	eax, DWORD PTR [ebp+8]    ; 将第一个指针地址从函数参数中重新加载到EAX寄存器</span><br><span class="line">    mov	BYTE PTR [eax], dl    ; 将EDX寄存器的低字节内容保存到EAX所指向的地址中</span><br><span class="line"></span><br><span class="line">    mov	eax, DWORD PTR [ebp+12]    ; 将第二个指针地址从函数参数中重新加载到EAX寄存器</span><br><span class="line">    movzx	edx, BYTE PTR [ebp-1]    ; 将新分配的栈空间中的低字节内容加载到EDX寄存器</span><br><span class="line">    mov	BYTE PTR [eax], dl    ; 将EDX寄存器的低字节内容保存到EAX所指向的地址中</span><br><span class="line"></span><br><span class="line">    leave    ; 恢复堆栈</span><br><span class="line">    ret    ; 函数返回</span><br></pre></td></tr></table></figure></div>
+
+<p>其中要注意的就是这里的数据类型，转换为C语言代码之后是<strong>unsigned char</strong>，在汇编代码中是不带符号的数据传递，因此这边是一个无符号数据</p>
+<p>其实反过来想，题目是一个字符串排序，ASCII码不可能是负值，因此使用无符号数就够了</p>
+<p><strong>等价的C语言代码如下</strong></p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">do_swap</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> *a, <span class="type">unsigned</span> <span class="type">char</span> *b)</span> {</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> c = *a;  </span><br><span class="line">    *a = *b;  </span><br><span class="line">    *b = c;  </span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="问题3-1"><a href="#问题3-1" class="headerlink" title="问题3"></a>问题3</h3><h4 id="原题重现-1"><a href="#原题重现-1" class="headerlink" title="原题重现"></a>原题重现</h4><p><strong>请用汇编语言实现冒泡排序函数（需要有详尽的代码注释）</strong>；提示会调用到已给定的<strong>do_swap</strong>汇编函数</p>
+<h4 id="问题分析-2"><a href="#问题分析-2" class="headerlink" title="问题分析"></a>问题分析</h4><p>这个题目真的写了好久好久，下面是一些笨人作为小白的一些简单分析</p>
+<p>首先我们应该先知道普通的冒泡排序的原理以及用C语言如何实现：</p>
+<h5 id="冒泡排序原理"><a href="#冒泡排序原理" class="headerlink" title="冒泡排序原理"></a>冒泡排序原理</h5><p>从第一个元素开始往后冒泡，遇到比自己小的就向前交换，直到最后</p>
+<p>每次一个元素冒泡到最大处冒泡的长度就可以-1，冒剩余的N-1个泡即可</p>
+<h5 id="C语言代码"><a href="#C语言代码" class="headerlink" title="C语言代码"></a>C语言代码</h5><p>参考自上学期的数据结构笔记的代码（其实是懒得再写一遍了…）</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Bubble_Sort</span><span class="params">(ElementType A[], <span class="type">int</span> N)</span> {</span><br><span class="line">    <span class="keyword">for</span> (P = N - <span class="number">1</span>; P &gt;= <span class="number">0</span>; P--) {</span><br><span class="line">        flag = <span class="number">0</span>; <span class="comment">//标志位，用来记录是否发生了交换</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; P; i++) { <span class="comment">/* 一趟冒泡 */</span></span><br><span class="line">            <span class="keyword">if</span> (A[i] &gt; A[i + <span class="number">1</span>]) {</span><br><span class="line">                Swap(A[i], A[i + <span class="number">1</span>]);<span class="comment">//调用交换子函数</span></span><br><span class="line">                flag = <span class="number">1</span>; <span class="comment">/* 标识发生了交换 */</span></span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">0</span>) <span class="keyword">break</span>; <span class="comment">/* 全程无交换 */</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="汇编代码编写分析"><a href="#汇编代码编写分析" class="headerlink" title="汇编代码编写分析"></a>汇编代码编写分析</h5><p>从C语言的代码就可以看到了，冒泡排序需要两个循环，一个外层循环和一个内层循环，然后传进来的参数有两个，一个是待排序的数组，另一个就是数组长度。在本题当中数组和数组长度作为全局变量在汇编代码最开始的时候就定义了，因此它们两个的地址还是很好找的，直接拿下来用就行（老师在这里还是很善良的，不然就要去读前面Function 1里面的代码去找生成的数组放在哪了）。</p>
+<p>因此，在编写汇编代码的时候也是这样，写一个内层循环和一个外层循环分别实现两个循环的功能就行，在把 C语言的循环转换成汇编语言的时候，有几个注意点：<strong>1.计数器   2.循环跳转   3.参数传递</strong></p>
+<p>首先是对于循环体本身，我们需要用一个局部变量来存储计数器，内层循环和外层循环都是这样，这里将计数器存在局部变量区，需要操作的时候再调入寄存器，这样可以防止因为寄存器使用冲突（比如放入了eax寄存器，子函数也使用了eax寄存器）导致计数器丢失，同时这样也释放了寄存器，有了更多的寄存器可以使用。虽然本题寄存器够用，将计数器放入局部变量区反倒需要调用内存使得程序的局部性变差，同时调用内存也不如寄存器速度快，但是在其它题目就不一定了，如果出现寄存器不够用就必须得存入局部变量区了。（而且局部变量区有16字节，不用白不用嘛~）</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#使用局部变量区存储计数器，可以避免在调用do_swap的过程中计数器的值被子函数修改</span><br><span class="line">    mov     BYTE PTR [ebp-8], 0  #外层循环计数器,将其存在局部变量区</span><br><span class="line">    movzx   ebx, BYTE PTR _char_list_len #数组长度存入ebx寄存器</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>在定位数组元素的时候使用相对寻址，写法是这样的：<code>BYTE PTR _char_list[edi]</code></p>
+<p>本题有一个细节：从示例我们可以看到是要将小写字母放在大写字母前面的，而小写字母的ASCII码是大于大写字母的，所以我们需要判断大小写，并将小写字母的数值变得比大写字母小。调试的时候注意看寄存器，字符存进去时存放的都是ASCII码，也就是说底层字符就是用ASCII码表示的，因此可以直接修改ASCII码，使得小写字母在比较大小的时候比大写字母小，这样就可以解决大小写判断问题。</p>
+<p>汇编语言的if-else语句是使用跳转函数实现的，所以在这题里面就有一个很反人类的点了，连续两个字符都需要进行大小写判断，所以这个地方的跳转必须是一个一个按顺序写，我暂时不知道有没有更优的写法，反正我写的是很不优雅…</p>
+<p>如果有更好的写法dd我：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#进行大小写检查，由于大写字母ASCII码从65开始，因此可以在比较的时候将小写字母-58将其接到大写字母前面使得其一定比大写字母小</span><br><span class="line">    cmp     eax, 97 #小写字母ASCII起始值为97</span><br><span class="line">    jae     transfer_a #如果是小写字母就让它-58</span><br><span class="line">    cmp     edx, 97 #接着检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare  </span><br><span class="line"></span><br><span class="line">transfer_a: #要按顺序跳转才行</span><br><span class="line">    sub     eax, 58</span><br><span class="line">    cmp     edx, 97 #检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare</span><br><span class="line">    </span><br><span class="line">transfer_b:</span><br><span class="line">    sub     edx, 58 #如果是小写字母就让它-58</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>循环也是一样的，循环结束使用的是跳转指令进行的，因为这个题目中间因为比较有几次跳转，因此我们需要为循环跳转再写两个函数：内层循环：not_swap，外层循环：end_inner_loop</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">not_swap: </span><br><span class="line">    dec     BYTE PTR [ebp-4] #内层循环计数器-1</span><br><span class="line">    jmp     inner_loop #回到内层循环，进行下一轮的比较</span><br><span class="line"></span><br><span class="line">end_inner_loop:</span><br><span class="line">    cmp     BYTE PTR [ebp-9], 1 #测试标志位，检查是否发生了交换</span><br><span class="line">    jne     end_bubble_sort #如果发生了交换就跳入外层循环，否则说明数组已经有序，直接结束排序</span><br><span class="line">    inc     BYTE PTR [ebp-8] #外层循环计数器+1，表示已经进行完一轮冒泡</span><br><span class="line">    jmp     outer_loop #进行下一轮冒泡</span><br></pre></td></tr></table></figure></div>
+
+
+
+<p>接下来就是最重要的参数传递部分，首先先看看我的第四版代码：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mov     eax, DWORD PTR [ebp-12] #将左指针存入eax，即将前面的字符存入eax</span><br><span class="line">  movzx   eax, BYTE PTR [eax]</span><br><span class="line">  mov     edx, DWORD PTR [ebp-16] #将右指针存入edx，即将后面的字符存入edx</span><br><span class="line">  movzx   edx, BYTE PTR [edx] </span><br><span class="line"></span><br><span class="line">  cmp     eax, edx #比较前后两个元素的值</span><br><span class="line">  jbe     not_swap #如果前面的元素小于后面的元素值则不交换</span><br><span class="line"></span><br><span class="line">  mov     eax, DWORD PTR [ebp-12] #把要交换的两个元素放入do_swap程序栈中准备供do_swap调用，传参操作</span><br><span class="line">  mov     edx, DWORD PTR [ebp-16]</span><br><span class="line">  mov     DWORD PTR [esp+8], edx</span><br><span class="line">  mov     DWORD PTR [esp+4], eax </span><br><span class="line">  #mov     DWORD PTR [esp], OFFSET FLAT:do_swap #将do_swap函数地址移动到栈顶，准备调用</span><br><span class="line">  call    do_swap #调用do_swap，交换前后两个元素</span><br><span class="line">  mov     BYTE PTR [ebp-9], 1 #标志位设置为1，记录内层发生了交换</span><br></pre></td></tr></table></figure></div>
+
+<p>这个是ChatGPT写的，相当丑陋的代码，而且这个代码根本无法实现参数传递，但是我们注意看这段代码参数传递的方式，这段代码的参数传递使用MOV指令，通过ESP寄存器的偏移来传参的，这就需要查看_do_swap函数函数使用的参数在哪，同时我们也需要知道函数栈的结构：</p>
+<p>函数栈结构图：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/image-20230422162829463.png" class title="image-20230422162829463">
+
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">do_swap:                         </span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 4</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+8] #第一个参数</span><br><span class="line">	movzx	eax, BYTE PTR [eax]</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12] #第二个参数</span><br><span class="line">	movzx	edx, BYTE PTR [eax]</span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [ebp-1]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到do_swap函数的参数使用的是[ebp+8]和[ebp+12]的位置，因此我们需要把参数传到这两个位置上去</p>
+<p>使用MOV而使用PUSH来传递参数的好处就是不会改变函数栈的栈顶位置（也就是ESP的位置），但是上面这段代码传的相当丑陋，苯小白现在也还没解决这个问题，希望懂的佬看到了dd我😢</p>
+<p>所以我最终使用的是PUSH来传参，使用PUSH函数就不用管这个参数在子函数中该是当前的[esp+多少]了，而且这个_do_swap函数本身在一开始就初始化了函数栈，因此我们可以随便push，记得push之后要改一下ESP：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">lea     eax, BYTE PTR _char_list[edi]  # 计算左指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">   push    eax</span><br><span class="line">   inc     edi #edi+1索引到右指针</span><br><span class="line">   lea     eax, BYTE PTR _char_list[edi]  # 计算右指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">   push    eax</span><br><span class="line">   </span><br><span class="line">   call    do_swap #调用do_swap，交换前后两个元素</span><br><span class="line">   add     esp, 8 #往函数栈中压入了两个字符，esp栈寄存器+8，由于每次调用函数都会重新设置栈寄存器，所以在调用do_bubble_sort时会自动将esp还原</span><br></pre></td></tr></table></figure></div>
+
+<p>传递参数之前要使用LEA指令将需要交换的数组元素的地址放到寄存器当中才可以正确将指针传入！</p>
+<h4 id="整体代码实现"><a href="#整体代码实现" class="headerlink" title="整体代码实现"></a>整体代码实现</h4><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">#Function-4# 冒泡排序函数</span><br><span class="line">do_bubble_sort:</span><br><span class="line">    push    ebp</span><br><span class="line">    mov     ebp, esp</span><br><span class="line">    sub     esp, 16</span><br><span class="line"></span><br><span class="line">    ### ------------------------------冒泡排序正文----------------------------开始</span><br><span class="line">    #选择从后往前冒泡</span><br><span class="line">    #使用局部变量区存储计数器，可以避免在调用do_swap的过程中计数器的值被子函数修改</span><br><span class="line">    mov     BYTE PTR [ebp-8], 0  #外层循环计数器,将其存在局部变量区</span><br><span class="line">    movzx   ebx, BYTE PTR _char_list_len #数组长度存入ebx寄存器</span><br><span class="line">outer_loop:</span><br><span class="line">    mov     BYTE PTR [ebp-9], 0 #标志位，记录是否发生了交换</span><br><span class="line">    mov     cl, BYTE PTR [ebp-8]#将外层循环计数器的值调入寄存器中,准备进行比较</span><br><span class="line">    movzx   ecx, cl</span><br><span class="line">    cmp     ecx, ebx #比较最后一个元素下标和循环计数器的值</span><br><span class="line">    jae     end_bubble_sort #如果循环次数已经和数组下标-1相等（即已经排序到最后一个元素）则排序结束</span><br><span class="line"></span><br><span class="line">    mov     BYTE PTR [ebp-4], bl #内层循环计数器</span><br><span class="line">    dec     BYTE PTR [ebp-4] #内层循环计数器，初始值是数组长度-1，表示数组最后一个元素的下标,并且每一轮都-1</span><br><span class="line">    </span><br><span class="line">inner_loop: #内层循环，进行一次的冒泡（交换）</span><br><span class="line">    movzx   esi, BYTE PTR [ebp-4]#将两个计数器装入通用寄存器</span><br><span class="line">    movzx   edi, BYTE PTR [ebp-8]</span><br><span class="line">    cmp     esi, edi #比较循环计数器与最后一个元素的下标值</span><br><span class="line">    jbe     end_inner_loop #如果相等则表示一轮冒泡结束，跳转到退出内层循环</span><br><span class="line">    </span><br><span class="line">    mov     eax, esi #将内层循环计数器的值放入通用寄存器</span><br><span class="line">    mov     edx, eax #将右指针存入edx，即将后面的字符存入edx，此时edx的值是数组的最后一个未排序元素的下标</span><br><span class="line">    dec     eax      #此时eax存的是前一个字符的下标</span><br><span class="line">    mov     edi, eax #edi此时的索引值就是左指针（前一个字符）     </span><br><span class="line"></span><br><span class="line">    movzx   eax, BYTE PTR _char_list[edi] #将前一个字符装入eax</span><br><span class="line">    movzx   edx, BYTE PTR _char_list[esi] #将后一个字符装入edx</span><br><span class="line">    </span><br><span class="line">    #一个更优的写法，先将字符存入局部变量区，需要时再移入寄存器，这样可以防止因寄存器被修改导致字符丢失，不过此处由于是连续使用字符所以也无需这样做</span><br><span class="line">    #mov    DWORD PTR [ebp-10], eax #存储左指针地址</span><br><span class="line">    #mov    DWORD PTR [ebp-12], edx #存储右指针地址</span><br><span class="line">    </span><br><span class="line">    #进行大小写检查，由于大写字母ASCII码从65开始，因此可以在比较的时候将小写字母-58将其接到大写字母前面使得其一定比大写字母小</span><br><span class="line">    cmp     eax, 97 #小写字母ASCII起始值为97</span><br><span class="line">    jae     transfer_a #如果是小写字母就让它-58</span><br><span class="line">    cmp     edx, 97 #接着检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare  </span><br><span class="line"></span><br><span class="line">transfer_a: #要按顺序跳转才行</span><br><span class="line">    sub     eax, 58</span><br><span class="line">    cmp     edx, 97 #检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare</span><br><span class="line">    </span><br><span class="line">transfer_b:</span><br><span class="line">    sub     edx, 58 #如果是小写字母就让它-58</span><br><span class="line">    </span><br><span class="line">compare:</span><br><span class="line">    cmp     edx, eax #比较前后两个元素的值（ASCII码）</span><br><span class="line">    jae     not_swap #如果前面的元素小于后面的元素值则不交换</span><br><span class="line">    </span><br><span class="line">    lea     eax, BYTE PTR _char_list[edi]  # 计算左指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">    push    eax</span><br><span class="line">    inc     edi #edi+1索引到右指针</span><br><span class="line">    lea     eax, BYTE PTR _char_list[edi]  # 计算右指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">    push    eax</span><br><span class="line">    </span><br><span class="line">    call    do_swap #调用do_swap，交换前后两个元素</span><br><span class="line">    add     esp, 8 #往函数栈中压入了两个字符，esp栈寄存器+8，由于每次调用函数都会重新设置栈寄存器，所以在调用do_bubble_sort时会自动将esp还原</span><br><span class="line">    mov     BYTE PTR [ebp-9], 1 #标志位设置为1，记录内层发生了交换</span><br><span class="line"></span><br><span class="line">not_swap:</span><br><span class="line">    dec     BYTE PTR [ebp-4] #内层循环计数器-1</span><br><span class="line">    jmp     inner_loop #回到内层循环，进行下一轮的比较</span><br><span class="line"></span><br><span class="line">end_inner_loop:</span><br><span class="line">    cmp     BYTE PTR [ebp-9], 1 #测试标志位，检查是否发生了交换</span><br><span class="line">    jne     end_bubble_sort #如果发生了交换就跳入外层循环，否则说明数组已经有序，直接结束排序</span><br><span class="line">    inc     BYTE PTR [ebp-8] #外层循环计数器+1，表示已经进行完一轮冒泡</span><br><span class="line">    jmp     outer_loop #进行下一轮冒泡</span><br><span class="line"></span><br><span class="line">    ### ------------------------------冒泡排序正文----------------------------结束</span><br><span class="line"></span><br><span class="line">end_bubble_sort:</span><br><span class="line">    leave</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="一些小声bb"><a href="#一些小声bb" class="headerlink" title="一些小声bb"></a>一些小声bb</h2><p>大学以来第一次真正破防就是写这个汇编作业，真的写到了作业截止日期的最后一天才写完，中间整整写了六版，而且都是很不一样的，最后还是参考了别人代码的一些些内容（感谢Windy，他！是！我！的！神！）。不过在写这个作业的过程中真的学到了很多，读汇编代码顺了很多，而且也搞懂了函数栈和函数调用。难的作业，学到的也多，而且老师真的超级超级用心，超级超级体谅我们，是我上大学见过的最好的老师了！</p>
+<h2 id="完成代码"><a href="#完成代码" class="headerlink" title="完成代码"></a>完成代码</h2><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br></pre></td><td class="code"><pre><span class="line">.arch i386</span><br><span class="line">.intel_syntax noprefix</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">.globl	_char_list</span><br><span class="line">.globl	_char_list_len</span><br><span class="line">.globl	_check_flag</span><br><span class="line">.globl	_test_no</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">_char_list_len:</span><br><span class="line">	.byte	10</span><br><span class="line">	.bss</span><br><span class="line">	.align 4</span><br><span class="line">_char_list:</span><br><span class="line">	.space 11</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">_check_flag:</span><br><span class="line">	.byte	1</span><br><span class="line">_test_no:</span><br><span class="line">	.byte	1</span><br><span class="line">	.section .rdata,"dr"</span><br><span class="line">	.align 4</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">hint_test_no:</span><br><span class="line">	.ascii "\12-----------------------------test-%d\12\0"</span><br><span class="line">hint_given_array:</span><br><span class="line">	.ascii "The given array:  %s\12\0"</span><br><span class="line">hint_sorted_array:</span><br><span class="line">	.ascii "The sorted array: %s\12\0"</span><br><span class="line"></span><br><span class="line">hint_test_error_bar:</span><br><span class="line">	.ascii "\12--!--!--!--!--!--!--!--!--!--test-%d\12\12\0"</span><br><span class="line">hint_test_error:</span><br><span class="line">	.ascii "Sorry but try it again!\12\0"</span><br><span class="line">	.align 4</span><br><span class="line">hint_test_success_bar:</span><br><span class="line">	.ascii "\12--*--*--*--*--*--*--*--*--*--passed!\12\12\0"</span><br><span class="line">hint_test_success:</span><br><span class="line">	.ascii "Well done!\12\0"</span><br><span class="line"></span><br><span class="line">.text</span><br><span class="line">.extern _printf</span><br><span class="line">.extern _puts</span><br><span class="line">.extern _time    # C标准库函数：获取系统时间；可以用于设定随机数种子</span><br><span class="line">.extern _srand   # C标准库函数：用于设定随机数种子</span><br><span class="line">.extern _rand    # C标准库函数：生成随机数</span><br><span class="line"></span><br><span class="line">.globl	gen_random_list</span><br><span class="line">.globl	do_swap</span><br><span class="line">.globl	do_bubble_sort</span><br><span class="line">.globl	check_sort</span><br><span class="line">.globl	_main</span><br><span class="line"></span><br><span class="line">#Function-1# 根据时间种子，随机生成由大小写英文字母构成的字符数组</span><br><span class="line">gen_random_list:</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 12</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR [ebp-1], 0</span><br><span class="line">in_gen_random_list_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _char_list_len</span><br><span class="line">	cmp	BYTE PTR [ebp-1], al</span><br><span class="line">	jnb	end_gen_random_list</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], 0</span><br><span class="line">	call	_time</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	add	eax, edx</span><br><span class="line">	mov	DWORD PTR [esp], eax</span><br><span class="line">	call	_srand</span><br><span class="line"></span><br><span class="line">	call	_rand</span><br><span class="line">	and	eax, 1</span><br><span class="line">	test	eax, eax</span><br><span class="line">	setne	al</span><br><span class="line">	test	al, al</span><br><span class="line">	je	in_gen_lower_letter</span><br><span class="line"></span><br><span class="line">	call	_rand</span><br><span class="line">	mov	ecx, eax</span><br><span class="line">	mov	edx, 0x4EC4EC4F</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	imul	edx</span><br><span class="line">	sar	edx, 3</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	sar	eax, 31  # 算数右移指令；其中，与逻辑右移shr 补 0 不同，sar 补位时，最高位保持不变</span><br><span class="line">	sub	edx, eax</span><br><span class="line">	mov	eax, edx</span><br><span class="line">	imul	eax, eax, 26  # 有符号乘法指令，eax * 26 --所得乘积放入--&gt; eax</span><br><span class="line">	sub	ecx, eax</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, 65</span><br><span class="line">	mov	BYTE PTR _char_list[eax], dl</span><br><span class="line"></span><br><span class="line">	jmp	in_gen_upper_letter</span><br><span class="line"></span><br><span class="line">in_gen_lower_letter:</span><br><span class="line">	call	_rand</span><br><span class="line">	mov	ecx, eax</span><br><span class="line">	mov	edx, 0x4EC4EC4F</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	imul	edx</span><br><span class="line">	sar	edx, 3   # 算数右移指令；其中，与逻辑右移shr 补 0 不同，sar 补位时，最高位保持不变</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	sar	eax, 31</span><br><span class="line">	sub	edx, eax</span><br><span class="line">	mov	eax, edx</span><br><span class="line">	imul	eax, eax, 26</span><br><span class="line">	sub	ecx, eax</span><br><span class="line">	mov	eax, ecx</span><br><span class="line">	mov	edx, eax</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	edx, 97</span><br><span class="line">	mov	BYTE PTR _char_list[eax], dl</span><br><span class="line"></span><br><span class="line">in_gen_upper_letter:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line">	jmp	in_gen_random_list_loop</span><br><span class="line"></span><br><span class="line">end_gen_random_list:</span><br><span class="line">	movzx	eax, BYTE PTR _char_list_len</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	mov	BYTE PTR _char_list[eax], 0  # 字符数组末尾置零，方便按字符串进行一次性整体打印</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], eax</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_no</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], OFFSET FLAT:_char_list</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_given_array</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-2# 实现交换两个指针各自指向的数据内容</span><br><span class="line">do_swap:                          #*# 问题-2：请理解已给定的do_swap汇编函数功能，写出等价的 C 语言函数代码</span><br><span class="line">                                  #          提示需注意数据类型，如长度、有无符号等</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 4</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+8] </span><br><span class="line">	movzx	eax, BYTE PTR [eax]</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [eax]</span><br><span class="line">	mov	eax, DWORD PTR [ebp+8]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	mov	eax, DWORD PTR [ebp+12]</span><br><span class="line">	movzx	edx, BYTE PTR [ebp-1]</span><br><span class="line">	mov	BYTE PTR [eax], dl</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-3# 对排序结果得正确性进行检查</span><br><span class="line">check_sort:</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 12</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp+4], OFFSET FLAT:_char_list</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_sorted_array</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR [ebp-1], 0</span><br><span class="line"></span><br><span class="line">in_check_loop:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	edx, BYTE PTR _char_list_len</span><br><span class="line">	movzx	edx, dl</span><br><span class="line">	sub	edx, 1</span><br><span class="line">	cmp	eax, edx</span><br><span class="line">	jge	end_check_sort</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	edx, BYTE PTR _char_list[eax]</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	dl, al</span><br><span class="line">	jbe	in_error_check</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 96</span><br><span class="line">	jbe	in_error_marked</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 90</span><br><span class="line">	jbe	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">in_error_marked:</span><br><span class="line">	mov	BYTE PTR _check_flag, 0</span><br><span class="line">	jmp	end_check_sort</span><br><span class="line"></span><br><span class="line">in_error_check:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 90</span><br><span class="line">	ja	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	movzx	eax, BYTE PTR _char_list[eax]</span><br><span class="line">	cmp	al, 96</span><br><span class="line">	jbe	continue_in_check_loop</span><br><span class="line"></span><br><span class="line">	mov	BYTE PTR _check_flag, 0</span><br><span class="line">	jmp	end_check_sort</span><br><span class="line"></span><br><span class="line">continue_in_check_loop:</span><br><span class="line">	movzx	eax, BYTE PTR [ebp-1]</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR [ebp-1], al</span><br><span class="line">	jmp	in_check_loop</span><br><span class="line"></span><br><span class="line">end_check_sort:</span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br><span class="line">#Function-4# 冒泡排序函数</span><br><span class="line">do_bubble_sort:</span><br><span class="line">    push    ebp</span><br><span class="line">    mov     ebp, esp</span><br><span class="line">    sub     esp, 16</span><br><span class="line"></span><br><span class="line">    ### ------------------------------冒泡排序正文----------------------------开始</span><br><span class="line">    #选择从后往前冒泡</span><br><span class="line">    #使用局部变量区存储计数器，可以避免在调用do_swap的过程中计数器的值被子函数修改</span><br><span class="line">    mov     BYTE PTR [ebp-8], 0  #外层循环计数器,将其存在局部变量区</span><br><span class="line">    movzx   ebx, BYTE PTR _char_list_len #数组长度存入ebx寄存器</span><br><span class="line">outer_loop:</span><br><span class="line">    mov     BYTE PTR [ebp-9], 0 #标志位，记录是否发生了交换</span><br><span class="line">    mov     cl, BYTE PTR [ebp-8]#将外层循环计数器的值调入寄存器中,准备进行比较</span><br><span class="line">    movzx   ecx, cl</span><br><span class="line">    cmp     ecx, ebx #比较最后一个元素下标和循环计数器的值</span><br><span class="line">    jae     end_bubble_sort #如果循环次数已经和数组下标-1相等（即已经排序到最后一个元素）则排序结束</span><br><span class="line"></span><br><span class="line">    mov     BYTE PTR [ebp-4], bl #内层循环计数器</span><br><span class="line">    dec     BYTE PTR [ebp-4] #内层循环计数器，初始值是数组长度-1，表示数组最后一个元素的下标,并且每一轮都-1</span><br><span class="line">    </span><br><span class="line">inner_loop: #内层循环，进行一次的冒泡（交换）</span><br><span class="line">    movzx   esi, BYTE PTR [ebp-4]#将两个计数器装入通用寄存器</span><br><span class="line">    movzx   edi, BYTE PTR [ebp-8]</span><br><span class="line">    cmp     esi, edi #比较循环计数器与最后一个元素的下标值</span><br><span class="line">    jbe     end_inner_loop #如果相等则表示一轮冒泡结束，跳转到退出内层循环</span><br><span class="line">    </span><br><span class="line">    mov     eax, esi #将内层循环计数器的值放入通用寄存器</span><br><span class="line">    mov     edx, eax #将右指针存入edx，即将后面的字符存入edx，此时edx的值是数组的最后一个未排序元素的下标</span><br><span class="line">    dec     eax      #此时eax存的是前一个字符的下标</span><br><span class="line">    mov     edi, eax #edi此时的索引值就是左指针（前一个字符）     </span><br><span class="line"></span><br><span class="line">    movzx   eax, BYTE PTR _char_list[edi] #将前一个字符装入eax</span><br><span class="line">    movzx   edx, BYTE PTR _char_list[esi] #将后一个字符装入edx</span><br><span class="line">    </span><br><span class="line">    #一个更优的写法，先将字符存入局部变量区，需要时再移入寄存器，这样可以防止因寄存器被修改导致字符丢失，不过此处由于是连续使用字符所以也无需这样做</span><br><span class="line">    #mov    DWORD PTR [ebp-10], eax #存储左指针地址</span><br><span class="line">    #mov    DWORD PTR [ebp-12], edx #存储右指针地址</span><br><span class="line">    </span><br><span class="line">    #进行大小写检查，由于大写字母ASCII码从65开始，因此可以在比较的时候将小写字母-58将其接到大写字母前面使得其一定比大写字母小</span><br><span class="line">    cmp     eax, 97 #小写字母ASCII起始值为97</span><br><span class="line">    jae     transfer_a #如果是小写字母就让它-58</span><br><span class="line">    cmp     edx, 97 #接着检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare  </span><br><span class="line"></span><br><span class="line">transfer_a: #要按顺序跳转才行</span><br><span class="line">    sub     eax, 58</span><br><span class="line">    cmp     edx, 97 #检查下一个字符是否为小写字符</span><br><span class="line">    jae     transfer_b</span><br><span class="line">    jmp     compare</span><br><span class="line">    </span><br><span class="line">transfer_b:</span><br><span class="line">    sub     edx, 58 #如果是小写字母就让它-58</span><br><span class="line">    </span><br><span class="line">compare:</span><br><span class="line">    cmp     edx, eax #比较前后两个元素的值（ASCII码）</span><br><span class="line">    jae     not_swap #如果前面的元素小于后面的元素值则不交换</span><br><span class="line">    </span><br><span class="line">    lea     eax, BYTE PTR _char_list[edi]  # 计算左指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">    push    eax</span><br><span class="line">    inc     edi #edi+1索引到右指针</span><br><span class="line">    lea     eax, BYTE PTR _char_list[edi]  # 计算右指针地址，存入eax寄存器，准备压入函数栈</span><br><span class="line">    push    eax</span><br><span class="line">    </span><br><span class="line">    call    do_swap #调用do_swap，交换前后两个元素</span><br><span class="line">    add     esp, 8 #往函数栈中压入了两个字符，esp栈寄存器+8，由于每次调用函数都会重新设置栈寄存器，所以在调用do_bubble_sort时会自动将esp还原</span><br><span class="line">    mov     BYTE PTR [ebp-9], 1 #标志位设置为1，记录内层发生了交换</span><br><span class="line"></span><br><span class="line">not_swap:</span><br><span class="line">    dec     BYTE PTR [ebp-4] #内层循环计数器-1</span><br><span class="line">    jmp     inner_loop #回到内层循环，进行下一轮的比较</span><br><span class="line"></span><br><span class="line">end_inner_loop:</span><br><span class="line">    cmp     BYTE PTR [ebp-9], 1 #测试标志位，检查是否发生了交换</span><br><span class="line">    jne     end_bubble_sort #如果发生了交换就跳入外层循环，否则说明数组已经有序，直接结束排序</span><br><span class="line">    inc     BYTE PTR [ebp-8] #外层循环计数器+1，表示已经进行完一轮冒泡</span><br><span class="line">    jmp     outer_loop #进行下一轮冒泡</span><br><span class="line"></span><br><span class="line">    ### ------------------------------冒泡排序正文----------------------------结束</span><br><span class="line"></span><br><span class="line">end_bubble_sort:</span><br><span class="line">    leave</span><br><span class="line">    ret</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#Function-5# 主函数 main</span><br><span class="line">_main:</span><br><span class="line">    mov %ebp, %esp #for correct debugging</span><br><span class="line">	push	ebp</span><br><span class="line">	mov	ebp, esp</span><br><span class="line">	sub	esp, 8</span><br><span class="line"></span><br><span class="line">test_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	cmp	al, 100       # 对排序函数进行测试的总次数；提示：调试时可以将这里改小一点，如改为 2</span><br><span class="line">	ja end_test_loop  # 通过判断两个无符号数之间的大小关系，如果 CF &amp; ZF = 0，说明大于，则转移</span><br><span class="line"></span><br><span class="line">	call	gen_random_list</span><br><span class="line">	call	do_bubble_sort</span><br><span class="line">	call	check_sort</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _check_flag                                 </span><br><span class="line">	test	al, al</span><br><span class="line">	jne	continue_test</span><br><span class="line"></span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	movzx	eax, al</span><br><span class="line">	mov	DWORD PTR [esp+4], eax</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_error_bar</span><br><span class="line">	call	_printf</span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_error</span><br><span class="line">	call	_puts</span><br><span class="line">	jmp	end_test_loop</span><br><span class="line"></span><br><span class="line">continue_test:</span><br><span class="line">	movzx	eax, BYTE PTR _test_no</span><br><span class="line">	add	eax, 1</span><br><span class="line">	mov	BYTE PTR _test_no, al</span><br><span class="line">	jmp	test_loop</span><br><span class="line"></span><br><span class="line">end_test_loop:</span><br><span class="line">	movzx	eax, BYTE PTR _check_flag</span><br><span class="line">	test	al, al</span><br><span class="line">	je	_end_main</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_success_bar</span><br><span class="line">	call	_printf</span><br><span class="line"></span><br><span class="line">	mov	DWORD PTR [esp], OFFSET FLAT:hint_test_success</span><br><span class="line">	call	_puts</span><br><span class="line"></span><br><span class="line">_end_main:                                    </span><br><span class="line">	mov	eax, 0</span><br><span class="line"></span><br><span class="line">	leave</span><br><span class="line">	ret</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 汇编冒泡排序</li>
+        <li><strong>Author:</strong> Serendy</li>
+        <li><strong>Created at
+                :</strong> 2023-04-21 11:32:51</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2023-05-10 09:58:02
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://mapleqian.github.io/2023/04/21/汇编冒泡排序/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">#汇编逆向</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/04/21/MD5%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">MD5加密算法逆向</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/03/12/ContactME/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">ContactME</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">汇编冒泡排序</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E9%A2%98"><span class="nav-text">原题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%982"><span class="nav-text">问题2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%983"><span class="nav-text">问题3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E4%BB%A3%E7%A0%81"><span class="nav-text">初始代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%982-1"><span class="nav-text">问题2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E9%A2%98%E9%87%8D%E7%8E%B0"><span class="nav-text">原题重现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-1"><span class="nav-text">问题分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%983-1"><span class="nav-text">问题3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E9%A2%98%E9%87%8D%E7%8E%B0-1"><span class="nav-text">原题重现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-2"><span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">整体代码实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%B0%8F%E5%A3%B0bb"><span class="nav-text">一些小声bb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E4%BB%A3%E7%A0%81"><span class="nav-text">完成代码</span></a></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        23 posts in total
+                    </span>
+                    
+                        <span>
+                            84.1k words in total
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.7.1</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/libs/anime.min.js"></script>
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/02/26/计算机网络/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="计算机网络课的笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络">
+<meta property="og:url" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="计算机网络课的笔记">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224202753534.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224203906385.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204422256.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204437793.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204642729.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204758430.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204939467.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105042449.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105216611.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105314605.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105323081.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105529979.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105604239.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110530843.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110729549.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110810533.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110820782.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110925863.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111236496.png">
+<meta property="og:image" content="http://example.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111332296.png">
+<meta property="og:image" content="http://example.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111407318.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111453990.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111510843.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111527369.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230309235623312.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230309235830786.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000105961.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000128929.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000315006.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000335907.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000348333.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100609409.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100650516.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100749036.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100814098.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100825046.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100908004.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100927025.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101006244.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101149685.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101211372.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314230715544.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231446710.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231602308.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231613315.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231712990.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101248472.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101255640.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101337756.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102134973.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102145594.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102153684.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102246612.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102320483.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102401357.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102457278.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102550090.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102615531.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102750825.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102631557.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102657667.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102705506.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102956223.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103130416.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103342113.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103408051.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095241802.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095335607.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095414128.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101418717.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101512098.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101541769.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101719677.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101943674.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102027676.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102039907.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102740848.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102820289.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105005999.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105011133.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105016924.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105237143.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105516609.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105544562.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105948771.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502110124599.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140645161.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140725194.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140808801.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141446172.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141453058.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141517265.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141709747.png">
+<meta property="og:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141718301.png">
+<meta property="article:published_time" content="2023-02-26T00:48:45.000Z">
+<meta property="article:modified_time" content="2023-07-12T03:28:41.950Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="Note">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224202753534.png">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/300.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/300.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/300.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            计算机网络 -
+        
+        SerendyLin Empire
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":true,"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"IF YOU CAN NOT BE A POET, BE THE POEM","subtitle":{"text":["做不了李白 就活成明月"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":false,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.7.1","navbar":{"auto_hide":false,"color":{"left":"#bd7ba7","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/300.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    CATEGORIES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    FRIENDS
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                CATEGORIES
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                FRIENDS
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">23</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://w.wallhaven.cc/full/d6/wallhaven-d66rvo.png" alt="计算机网络" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-center">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">计算机网络</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/po5.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-02-26 08:48:45</span>
+        <span class="mobile">2023-02-26 08:48:45</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-07-12 11:28:41</span>
+            <span class="mobile">2023-07-12 11:28:41</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Note/">Note</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Note/">Note</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>9.6k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>33 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h1 id="1-概论"><a href="#1-概论" class="headerlink" title="1 概论"></a>1 概论</h1><h2 id="网络接入方式"><a href="#网络接入方式" class="headerlink" title="网络接入方式"></a>网络接入方式</h2><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224202753534.png" class>
+
+<h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><p>处在因特网边缘的部分就是连接在因特网上的所有的主机。这些主机又称为端系统(End  System)。 </p>
+<p>端系统中运行的程序之间的通信方式通常可划分为两大类： </p>
+<p>客户/服务器(Client/Server, C/S)方式 ：通信由客户 A发起， 向服务器 B 请求服务， 而服务器 B 向客户 A 提供服务。</p>
+<p> 对等(Peer-to-Peer , P2P)方式：Peer既是客户，又是服务器</p>
+<h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><p>因特网中最复杂的部分。 </p>
+<p>功能：向网络边缘中的大量主机提供连通性， 使边缘部分中的任何一个主机都能够和其他主机 通信(即发送或接收数据) </p>
+<p>核心设备：路由器(Router) </p>
+<p>路由器是实现<strong>分组交换</strong>(Packet Switching)的关键 构件，其任务是<strong>转发收到的分组</strong>，这是网络核心 部分最重要的功能</p>
+<h2 id="电路交换和分组交换"><a href="#电路交换和分组交换" class="headerlink" title="电路交换和分组交换"></a>电路交换和分组交换</h2><p>“交换”(switching)的含义就是转接——把一条电话线转接到另一条电话线，使它们连通起来。 </p>
+<p>从通信资源的分配角度来看， “交换”就是按照某种方式动态地分配传输线路的资源。</p>
+<h3 id="电话系统（电路交换）"><a href="#电话系统（电路交换）" class="headerlink" title="电话系统（电路交换）"></a>电话系统（电路交换）</h3><p><strong>笨终端</strong>，聪明的<strong>网络</strong> </p>
+<p>确保每个网络部件都是可靠的 </p>
+<p>​		系统可靠性＝部件可靠性 </p>
+<p>​		通过局部冗余实现部件的高可靠性 </p>
+<p>​		期望每个部件都能正常工作，部件失败的可能性 很低 </p>
+<p>需要人工配置的，高度控制的网络</p>
+<h4 id="主要特点"><a href="#主要特点" class="headerlink" title="主要特点"></a>主要特点</h4><p>电路交换分为三个阶段： <strong>建立连接、通信、释放连接</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224203906385.png" class>
+
+<h3 id="分组交换系统"><a href="#分组交换系统" class="headerlink" title="分组交换系统"></a>分组交换系统</h3><p>建立在简单的、不可靠部件上的可靠系统 </p>
+<p>自适应的系统 </p>
+<p>聪明的<strong>终端</strong>，可以修正传输错误 </p>
+<p>分组交换网络抵御故障的能力较强，重新传输 的是出问题的数据包、而不是全部信息；如果数据包遇到计算机发生故障或者线路中断，会 另找其他的传输路径。</p>
+<h4 id="主要特点-1"><a href="#主要特点-1" class="headerlink" title="主要特点"></a>主要特点</h4><p>在发送端，先把较长的报文划分成较短的、固定长度的数据段（分组）;</p>
+<p>每一个数据段前面添加上首部构成分组; </p>
+<p>依次把各分组发送到接收端; </p>
+<p>接收端收到分组后剥去首部还原成报文</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204422256.png" class>
+
+<p>数据先分成分组后再传输</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204437793.png" class>
+
+<p>每个分组单独选路</p>
+<h4 id="路由器的处理过程"><a href="#路由器的处理过程" class="headerlink" title="路由器的处理过程"></a>路由器的处理过程</h4><p>在路由器中的输入和输出端口之间没有直接连线（即没有建立物理连接）。</p>
+<p>路由器处理分组的过程是：</p>
+<p>​	①把收到的分组先放入缓存(暂时存储); </p>
+<p>​	②查找转发表，找出到某个目的地址应从哪个 端口转发; </p>
+<p>​	③把分组送到适当的端口转发出去</p>
+<p><strong>==存储转发==</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204642729.png" class>
+
+<p>主机和路由器的作用不同 </p>
+<p>​	主机是为用户进行信息处理的，并向网络发送分组，从网络接收分组 </p>
+<p>​	路由器对分组进行<strong>存储转发</strong>，最后把 分组交付目的主机</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204758430.png" class>
+
+<h4 id="分组交换的优点"><a href="#分组交换的优点" class="headerlink" title="分组交换的优点"></a>分组交换的优点</h4><p><strong>高效</strong> <strong>动态分配</strong>传输带宽，对通信链路是逐段占用 </p>
+<p><strong>灵活</strong> 以<strong>分组</strong>为传送单位和查找路由 </p>
+<p><strong>迅速</strong> <strong>不必先建立连接</strong>就能向其他主机 发送分组 </p>
+<p><strong>可靠</strong> 保证可靠性的网络协议；分布式的 路由选择协议使网络有很好的<strong>生存性</strong></p>
+<h4 id="分组交换带来的问题"><a href="#分组交换带来的问题" class="headerlink" title="分组交换带来的问题"></a>分组交换带来的问题</h4><p>分组在各结点存储转发时需要排队， 并要检查分组首部决定向何处转发， 这就会㐀成一定的<strong>时延</strong> </p>
+<p>分组必须携带的首部(里面有必不可少 的控制信息)也㐀成了一定的<strong>开销</strong></p>
+<h3 id="分组交换和电路交换的时延特性"><a href="#分组交换和电路交换的时延特性" class="headerlink" title="分组交换和电路交换的时延特性"></a>分组交换和电路交换的时延特性</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230224204939467.png" class>
+
+<p>电路交换时延与数据长度有关</p>
+<p>分组交换时延：转发时延（路由器）+传输时延</p>
+<h2 id="计算机网络的类型"><a href="#计算机网络的类型" class="headerlink" title="计算机网络的类型"></a>计算机网络的类型</h2><h3 id="WAN（Wide-Area-Network）-也称为远程网"><a href="#WAN（Wide-Area-Network）-也称为远程网" class="headerlink" title="WAN（Wide Area Network）,也称为远程网"></a>WAN（Wide Area Network）,也称为远程网</h3><p>通信子网主要使用分组交换技术</p>
+<h3 id="城域网（Metropolitan-Area-Network-MAN"><a href="#城域网（Metropolitan-Area-Network-MAN" class="headerlink" title="城域网（Metropolitan Area Network, MAN)"></a>城域网（Metropolitan Area Network, MAN)</h3><h3 id="局域网-Local-Area-Network，LAN"><a href="#局域网-Local-Area-Network，LAN" class="headerlink" title="局域网(Local Area Network，LAN)"></a>局域网(Local Area Network，LAN)</h3><p>不存在路由选择问题</p>
+<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105042449.png" class>
+
+<h3 id="局域网和广域网（WAN和LAN）"><a href="#局域网和广域网（WAN和LAN）" class="headerlink" title="局域网和广域网（WAN和LAN）"></a>局域网和广域网（WAN和LAN）</h3><p><strong>局域网和广域网的侧重点不同：</strong><br>LAN：<strong>共享信道，冲突算法</strong><br>解决网络中随时可能产生的冲突，减少冲突，<br>减少错误<br>WAN：网状拓扑，<strong>路由算法</strong><br>找出一条最佳的路径，从而加快转发㏿度，<br>减少错误</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105216611.png" class>
+
+<h3 id="ISP和骨干网"><a href="#ISP和骨干网" class="headerlink" title="ISP和骨干网"></a>ISP和骨干网</h3><p>ISP：网络服务提供商 Internet Service Provider</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105314605.png" class>
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105323081.png" class>
+
+<p>把城市之间连接起来的网就叫<strong>骨干网</strong><br><strong>直接和国外连接（即有国际出口）</strong><br>其他有接入功能的ISP通过骨干网连到国外<br>“骨干网”通常是用于描述大型网络结构时经常使用的词语，描述网络结构，而非具体使用的传输方式或协议<br>骨干网一般都是广域网:作用范围几十到几千<br>公里</p>
+<h2 id="衡量网络性能的指标"><a href="#衡量网络性能的指标" class="headerlink" title="衡量网络性能的指标"></a>衡量网络性能的指标</h2><h3 id="带宽"><a href="#带宽" class="headerlink" title="带宽"></a>带宽</h3><h4 id="速率"><a href="#速率" class="headerlink" title="速率"></a>速率</h4><p>比特(bit，位)是计算机中数据量的单位，也是信息论中使用的信息量的单位。</p>
+<p>速率即<strong>数据率</strong>(data rate)或比特率(bit rate)是连接在计算机网络上的主机<strong>在数字信道上传输数据的速率</strong>，是一个最重要的性能指标。速率的单位是 bps，kbps，Mbps，Gbps 等</p>
+<p>速率往往是指额定速率或标称速率</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105529979.png" class>
+
+<h4 id="带宽与位宽度"><a href="#带宽与位宽度" class="headerlink" title="带宽与位宽度"></a>带宽与位宽度</h4><p>数字信号流随时间的变化：在时间轴上信 号的宽度随带宽的增大而变窄（位时间）</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304105604239.png" class>
+
+<h3 id="时延"><a href="#时延" class="headerlink" title="时延"></a>时延</h3><h4 id="发送时延"><a href="#发送时延" class="headerlink" title="发送时延"></a>发送时延</h4><p>发送数据时，数据块从节点进入到传输媒体所需要的时间。 </p>
+<p>从发送数据块的第一个比特算起，到该数据块的最后一个比特发送完毕所需的时间。<br><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -2.172ex;" xmlns="http://www.w3.org/2000/svg" width="30.329ex" height="5.475ex" role="img" focusable="false" viewbox="0 -1460 13405.6 2420"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">发</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">送</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(4277.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"/></g><g data-mml-node="mfrac" transform="translate(5333.6,0)"><g data-mml-node="mrow" transform="translate(220,710)"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">数</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">据</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">块</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">长</text></g><g data-mml-node="mi" transform="translate(4000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">度</text></g><g data-mml-node="mtext" transform="translate(5000,0)"><path data-c="A0" d=""/></g><g data-mml-node="mo" transform="translate(5250,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/></g><g data-mml-node="mi" transform="translate(5639,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"/></g><g data-mml-node="mi" transform="translate(6068,0)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(6413,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g><g data-mml-node="mi" transform="translate(6774,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g><g data-mml-node="mo" transform="translate(7243,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"/></g></g><g data-mml-node="mrow" transform="translate(235.5,-710)"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">信</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">道</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">带</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">宽</text></g><g data-mml-node="mtext" transform="translate(4000,0)"><path data-c="A0" d=""/></g><g data-mml-node="mo" transform="translate(4250,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/></g><g data-mml-node="mi" transform="translate(4639,0)"><path data-c="1D44F" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"/></g><g data-mml-node="mi" transform="translate(5068,0)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(5413,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g><g data-mml-node="mi" transform="translate(5774,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(6243,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"/></g></g><g data-mml-node="mi" transform="translate(6743,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g><g data-mml-node="mo" transform="translate(7212,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"/></g></g><rect width="7832" height="60" x="120" y="220"/></g></g></g></svg></mjx-container></p>
+<h4 id="传播时延"><a href="#传播时延" class="headerlink" title="传播时延"></a>传播时延</h4><p>电磁波在信道中需要传播一定的距离而花费的时间。 </p>
+<p>信号传输速率（即发送速率）和信号在信道上的传播速率是完全不同的概念<br><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -2.172ex;" xmlns="http://www.w3.org/2000/svg" width="44.454ex" height="5.475ex" role="img" focusable="false" viewbox="0 -1460 19648.6 2420"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">传</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">播</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(4277.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"/></g><g data-mml-node="mfrac" transform="translate(5333.6,0)"><g data-mml-node="mrow" transform="translate(4204.5,710)"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">信</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">道</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">长</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">度</text></g><g data-mml-node="mtext" transform="translate(4000,0)"><path data-c="A0" d=""/></g><g data-mml-node="mo" transform="translate(4250,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/></g><g data-mml-node="mi" transform="translate(4639,0)"><path data-c="1D45A" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mo" transform="translate(5517,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"/></g></g><g data-mml-node="mrow" transform="translate(220,-710)"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">信</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">号</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">在</text></g><g data-mml-node="mi" transform="translate(3000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">信</text></g><g data-mml-node="mi" transform="translate(4000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">道</text></g><g data-mml-node="mi" transform="translate(5000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">上</text></g><g data-mml-node="mi" transform="translate(6000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">的</text></g><g data-mml-node="mi" transform="translate(7000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">传</text></g><g data-mml-node="mi" transform="translate(8000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">播</text></g><g data-mml-node="mi" transform="translate(9000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">速</text></g><g data-mml-node="mi" transform="translate(10000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">率</text></g><g data-mml-node="mtext" transform="translate(11000,0)"><path data-c="A0" d=""/></g><g data-mml-node="mo" transform="translate(11250,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/></g><g data-mml-node="mi" transform="translate(11639,0)"><path data-c="1D45A" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(12517,0)"><g data-mml-node="mo"><path data-c="2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"/></g></g><g data-mml-node="mi" transform="translate(13017,0)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g><g data-mml-node="mo" transform="translate(13486,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"/></g></g><rect width="14075" height="60" x="120" y="220"/></g></g></g></svg></mjx-container></p>
+<h4 id="处理时延"><a href="#处理时延" class="headerlink" title="处理时延"></a>处理时延</h4><p>交换结点为存储转发而进行一些 必要的处理所花费的时间</p>
+<h4 id="排队时延"><a href="#排队时延" class="headerlink" title="排队时延"></a>排队时延</h4><p>结点缓存队列中分组排队所经历的时延 </p>
+<p><strong>排队时延的长短往往取决于网络中当时的通信量</strong></p>
+<h4 id="数据经历的总时延"><a href="#数据经历的总时延" class="headerlink" title="数据经历的总时延"></a>数据经历的总时延</h4><p><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -0.452ex;" xmlns="http://www.w3.org/2000/svg" width="54.301ex" height="2.149ex" role="img" focusable="false" viewbox="0 -750 24000.9 950"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">总</text></g><g data-mml-node="mi" transform="translate(1000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(2000,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(3277.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"/></g><g data-mml-node="mi" transform="translate(4333.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">发</text></g><g data-mml-node="mi" transform="translate(5333.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">送</text></g><g data-mml-node="mi" transform="translate(6333.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(7333.6,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(8555.8,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"/></g><g data-mml-node="mi" transform="translate(9556,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">传</text></g><g data-mml-node="mi" transform="translate(10556,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">播</text></g><g data-mml-node="mi" transform="translate(11556,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(12556,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(13778.2,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"/></g><g data-mml-node="mi" transform="translate(14778.4,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">处</text></g><g data-mml-node="mi" transform="translate(15778.4,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">理</text></g><g data-mml-node="mi" transform="translate(16778.4,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(17778.4,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g><g data-mml-node="mo" transform="translate(19000.7,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"/></g><g data-mml-node="mi" transform="translate(20000.9,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">排</text></g><g data-mml-node="mi" transform="translate(21000.9,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">队</text></g><g data-mml-node="mi" transform="translate(22000.9,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">时</text></g><g data-mml-node="mi" transform="translate(23000.9,0)"><text data-variant="normal" transform="scale(1,-1)" font-size="884px" font-family="serif">延</text></g></g></g></svg></mjx-container></p>
+<h4 id="时延的产生"><a href="#时延的产生" class="headerlink" title="时延的产生"></a>时延的产生</h4><p>从结点 A 向结点 B 发送数据，四种时延所产生 的位置</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110530843.png" class>
+
+<h3 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h3><p>吞吐量：每秒能够成功传输的数据量(瞬时、 平均) </p>
+<p>吞吐量与带宽的区分：两者的单位都是bps. </p>
+<p>英文：吞吐量:throughput 带宽: bandwidth </p>
+<p>通信链路的带宽一般是指链路上每秒所能传送 的比特数，以太网的带宽是10Mbps</p>
+<p>区分链路上的可用带宽与实际链路中每秒所能 传送的比特数（吞吐量），用“吞吐量”来表示 一个系统的测试性能 </p>
+<p>因为实现受各种低效率因素的影响，由一段带 宽为10Mbps的链路连接的一对节点可能只达到 2Mbps的吞吐量。 </p>
+<p>这样就意味着，一个主机上的应用能够以 2Mbps的速度向另外的一个主机发送数据。</p>
+<p>每个连接的端到端吞吐量： min(Rc, Rs,  R/10) </p>
+<p>实际上 Rc 或 Rs 也可 能是瓶颈</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110729549.png" class>
+
+<h3 id="因特网钟主机的通信过程"><a href="#因特网钟主机的通信过程" class="headerlink" title="因特网钟主机的通信过程"></a>因特网钟主机的通信过程</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110810533.png" class>
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110820782.png" class>
+
+<h2 id="协议和层次体系结构"><a href="#协议和层次体系结构" class="headerlink" title="协议和层次体系结构"></a>协议和层次体系结构</h2><h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3><p>协议是通信实体（如网络应用程序）之 间通信所必须遵守的<strong>规则</strong></p>
+<p>协议定义了在两个或多个通信实体之间 交换的<strong>报文格式和次序</strong>，以及在报文 传输和/或接收或其他事件方面所采取的 <strong>动作</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304110925863.png" class>
+
+<h3 id="协议的组成"><a href="#协议的组成" class="headerlink" title="协议的组成"></a>协议的组成</h3><p>语法：数据与控制信息的结构或格式 </p>
+<p>语义：需要发出何种控制信息，完成何种动作以及做出何种响应 </p>
+<p>同步：事件实现顺序的详细说明</p>
+<h3 id="分层体系结构"><a href="#分层体系结构" class="headerlink" title="分层体系结构"></a>分层体系结构</h3><h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><p>实体、协议、服务和服务访问点<br>        实体(Entity) 表示任何可发送或接收信息的硬件或软件进程。<br>        协议是控制两个对等实体（Peer Entity）进行通信的规则的集合。<br>        在协议的控制下，两个对等实体间的通信使得本层能够向上一层提供服务。<br>        要实现本层协议，还需要使用下层所提供的服务。</p>
+<h4 id="协议和服务"><a href="#协议和服务" class="headerlink" title="协议和服务"></a>协议和服务</h4><p>本层服务的实体只能看见服务而无法看见下 面的协议。 </p>
+<p>下面的协议对上面的服务用户是<strong>透明的</strong>。 </p>
+<p>协议是“<strong>水平的</strong>” ，即协议是控制对等实体之 间通信的规则。 </p>
+<p>服务是“<strong>垂直的</strong>” ，即服务是由下层向上层通 过层间接口提供的。 </p>
+<p>同一系统相邻两层的实体进行交互的地方， 称为<strong>服务访问点 SAP</strong> (Service Access Point)。</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111236496.png" class>
+
+<h3 id="TCP-IP协议栈"><a href="#TCP-IP协议栈" class="headerlink" title="TCP/IP协议栈"></a>TCP/IP协议栈</h3><p><img lazyload src="/images/loading.svg" data-src="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111332296.png"><img lazyload src="/images/loading.svg" data-src="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111407318.png"></p>
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111453990.png" class>
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111510843.png" class>
+
+<p>示例： 我要访问北邮的主页，通信过程是怎样的？</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230304111527369.png" class>
+
+<h4 id="分层体系结构的要点"><a href="#分层体系结构的要点" class="headerlink" title="分层体系结构的要点"></a>分层体系结构的要点</h4><ol>
+<li>网络体系结构<strong>分几层</strong>？每层的<strong>功能</strong>是什么？ 有哪些协议？ </li>
+<li>不同系统的<strong>对等层实体</strong>遵守<strong>协议</strong>进行通信 </li>
+<li>协议的实现需要下层的<strong>服务</strong> </li>
+<li>只有最底层是实际通信，其他各层都是虚拟通信，数据流向：U型 </li>
+<li>除最底层之外，每层对于上层的数据进行<strong>封装</strong>（打包：增加包头/尾，包头/尾的格式和内容由协议规定）</li>
+</ol>
+<h1 id="2-应用层"><a href="#2-应用层" class="headerlink" title="2 应用层"></a>2 应用层</h1><h2 id="网络应用概述"><a href="#网络应用概述" class="headerlink" title="网络应用概述"></a>网络应用概述</h2><h3 id="提供网络应用"><a href="#提供网络应用" class="headerlink" title="提供网络应用"></a>提供网络应用</h3><h5 id="编写应用程序"><a href="#编写应用程序" class="headerlink" title="编写应用程序"></a>编写应用程序</h5><p>在不同的端系统上运行<br>通过网络和其他端系统通信<br>遵守特定的协议<br>示例：webserver软件和浏览器软件通信</p>
+<h5 id="无需修改网络核心软件"><a href="#无需修改网络核心软件" class="headerlink" title="无需修改网络核心软件"></a>无需修改网络核心软件</h5><p>网络核心设备不运行网络应用程序<br>方便实现快速的应用开发和部署</p>
+<h3 id="应用层协议的内容"><a href="#应用层协议的内容" class="headerlink" title="应用层协议的内容"></a>应用层协议的内容</h3><p><strong>消息类型</strong><br>        例如：请求、应答<br><strong>语法（Syntax）</strong><br>        消息中包含哪些字段，每个字段的长度<br><strong>语义 (Semantics)</strong><br>        每个字段信息的含义<br><strong>时序：消息的顺序</strong></p>
+<h3 id="应用层协议的特点"><a href="#应用层协议的特点" class="headerlink" title="应用层协议的特点"></a>应用层协议的特点</h3><p>面向用户，支持特定的网络应用 </p>
+<p>​		<strong>没有通用的协议，每个应用有专门的协议！</strong><br>​		<strong>相比其他层，协议数量最多、最复杂</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230309235623312.png" class title="image-20230309235623312">
+
+<h3 id="网络应用的体系结构"><a href="#网络应用的体系结构" class="headerlink" title="网络应用的体系结构"></a>网络应用的体系结构</h3><h4 id="C-S-体系结构"><a href="#C-S-体系结构" class="headerlink" title="C/S 体系结构"></a>C/S 体系结构</h4><p><strong>服务器:</strong><br>提供服务，同时处理多个客户请求<br>一直在线<br>地址(域名)公开，一般不变<br>可能有多个服务器(server farms)<br>一般需要高性能硬件支持</p>
+<p> <strong>客户:</strong><br>与服务器通信，使用服务<br>临时连接到网络<br>IP地址可能是动态的<br>客户之间不直接通信</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230309235830786.png" class title="image-20230309235830786">
+
+<h4 id="P2P体系结构"><a href="#P2P体系结构" class="headerlink" title="P2P体系结构"></a>P2P体系结构</h4><p>Peer -to-Peer<br>没有严格的服务器 - 客户机之分 ，Peer<br>没 有 一 直 在 线 的 服 务 器 ， Peer 在 必 要 时 充 当 服 务 器<br>Peer 之 间 直 接 通 信<br>Peer 临 时 连 接 到 网 络 ， 且IP 地 址 可 能 动 态 变 化  <strong>可扩 展 、 成本低 ， 但难 于 管 理 、 有 安 全 隐 患</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000105961.png" class title="image-20230310000105961">
+
+<h5 id="P2P文件下载：Peer之间互相传输文件"><a href="#P2P文件下载：Peer之间互相传输文件" class="headerlink" title="P2P文件下载：Peer之间互相传输文件"></a>P2P文件下载：Peer之间互相传输文件</h5><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000128929.png" class title="image-20230310000128929">
+
+<h5 id="P2P-如何查找资源"><a href="#P2P-如何查找资源" class="headerlink" title="P2P: 如何查找资源"></a>P2P: 如何查找资源</h5><p><strong>集中式</strong>：从索引服务器(Index Server)中查找资源，eg. Napster<br><strong>分布式</strong>：洪泛查询(Query Flooding)，eg. Gnutella<br><strong>分层叠加网</strong>，超级节点提供索引服务，<br>eg.KaZaA, freenet,chord</p>
+<p>集中式查找：混合P2P</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000315006.png" class title="image-20230310000315006">
+
+<p>洪泛式（Flooding）查找</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000335907.png" class title="image-20230310000335907">
+
+<p>分层叠加网（Overlay Network）查找</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310000348333.png" class title="image-20230310000348333">
+
+<h4 id="C-S和P2P混合结构"><a href="#C-S和P2P混合结构" class="headerlink" title="C/S和P2P混合结构"></a>C/S和P2P混合结构</h4><h3 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h3><p>C/S模式的主机间进程通信</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100609409.png" class title="image-20230310100609409">
+
+<p>不同主机间通信的接口：Sockets</p>
+<p><strong>套接字</strong><br>应用进程使用socket来发送/接收消息<br>应用编程接口（API）<br>        位于应用层和传输层 之间<br>        帮助应用访问系统内核（TCP/IP协议软件）<br>        设置相关参数（如最大报文段长度MSS等）</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100650516.png" class title="image-20230310100650516">
+
+<p>Internet 上的每台主机都 有一个唯一的IP地址<br>Q: IP地址能唯一标识进程吗? A: 当然不行，一台主机中可能有多个进程在运行</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100749036.png" class title="image-20230310100749036">
+
+<h3 id="通信关系与端口号"><a href="#通信关系与端口号" class="headerlink" title="通信关系与端口号"></a>通信关系与端口号</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100814098.png" class title="image-20230310100814098">
+
+<p>IP地址与端口号示例</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100825046.png" class title="image-20230310100825046">
+
+<h3 id="网络应用对传输服务的要求：衡量指标"><a href="#网络应用对传输服务的要求：衡量指标" class="headerlink" title="网络应用对传输服务的要求：衡量指标"></a>网络应用对传输服务的要求：衡量指标</h3><h5 id="可靠性：数据丢失率"><a href="#可靠性：数据丢失率" class="headerlink" title="可靠性：数据丢失率"></a>可靠性：数据丢失率</h5><p>o 可容忍差错，如话音<br>o 不能容忍差错，如Email</p>
+<h5 id="实时性"><a href="#实时性" class="headerlink" title="实时性"></a>实时性</h5><p>o 端到端的时延</p>
+<h5 id="吞吐量-Throughput"><a href="#吞吐量-Throughput" class="headerlink" title="吞吐量 (Throughput)"></a>吞吐量 (Throughput)</h5><p>o 端到端的带宽<br>o 音频数据: 5kbps-1Mbps<br>o 视频数据:10kbps-5Mbps</p>
+<h5 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h5><p>o 是否加密、是否验证用户身份、能否保证数据一致性</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100908004.png" class title="image-20230310100908004">
+
+<h3 id="因特网的传输层服务"><a href="#因特网的传输层服务" class="headerlink" title="因特网的传输层服务"></a>因特网的传输层服务</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310100927025.png" class title="image-20230310100927025">
+
+<h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><h3 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101006244.png" class title="image-20230310101006244">
+
+<p><strong>IP地址的优点和缺点</strong><br>        IP地址更适合计算机处理，包含足够的路由信息。<br>        IP地址不适合人们记忆<br>        无法通过IP地址猜测主机的用途<br>                如一个主机到底是www服务器还是FTP服务器？<br><strong>如何取长补短——域名系统</strong><br>    优点：<br>        使用方便，易于记忆。<br>         一致性好，不会随IP地址的改变而改变。<br>    采用分层结构的分布式数据库，ᨀ供主机名和IP地址映射的目录服务<br>    允许主机查询分布式DNS数据库的应用层协议</p>
+<h3 id="DNS协议要点"><a href="#DNS协议要点" class="headerlink" title="DNS协议要点"></a>DNS协议要点</h3><p>采用C/S模型，Client请求，Server响应<br>客户端程序：resolver(解析器)<br>传输层采用UDP<br>DNS服务器的访问端口号是53<br>DNS是其他应用层协议的支撑协议</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101149685.png" class title="image-20230310101149685">
+
+<p>层次化的名字空间</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230310101211372.png" class title="image-20230310101211372">
+
+<h3 id="主机域名的构成"><a href="#主机域名的构成" class="headerlink" title="主机域名的构成"></a>主机域名的构成</h3><p><strong>主机名是由一系列由“.”分开的标签组成：</strong></p>
+<p>标签由英文字母和数字组成；<br>每个标签不能超过63个字符；<br>全部的标签不能超过255个字符；<br>书写顺序是从主机开始直到域名树的根域为止。例如：scss.bupt.edu.cn</p>
+<p><strong>域名是一个组织在域名空间中的名字</strong></p>
+<p>例如，北京邮电大学的域名为bupt.edu.cn。<br>该组织中已注册的主机都以组织的域名为后缀。</p>
+<h3 id="区域"><a href="#区域" class="headerlink" title="区域"></a>区域</h3><p>是域名空间中的一部分（子树），从域名管理的角度来划分的，即DNS服务器的管辖范围是“区”<br>        每一个区设置相应的权威服务器，用来保存该区中所有主机的域名到ip地址的映射</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314230715544.png" class title="image-20230314230715544">
+
+<h3 id="DNS服务器"><a href="#DNS服务器" class="headerlink" title="DNS服务器"></a>DNS服务器</h3><p>根据DNS服务器的作用，可分为四类：</p>
+<h5 id="根域名服务器（Root-Name-Server）"><a href="#根域名服务器（Root-Name-Server）" class="headerlink" title="根域名服务器（Root Name Server）"></a>根域名服务器（Root Name Server）</h5><p>o 为下级域名服务器提供域名解析服务；<br>        它需要知道全部顶级域名服务器的地址。<br>o 数量很少，由于历史原因，主要分布在北美地区。</p>
+<p>全球共有13个(a-m)<br>o 当用户无法在本地完成名字解析时，即访问根名字服务器<br>o 根名字服务器知道所有顶级名字服务器的IP地址<br>n 每个名字服务器均知道其下级名字服务器的地址<br>n 最终能访问到<strong>权威名字服务器</strong>，完成名字解析</p>
+<h5 id="顶级域名服务器（Top-level-Name-Server）"><a href="#顶级域名服务器（Top-level-Name-Server）" class="headerlink" title="顶级域名服务器（Top level Name Server）"></a>顶级域名服务器（Top level Name Server）</h5><p>o 负责管理该顶级域名服务器注册的所有二级域名。</p>
+<h5 id="权威域名服务器（Authoritative-Name-Server）"><a href="#权威域名服务器（Authoritative-Name-Server）" class="headerlink" title="权威域名服务器（Authoritative Name Server）"></a>权威域名服务器（Authoritative Name Server）</h5><p>o 每台因特网中的主机都应该在所在域的域名服务器中注册，提供注册的域名服务器就是该主机的认证域名服务器。</p>
+<p>企业网/校园网的DNS 服务器，提供主机名(如Web 服务器、Email 服务器的域名)与IP地址的权威映射<br>由企业网/校园网自己维护或ISP维护</p>
+<h5 id="本地域名服务器（Local-Name-Server）"><a href="#本地域名服务器（Local-Name-Server）" class="headerlink" title="本地域名服务器（Local Name Server）"></a>本地域名服务器（Local Name Server）</h5><p>o 当一个主机发出 DNS 查询请求时，这个查询请求报文就发送给本地域名服务器。</p>
+<p>如果本地DNS 服务器找不到对应的映射关系，则将<strong>代理resolver</strong>去请求其他的名字服务器<br>本地DNS 服务器可能是企业网/校园网的DNS 服务器或ISP 的DNS 服务器</p>
+<h3 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231446710.png" class title="image-20230314231446710">
+
+<h4 id="迭代查询"><a href="#迭代查询" class="headerlink" title="迭代查询"></a>迭代查询</h4><p><strong>迭代查询过程</strong><br>在无法完成域名解析时，<strong>本地DNS服务器</strong>询问根DNS 服务器<br>根DNS 服务器返回.edu域DNS 服务器的地址<br>本地DNS 服务器询问.edu域DNS 服务器<br>以此类推，最终请求权威DNS 服务器</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231602308.png" class title="image-20230314231602308">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231613315.png" class title="image-20230314231613315">
+
+<h4 id="递归查询"><a href="#递归查询" class="headerlink" title="递归查询"></a>递归查询</h4><p>由被请求的名字服务器代理进行DNS查询<br>因特网中可选采用</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230314231712990.png" class title="image-20230314231712990">
+
+<h3 id="DNS性能改进措施"><a href="#DNS性能改进措施" class="headerlink" title="DNS性能改进措施"></a>DNS性能改进措施</h3><p><strong>主、备用服务器</strong><br>定期把数据复制到备用服务器中，主服务器发生故障时，备用服务器代替工作</p>
+<p><strong>当DNS服务器收到一个新的DNS响应，会将域名和地址的映射关系缓存在本地</strong><br>提高后续查找效率<br>缓存的映射数据在一段时间后过期<br>本地DNS服务器通常可以直接访问TLD 服务器，而不必访问根名字服务器</p>
+<p> <strong>映射数据更新/通知机制</strong></p>
+<h3 id="DNS资源记录"><a href="#DNS资源记录" class="headerlink" title="DNS资源记录"></a>DNS资源记录</h3><p><strong>RR 格式: (name, TTL, class, type, value)</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101248472.png" class title="image-20230318101248472">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101255640.png" class title="image-20230318101255640">
+
+<h3 id="DNS协议消息"><a href="#DNS协议消息" class="headerlink" title="DNS协议消息"></a>DNS协议消息</h3><p>DNS协议包含**请求(query)和应答(reply)**两个消息， 其消息格式相同</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318101337756.png" class title="image-20230318101337756">
+
+<p>消息头(12字节) </p>
+<p><strong>标识（ID）</strong>: 16位，一对请 求和应答消息使用同样的标识 </p>
+<p><strong>标志（Flag）</strong>:<br>消息是<strong>请求</strong>或<strong>应答</strong><br>是否使用递归查询<br>递归查询是否可行<br>应答是否是权威的</p>
+<h3 id="DNS的安全性问题"><a href="#DNS的安全性问题" class="headerlink" title="DNS的安全性问题"></a>DNS的安全性问题</h3><p>名字服务器易受攻击，名字数据库被非法主机<br>修改<br>n DNS伪冒(spoofing)<br>n DNS缓存毒化(Cache poisoning)<br>n DOS、缓存溢出(Buffer overrun)、重放(Replay)攻击…</p>
+<p>o 改进策略：DNSSEC<br>n RFC 3090<br>n 数字签名、公共密钥<br>        o 对DNS请求/应答消息进行身份认证</p>
+<h2 id="WWW应用和HTTP"><a href="#WWW应用和HTTP" class="headerlink" title="WWW应用和HTTP"></a>WWW应用和HTTP</h2><p>❒万维网，WWW, World Wide Web<br>❒ 不是一个网络，而是基于因特网的信息服务系统<br>❒ 分布式超媒体系统(Hyper-media)<br>        超媒体包括文本、图形、图像、音频、视频等多种媒体<br>❒ 以C/S模式工作<br>        客户程序向服务器程序ᨀ出请求<br>        服务器程序向客户程序返回客户需要的万维网文档，即页</p>
+<h3 id="WWW应用的客户端：浏览器"><a href="#WWW应用的客户端：浏览器" class="headerlink" title="WWW应用的客户端：浏览器"></a>WWW应用的客户端：浏览器</h3><p>o WWW应用的用户接口<br>o 功能<br>        n 向Web服务器发送请求消息<br>        n 接收Web服务器的应答消息<br>        n 解释网页文档的源代码，将网页呈现给用户<br>        n 通用的客户端，支持Email、文件传输、BBS、电子商务等应用<br>o 不同的浏览器对于同一网页文件的呈现结果不同</p>
+<h3 id="WWW应用的服务器端：Web服务器"><a href="#WWW应用的服务器端：Web服务器" class="headerlink" title="WWW应用的服务器端：Web服务器"></a>WWW应用的服务器端：Web服务器</h3><p>o 保存Web网页文档<br>o 接收客户端的请求消息<br>o 返回响应消息：状态信息和网页数据<br>o 可选功能<br>        n 保存访问用户信息<br>        n 对于访问用户进行身份认证<br>        n 对于网页数据进行权限管理<br>        n ……</p>
+<h3 id="WWW应用的编址：URL"><a href="#WWW应用的编址：URL" class="headerlink" title="WWW应用的编址：URL"></a>WWW应用的编址：URL</h3><p>统一资源定位符，唯一标识一个资源，对资源进行定位和访问</p>
+<p><strong>协议名 :// 主机: 端口号 /文件路径及文件名</strong><br>例如：<a class="link" target="_blank" rel="noopener" href="http://www.abc.com:8080/example/example.html">http://www.abc.com:8080/example/example.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>和网页上的链接相关联<br>缺省值：<br>        n 协议名：http<br>        n 端口号：80<br>        n 文件名：index.html</p>
+<h3 id="网页类型"><a href="#网页类型" class="headerlink" title="网页类型"></a>网页类型</h3><p><strong>o静态网页（Static web page）</strong><br>        n 以文件形式保存<br>        n 不同的用户、不同时间访问，返回结果均一样</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102134973.png" class title="image-20230318102134973">
+
+<p><strong>o动态网页（Dynamic web page）</strong><br>        n 收到浏览器请求后，服务器端动态生成网页<br>        n 示例：CGI脚本</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102145594.png" class title="image-20230318102145594">
+
+<p><strong>o活跃网页（Active web page）</strong><br>        n 收到服务器响应后，客户端动态生成网页<br>        n 示例：Java Applet</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102153684.png" class title="image-20230318102153684">
+
+<h3 id="HTTP概述"><a href="#HTTP概述" class="headerlink" title="HTTP概述"></a>HTTP概述</h3><p>o WWW的应用层协议<br>o 采用C/S模型<br>        n <strong>客户端浏览器</strong>： 发出HTTP请求，接收HTTP响应，向用户呈现网页<br>        n <strong>Web服务器</strong>: 接收HTTP请求，返回HTTP响应（包含请求的网页数据）<br>o 传输层采用TCP<br>o 无状态（Stateless）协议<br>        n 服务器端不保存以前的访问记录，对于每个请求都是单独处理</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102246612.png" class title="image-20230318102246612">
+
+<h3 id="HTTP-的操作过程"><a href="#HTTP-的操作过程" class="headerlink" title="HTTP 的操作过程"></a>HTTP 的操作过程</h3><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102320483.png" class title="image-20230318102320483">
+
+<p>(1) 浏览器分析超链接, 如 <a class="link" target="_blank" rel="noopener" href="http://www.abc.com/example.html">http://www.abc.com/example.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br>(2) 浏览器使用通过DNS获得服务器(<a class="link" target="_blank" rel="noopener" href="http://www.abc.com)的ip地址/">www.abc.com)的IP地址 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a><br>(3) 浏览器建立到服务器的TCP连接<br>(4) 浏览器发送HTTP 请求： <strong>GET</strong> /example.html HTTP/1.0<br>(5) 服务器发送HTTP响应<br>(6) 释放TCP连接<br>(7) 浏览器显示网页example.html</p>
+<h4 id="非持久连接"><a href="#非持久连接" class="headerlink" title="非持久连接"></a>非持久连接</h4><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102401357.png" class title="image-20230318102401357">
+
+<p><strong>RTT</strong>: Round Trip Time, 往返时间，time for a small packet to travel from client to server and back.(不包含发送时延)</p>
+<p><strong>响应时间:</strong><br>1 ×RTT：建立TCP连接<br>1 ×RTT： 发送HTTP请求、返回HTTP响应<br>网页对象文件传输时间<br><strong>响应时间 = 2 ×RTT+文件传输时间</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102457278.png" class title="image-20230318102457278">
+
+<h4 id="持久连接"><a href="#持久连接" class="headerlink" title="持久连接"></a>持久连接</h4><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102550090.png" class title="image-20230318102550090">
+
+<p><strong>流水线</strong></p>
+<p>Client可以连续发出多个请求，而不必等待前一个请求的响应完成</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102615531.png" class title="image-20230318102615531">
+
+<h3 id="HTTP消息的格式"><a href="#HTTP消息的格式" class="headerlink" title="HTTP消息的格式"></a>HTTP消息的格式</h3><p>HTTP有两类消息：请求（request）,响应（ response ）<br>❒ 消息格式：ASCII ，（易读）</p>
+<h4 id="请求消息"><a href="#请求消息" class="headerlink" title="请求消息"></a>请求消息</h4><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102750825.png" class title="image-20230318102750825">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102631557.png" class title="image-20230318102631557">
+
+<h4 id="响应消息"><a href="#响应消息" class="headerlink" title="响应消息"></a>响应消息</h4><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102657667.png" class title="image-20230318102657667">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102705506.png" class title="image-20230318102705506">
+
+<h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><p>Web服务器对于访问用户的标识信息，可用于识别用户、记录用户信息和访问情况</p>
+<p>Cookie涉及下列内容：</p>
+<ol>
+<li>在HTTP响应中包含一行set-cookie头信息</li>
+<li>在HTTP请求中包含一行cookie头信息</li>
+<li>Client主机中保存一个cookie文件，由浏览器管理</li>
+<li>Server端的后台数据库</li>
+</ol>
+<p>示例： o 小王访问淘宝网站 o服务器收到初次访问请 求时，将增加小王的相关信息<br>                唯一的ID  数据库的记录</p>
+<p><strong>Cookie: 用于保持访问状态</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318102956223.png" class title="image-20230318102956223">
+
+<h4 id="Cookie的特性"><a href="#Cookie的特性" class="headerlink" title="Cookie的特性"></a>Cookie的特性</h4><p><strong>Cookie的应用：</strong><br>o 身份认证<br>o 购物车<br>o 个性化的推荐信息<br>o 用户会话状态(Web e-mail)</p>
+<h3 id="代理服务器（Proxy-Server）"><a href="#代理服务器（Proxy-Server）" class="headerlink" title="代理服务器（Proxy Server）"></a>代理服务器（Proxy Server）</h3><p><strong>目的</strong>：减轻Web服务器的负担，加快访问速度</p>
+<p>在浏览器程序中设置 通过代理访问<br>浏览器将所有HTTP  请求均发送给代理<br>        如果在代理中找到请求的 对象，则由代理返回响应<br>        否则代理将请求转发给 要访问的Web Server， 由该Server 响应<br>        代理缓存来自Web  Server的网页对象</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103130416.png" class title="image-20230318103130416">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103342113.png" class title="image-20230318103342113">
+
+<p><strong>浏览器Caching： 浏览器缓存访问过的网页，进一步减少网络负载</strong></p>
+<h4 id="缓存的更新：条件GET"><a href="#缓存的更新：条件GET" class="headerlink" title="缓存的更新：条件GET"></a>缓存的更新：条件GET</h4><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230318103408051.png" class title="image-20230318103408051">
+
+<h1 id="3-网络层"><a href="#3-网络层" class="headerlink" title="3 网络层"></a>3 网络层</h1><h2 id="网络层概述"><a href="#网络层概述" class="headerlink" title="网络层概述"></a>网络层概述</h2><p>实现了<strong>端到端（主机-主机）</strong>的数据传输</p>
+<h3 id="网络层的主要功能"><a href="#网络层的主要功能" class="headerlink" title="网络层的主要功能"></a>网络层的主要功能</h3><p>路由选择<br>        根据数据携带的<strong>目的主机地址</strong>为数据包选择一条的路径，以到达目的主机<br>主机/路由器编址<br>        每个<strong>网络接口</strong>有一个唯一的IP地址<br>网络互联<br>        在不同的网络之间转发数据，向传输层提供统一的数据传输<br>分段/重装<br>        当数据包长度超过输出接口所连接的网络的限制时，应拆分成多个数据包</p>
+<h3 id="网络互联"><a href="#网络互联" class="headerlink" title="网络互联"></a>网络互联</h3><p>从网络体系结构的层次观点来考察，网络互联<br>可在四个层次上实现：<br>n 物理层<br>n 数据链路层<br>n 网络层<br>n 网络层以上</p>
+<h4 id="物理层：中继器-集线器"><a href="#物理层：中继器-集线器" class="headerlink" title="物理层：中继器/集线器"></a>物理层：中继器/集线器</h4><p>在电缆段之间复制比特流<br>没有地址概念，本质上不是网络互连</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095241802.png" class title="image-20230502095241802">
+
+<h4 id="数据链路层：网桥-交换机"><a href="#数据链路层：网桥-交换机" class="headerlink" title="数据链路层：网桥/交换机"></a>数据链路层：网桥/交换机</h4><p><strong>LAN互联</strong>：在<strong>网段</strong>(segment)之间转发<strong>数据帧</strong><br>根据数据帧中的信息（<strong>MAC地址</strong>）进行转发</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095335607.png" class title="image-20230502095335607">
+
+<h4 id="网络层：路由器"><a href="#网络层：路由器" class="headerlink" title="网络层：路由器"></a>网络层：路由器</h4><p><strong>网络层互联</strong>：在<strong>网络之间</strong>转发<strong>分组/包</strong><br>根据分组中的逻辑地址（<strong>IP地址</strong>）进行转发</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502095414128.png" class title="image-20230502095414128">
+
+<h4 id="更高层：网关"><a href="#更高层：网关" class="headerlink" title="更高层：网关"></a>更高层：网关</h4><p>连接<strong>不同体系结构</strong>或协议的网络<br>传输网络、应用网关</p>
+<h4 id="网络互联：小结"><a href="#网络互联：小结" class="headerlink" title="网络互联：小结"></a>网络互联：小结</h4><p>o 物理层：使用中继器或集线器在不同的电缆段之间复制位信号，无寻址功能；<br>o 数据链路层：使用网桥或交换机在局域网之间存储转发数据帧，用MAC地址寻址；<br>o 网络层：使用路由器在不同的网络之间存储转发分组，用IP地址寻址；<br>o 传输层及应用层：使用网关提供更高层次的互连，用端口号或其他特定标识寻址。</p>
+<h4 id="源主机网络层的主要工作"><a href="#源主机网络层的主要工作" class="headerlink" title="源主机网络层的主要工作"></a>源主机网络层的主要工作</h4><p>将上层数据封装成IP包<br>查路由表选择路由</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101418717.png" class title="image-20230502101418717">
+
+<h4 id="路由器网络层的主要工作"><a href="#路由器网络层的主要工作" class="headerlink" title="路由器网络层的主要工作"></a>路由器网络层的主要工作</h4><p>查路由表选择路由<br>IP包转发</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101512098.png" class title="image-20230502101512098">
+
+<h4 id="目的主机网络层的主要工作"><a href="#目的主机网络层的主要工作" class="headerlink" title="目的主机网络层的主要工作"></a>目的主机网络层的主要工作</h4><p>检查目的地址，确认是自己<br>处理IP包头，将数据交给上层</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101541769.png" class title="image-20230502101541769">
+
+<h3 id="网络层提供的服务"><a href="#网络层提供的服务" class="headerlink" title="网络层提供的服务"></a>网络层提供的服务</h3><p><strong>屏蔽底层网络的差异</strong>，向传输层提供一致的服务</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101719677.png" class title="image-20230502101719677">
+
+<h4 id="虚电路网络"><a href="#虚电路网络" class="headerlink" title="虚电路网络"></a>虚电路网络</h4><p>虚电路网络提供<strong>面向连接</strong>的服务<br>n 借鉴了电路交换的优点<br>n 发送数据之前，源主机和目的主机之间首先要建立一条虚连接（逻辑连接）<br>n 数据无丢失、重复和失序<br>n 示例：分组交换网X.25、ATM</p>
+<h5 id="面向连接"><a href="#面向连接" class="headerlink" title="面向连接"></a>面向连接</h5><p><strong>数据传输过程</strong>分为三阶段：建立虚连接、传输数据、拆除虚连接<br><strong>虚电路表</strong><br>        输入接口、输入VCI（虚电路标识，局部有效）<br>        输出接口、输出VCI（虚电路标识，局部有效）</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502101943674.png" class title="image-20230502101943674">
+
+<p>输入接口和输入VCI唯一标识一条虚电路，后续的数据报只需携带<strong>VCI，无需携带完整的目的地址</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102027676.png" class title="image-20230502102027676">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102039907.png" class title="image-20230502102039907">
+
+<p><strong>A 发送给 B 的所有分组都沿着同一条虚电路传送</strong></p>
+<h4 id="数据报网络"><a href="#数据报网络" class="headerlink" title="数据报网络"></a>数据报网络</h4><p><strong>无连接</strong><br>路由器对于每个输入的数据包<strong>单独</strong>进行<strong>处理</strong><br>路由表包含了目的地址和输出接口的对应关系<br>每个数据包必须包含<strong>完整的目的地址</strong><br>来自相同源节点和目的节点的两个数据报可能被转发到不同的接口，不保证顺序<br>对网络状况和目的主机状况一无所知，可能出现丢失</p>
+<h5 id="数据报网络的好处"><a href="#数据报网络的好处" class="headerlink" title="数据报网络的好处"></a>数据报网络的好处</h5><p>由于传输网络不提供端到端的可靠传输服务，这就使网络中的路由器可以做得比较<strong>简单</strong>，而且<strong>价格低廉</strong>（与电信网的交换机相比较）。<br>如果主机（即端系统）中的进程之间的通信需要是<strong>可靠</strong>的，那么就由网络的<strong>主机中的传输层负责</strong>（包括差错处理、流量控制等）。<br>采用这种设计思路的好处是：网络的造价大大降低，运行方式灵活，能够适应多种应用。</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102740848.png" class title="image-20230502102740848">
+
+<p><strong>H1 发送给 H2 的分组可能沿着不同路径传送</strong></p>
+<p>路由表示例</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502102820289.png" class title="image-20230502102820289">
+
+<h4 id="数据报-vs-虚电路"><a href="#数据报-vs-虚电路" class="headerlink" title="数据报 vs 虚电路"></a>数据报 vs 虚电路</h4><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>数据报</th>
+<th>虚电路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>是否需要预先建立连接</td>
+<td>不需要</td>
+<td>需要</td>
+</tr>
+<tr>
+<td>数据包中携带的地址</td>
+<td>完整地址</td>
+<td>较短的VCI</td>
+</tr>
+<tr>
+<td>资源分配方式</td>
+<td>动态分配</td>
+<td>预先分配</td>
+</tr>
+<tr>
+<td>路由选择</td>
+<td>每个数据包都需要</td>
+<td>只是在建立虚电路时</td>
+</tr>
+<tr>
+<td>数据传输的可靠性</td>
+<td>不可靠，数据包可能丢失、重复或失序</td>
+<td>可靠</td>
+</tr>
+<tr>
+<td>一对主机之间的数据流的传输路径</td>
+<td>每个数据包的传输路径可能不同</td>
+<td>一个虚连接上的所有数据包沿着同一路径传输</td>
+</tr>
+<tr>
+<td>路由器或链路故障的影响</td>
+<td>只影响正在处理的数据包</td>
+<td>经过该路由器或链路的所有连接都需要重建</td>
+</tr>
+<tr>
+<td>服务质量（QoS）保障</td>
+<td>很难实现</td>
+<td>通过在建立VC时申请足够资源，容易实现</td>
+</tr>
+<tr>
+<td>拥塞控制</td>
+<td>很难实现</td>
+<td>容易实现</td>
+</tr>
+</tbody></table>
+<h2 id="路由选择算法"><a href="#路由选择算法" class="headerlink" title="路由选择算法"></a>路由选择算法</h2><p>根据数据包中携带的<strong>目的地址</strong>，为数据包在网络中选择一条路径，以到达目的主机</p>
+<p>路由器查找路由表，完成选路</p>
+<p>选路到<strong>下一跳</strong>（Next Hop，或输出接口），而不是完整路由</p>
+<p>路由选择与转发<br>        转发：将数据从路由器的输入接口转移到相应的输出接口<br>        路由选择：根据路由表确定应转发到哪个输出接口的过程</p>
+<p>确定/更新路由表的算法</p>
+<p>理想的路由算法<br>        算法必须是正确的和完整的。<br>        算法在计算上应简单。<br>        算法应能适应通信量和网络拓扑的变化，要有自适应性。<br>        算法应具有稳定性。<br>        算法应是公平的。<br>        算法应是最佳的。</p>
+<p>不存在一种绝对的最佳路由算法。</p>
+<p>基于图论<br>        节点：路由器<br>        边：链路<br>        权值：链路开销<br>                路径长度<br>                HOP数（跳数）<br>                延迟时间</p>
+<p>最短路由<br>        总开销最小的路径</p>
+<h4 id="路由选择算法的分类"><a href="#路由选择算法的分类" class="headerlink" title="路由选择算法的分类"></a>路由选择算法的分类</h4><p>静态选路算法（非自适应选路算法）<br>        路由表预先设定（不考虑网络当前状况）<br>        路由表基本不变<br>        一般不能保证是最佳路由</p>
+<p>动态选路算法（自适应选路算法）<br>        根据当前网络的拓扑结构和负载，（周期性）动态更新路由表</p>
+<h3 id="静态选路算法"><a href="#静态选路算法" class="headerlink" title="静态选路算法"></a>静态选路算法</h3><p>o 固定路由表选路法<br>        根据事先设置的静态路由表，查表选路</p>
+<p>o 洪泛法（Flooding）<br>        向除输入接口之外的所有接口转发</p>
+<p>o 随机走动选路法<br>        按概率随机选路</p>
+<h4 id="固定路由表选路法"><a href="#固定路由表选路法" class="headerlink" title="固定路由表选路法"></a>固定路由表选路法</h4><h5 id="静态路由表的生成：Dijakstra算法——Dijakstra的最短路径算法"><a href="#静态路由表的生成：Dijakstra算法——Dijakstra的最短路径算法" class="headerlink" title="静态路由表的生成：Dijakstra算法——Dijakstra的最短路径算法"></a>静态路由表的生成：Dijakstra算法——Dijakstra的最短路径算法</h5><p>o 求源节点到其他节点的最短路径和最小开销，即以源节点<br>为根的<strong>最短路径树</strong>(Shortest Path Tree, SPF)</p>
+<p>o 算法原理<br>        1）定义一个集合N，包含所有最短路径已确定的节点，在初始时，该集合中只包含一个源节点（设为S）<br>        2）如果S和某个节点之间有一条边相连，距离就是该边上的权值；否则，距离值设为无穷大（∞）<br>        3）从集合N外的节点中选择一个和S距离最小的节点（设为T）加入集合<br>        4）重新计算S到其他集合N外的节点的距离，如果经过T的路径更短，则更新距离值<br>        5）重复3-4步，直到所有节点都加入集合N</p>
+<p>参考：<a class="link" target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1H4411N7oD?p=93&vd_source=c75b11f1c6d9b809759edcc17586cf0d">https://www.bilibili.com/video/BV1H4411N7oD?p=93&amp;vd_source=c75b11f1c6d9b809759edcc17586cf0d <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h4 id="静态选路算法：洪泛法"><a href="#静态选路算法：洪泛法" class="headerlink" title="静态选路算法：洪泛法"></a>静态选路算法：洪泛法</h4><p>不计算路径，有路就走<br>路由器收到数据包后，向除了输入接口之外的所有接口转发</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105005999.png" class title="image-20230502105005999">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105011133.png" class title="image-20230502105011133">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105016924.png" class title="image-20230502105016924">
+
+<p><strong>特点：</strong></p>
+<p>o 一个数据包将产生大量的副本（copy）<br>        n 给网络增加<strong>大量负载</strong></p>
+<p>o 至少有一个副本将到达目的主机<br>        n <strong>健壮性强</strong></p>
+<p>o 至少有一个副本选择的是<strong>最优路由</strong></p>
+<p>o 所有的路由器都会收到副本<br>        n 可用于<strong>传播路由信息</strong></p>
+<p>缺点：重复数据包多，浪费带宽<br>优点：可靠性高，路径最短，常用于军事</p>
+<h4 id="随机走动选路法"><a href="#随机走动选路法" class="headerlink" title="随机走动选路法"></a>随机走动选路法</h4><p>o 路由表中，一个表项有多条候选路由，路由器收到一个数据包时，按照预定的概率随机地选择其中一条路由<br>o 应用：无线网络</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105237143.png" class title="image-20230502105237143">
+
+<h3 id="动态选路算法"><a href="#动态选路算法" class="headerlink" title="动态选路算法"></a>动态选路算法</h3><p>自适应算法是动态的、分布式的算法<br>实现分布式算法的三要素： n 测量路由 n 更新路由信息的协议 n 计算路由开销</p>
+<h4 id="DVR：距离矢量选路算法-Distance-Vector-Routing"><a href="#DVR：距离矢量选路算法-Distance-Vector-Routing" class="headerlink" title="DVR：距离矢量选路算法 Distance Vector Routing"></a>DVR：距离矢量选路算法 Distance Vector Routing</h4><p>o 距离：两个节点间传输数据的开销<br>o 前提：每个路由器都知道自己<strong>到邻居节点的距离</strong><br>o 动态选路：路由器通过<strong>周期性</strong>地与<strong>邻居节点交换路由信息</strong><br>        n 与谁交换：邻居节点<br>        n 交换什么：路由表中的距离项（目的地、距离）<br>        n 何时交换：周期性交换<br>o 各节点根据路由信息<strong>更新</strong>路由表</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105516609.png" class title="image-20230502105516609">
+
+<h5 id="无穷计算问题"><a href="#无穷计算问题" class="headerlink" title="无穷计算问题"></a>无穷计算问题</h5><p>好消息传播得快，坏消息传播得慢</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105544562.png" class title="image-20230502105544562">
+
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>o 交换的路径信息量大<br>o 路径信息不一致<br>o <strong>收敛速度慢</strong>（坏消息）<br>o 不适合大型网络</p>
+<h4 id="LSR：链路状态选路算法-Link-State-Routing"><a href="#LSR：链路状态选路算法-Link-State-Routing" class="headerlink" title="LSR：链路状态选路算法 Link State Routing"></a>LSR：链路状态选路算法 Link State Routing</h4><p>链路状态：链路连通/中断、链路开销<br>o 又称最短路径优先（SPF）选路<br>        使用Dijkstra算法来计算最短路径<br>o 路由器发现自己和<strong>邻居节点</strong>的<strong>链路状态及开销</strong><br>o 路由器之间通过<strong>交换路由信息</strong>，构造出<strong>全网的拓扑结构</strong>，并计算出到其他节点的<strong>最短路径</strong><br>        与谁交换：网络中的<strong>所有节点</strong><br>        交换什么：一个节点到各<strong>邻居节点的链路开销</strong><br>        何时交换：网络初启或链路状态<strong>变化时</strong></p>
+<h5 id="链路状态算法（-L-S-）"><a href="#链路状态算法（-L-S-）" class="headerlink" title="链路状态算法（ L-S ）"></a>链路状态算法（ L-S ）</h5><p>基本思想：<br>o 发现它的邻接节点，并得到其网络地址<br>o 测量它到各邻接节点的延迟或开销<br>o 组装一个分组以告知它刚知道的所有信息<br>o 将这个分组发给所有其他路由器<br>o 计算到每个其他路由器的最短路径</p>
+<h5 id="发现邻接节点"><a href="#发现邻接节点" class="headerlink" title="发现邻接节点"></a>发现邻接节点</h5><p>当一个路由器启动后，向每个<strong>点到点</strong>线路发送 HELLO分组（携带自己的网络地址），另一端的路由器发送回来应答，通报其网络地址</p>
+<h5 id="测量线路开销"><a href="#测量线路开销" class="headerlink" title="测量线路开销"></a>测量线路开销</h5><p>发送一个ECHO分组要求对方<strong>立即响应</strong>，通过测量RTT，再除以2，发送方就可以得到一个延迟估计值</p>
+<p>如果要更精确，可以重复这一过程，取其平均值</p>
+<h5 id="构造链路状态包（LSP）"><a href="#构造链路状态包（LSP）" class="headerlink" title="构造链路状态包（LSP）"></a>构造链路状态包（LSP）</h5><p>包含：源节点到其所有邻居节点（路由器）的线路开销测量值（即时延）</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502105948771.png" class title="image-20230502105948771">
+
+<h5 id="发布链路状态分组"><a href="#发布链路状态分组" class="headerlink" title="发布链路状态分组"></a>发布链路状态分组</h5><p>用<strong>洪泛法</strong>向所有节点发布LSP，保证每个节点都能收到。<br>o 存在问题：<br>        n 对于重复的LSP，路由器使用序号判断哪个LSP最新<br>        n 如果序号循环使用，就会发生重复<br>        n 如果一个路由器重启，序号将从0开始重新计数，但这些LSP会被当成过时包<br>        n 如果序号发生错误，则很多LSP将被看成过时包</p>
+<h5 id="解决办法：序号-年龄"><a href="#解决办法：序号-年龄" class="headerlink" title="解决办法：序号+年龄"></a>解决办法：序号+年龄</h5><p>使用一个32位<strong>序号</strong>，即使每秒钟发送一个LSP包，137年才会循环一次<br>在每个LSP包中加一<strong>年龄</strong>字段（如初值为60），每秒钟将年龄值减1，为0后该包将被丢弃</p>
+<h5 id="计算新路由"><a href="#计算新路由" class="headerlink" title="计算新路由"></a>计算新路由</h5><p> 用Dijkstra算法计算到每个节点的路由</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230502110124599.png" class title="image-20230502110124599">
+
+<h5 id="L-S路由算法的优缺点"><a href="#L-S路由算法的优缺点" class="headerlink" title="L-S路由算法的优缺点"></a>L-S路由算法的优缺点</h5><p>LSR的优点<br>    n <strong>路由信息的一致性好</strong>，坏消息也一样传播得快<br>    n 状态分组的长度较短，仅包含到邻接点的距离、序号和年龄等，与网络规模关系不大，传输所耗用的网络带宽不大，此外，状态分组的扩散，由于年龄参数的设定，不会无限制扩散，所以可适用于大型网络</p>
+<p>LSR的缺点<br>    n 每个路由器需要有<strong>较大的存储空间</strong>，用以存储所收到的每一个节点的链路状态分组<br>    n 计算工作量大，每次都必须计算最短路径</p>
+<h2 id="因特网的网络层协议"><a href="#因特网的网络层协议" class="headerlink" title="因特网的网络层协议"></a>因特网的网络层协议</h2><h3 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h3><p>给每个连接在因特网上的主机（或路由器）的 网络接口分配的全世界范围内<strong>唯一的 32 位</strong>标 识符 </p>
+<p>每个连接到网络的接口（如网卡）都有一个IP 地址<br>        笔记本电脑的无线网卡和有线网卡各有一个IP地址</p>
+<h4 id="IP地址构成"><a href="#IP地址构成" class="headerlink" title="IP地址构成"></a>IP地址构成</h4><p><strong>网络号</strong>net-id +<strong>主机号</strong>host-id<br>        n 网络号标识主机/路由器所连接到的网络，<br>        n 主机号标识该主机/路由器<br><strong>IP 地址 ::= { &lt;网络号&gt;, &lt;主机号&gt;}</strong></p>
+<p>地址划分有两类<br>n 分类编址：<br>        Ø 单播地址分为A、B、C三类<br>        Ø 网络号和主机号所占的比特个数不同<br>n 无类别编址</p>
+<h5 id="分类地址"><a href="#分类地址" class="headerlink" title="分类地址"></a>分类地址</h5><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140645161.png" class title="image-20230503140645161">
+
+<h5 id="点分十进制记法"><a href="#点分十进制记法" class="headerlink" title="点分十进制记法"></a>点分十进制记法</h5><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140725194.png" class title="image-20230503140725194">
+
+<h5 id="各类网络的地址空间大小"><a href="#各类网络的地址空间大小" class="headerlink" title="各类网络的地址空间大小"></a>各类网络的地址空间大小</h5><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503140808801.png" class title="image-20230503140808801">
+
+<h5 id="IP-地址的一些重要特点"><a href="#IP-地址的一些重要特点" class="headerlink" title="IP 地址的一些重要特点"></a>IP 地址的一些重要特点</h5><p>o IP 地址分网络号和主机号两个等级<br>    n 地址管理机构（全球ICANN、我国CNNIC）在分配IP地址时只分配网络号，而主机号则由得到该网络号的单位自行分配，方便 IP 地址的管理<br>    n 路由器<strong>仅根据目的主机的网络号来转发IP包</strong>（而不考虑目的主机号），减小了路由表中的表项数，从而减小了路由表所占的存储空间，且加快了查找速度<br>o IP地址用于标识一个网络接口<br>    n 一台路由器（主机）连接到两个网络时，具有两个不同的IP地址，其网络号不同</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141446172.png" class title="image-20230503141446172">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141453058.png" class title="image-20230503141453058">
+
+<h5 id="特殊的IP地址"><a href="#特殊的IP地址" class="headerlink" title="特殊的IP地址"></a>特殊的IP地址</h5><img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141517265.png" class title="image-20230503141517265">
+
+<h4 id="划分子网"><a href="#划分子网" class="headerlink" title="划分子网"></a>划分子网</h4><p>o 属于一个<strong>单位内部的事情</strong>，对外仍然是一个网络<br>o 从主机号<strong>借用</strong>高若干位作为<strong>子网号</strong> subnet-id，主机号<br>host-id 相应减少了若干位<br><code>IP地址 ::= {&lt;网络号&gt;, &lt;子网号&gt;, &lt;主机号&gt;}</code><br>o 从外网发给本网某个主机的IP包，仍然根据其<strong>目的网络地址</strong>，先找到连接本网的路由器；路由器收到 IP包后，再按<strong>目的网络地址</strong>转发到目的子网。<br>    n 最后交付给目的主机</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141709747.png" class title="image-20230503141709747">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/02/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/image-20230503141718301.png" class title="image-20230503141718301">
+
+<h4 id="子网掩码"><a href="#子网掩码" class="headerlink" title="子网掩码"></a>子网掩码</h4><p>o 从一个 IP 包的包头<strong>无法判断</strong>源主机或目的主机所在网络的网络地址<br>o 使用<strong>子网掩码</strong>(subnet mask)可以找出 IP 地址中的网络号部分<br>o 子网掩码：特殊IP地址，网络号（包括子网号）部分为全1，主机号部分为全0<br>        n 功能：获得网络地址<br>        n 方法：将网内的任一个IP地址与子网掩码进行“按位与”操作，即得到该网络的地址</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 计算机网络</li>
+        <li><strong>Author:</strong> Serendy</li>
+        <li><strong>Created at
+                :</strong> 2023-02-26 08:48:45</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2023-07-12 11:28:41
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://mapleqian.github.io/2023/02/26/计算机网络/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/Note/">#Note</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">记录第一次搭建个人博客</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">计算机网络</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%A6%82%E8%AE%BA"><span class="nav-text">1 概论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-text">网络接入方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%BE%B9%E7%BC%98"><span class="nav-text">网络边缘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83"><span class="nav-text">网络核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2%E5%92%8C%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2"><span class="nav-text">电路交换和分组交换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E8%AF%9D%E7%B3%BB%E7%BB%9F%EF%BC%88%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2%EF%BC%89"><span class="nav-text">电话系统（电路交换）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9"><span class="nav-text">主要特点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2%E7%B3%BB%E7%BB%9F"><span class="nav-text">分组交换系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%89%B9%E7%82%B9-1"><span class="nav-text">主要特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="nav-text">路由器的处理过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-text">分组交换的优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">分组交换带来的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2%E5%92%8C%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2%E7%9A%84%E6%97%B6%E5%BB%B6%E7%89%B9%E6%80%A7"><span class="nav-text">分组交换和电路交换的时延特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">计算机网络的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WAN%EF%BC%88Wide-Area-Network%EF%BC%89-%E4%B9%9F%E7%A7%B0%E4%B8%BA%E8%BF%9C%E7%A8%8B%E7%BD%91"><span class="nav-text">WAN（Wide Area Network）,也称为远程网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%8E%E5%9F%9F%E7%BD%91%EF%BC%88Metropolitan-Area-Network-MAN"><span class="nav-text">城域网（Metropolitan Area Network, MAN)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91-Local-Area-Network%EF%BC%8CLAN"><span class="nav-text">局域网(Local Area Network，LAN)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB"><span class="nav-text">关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E5%9F%9F%E7%BD%91%E5%92%8C%E5%B9%BF%E5%9F%9F%E7%BD%91%EF%BC%88WAN%E5%92%8CLAN%EF%BC%89"><span class="nav-text">局域网和广域网（WAN和LAN）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ISP%E5%92%8C%E9%AA%A8%E5%B9%B2%E7%BD%91"><span class="nav-text">ISP和骨干网</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A1%E9%87%8F%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E7%9A%84%E6%8C%87%E6%A0%87"><span class="nav-text">衡量网络性能的指标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E5%AE%BD"><span class="nav-text">带宽</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9F%E7%8E%87"><span class="nav-text">速率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6%E5%AE%BD%E4%B8%8E%E4%BD%8D%E5%AE%BD%E5%BA%A6"><span class="nav-text">带宽与位宽度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E5%BB%B6"><span class="nav-text">时延</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%97%B6%E5%BB%B6"><span class="nav-text">发送时延</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E6%92%AD%E6%97%B6%E5%BB%B6"><span class="nav-text">传播时延</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%97%B6%E5%BB%B6"><span class="nav-text">处理时延</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E9%98%9F%E6%97%B6%E5%BB%B6"><span class="nav-text">排队时延</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%8F%E5%8E%86%E7%9A%84%E6%80%BB%E6%97%B6%E5%BB%B6"><span class="nav-text">数据经历的总时延</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E5%BB%B6%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-text">时延的产生</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%9E%E5%90%90%E9%87%8F"><span class="nav-text">吞吐量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E9%92%9F%E4%B8%BB%E6%9C%BA%E7%9A%84%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="nav-text">因特网钟主机的通信过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E5%92%8C%E5%B1%82%E6%AC%A1%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">协议和层次体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-text">协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-text">协议的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">分层体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E5%92%8C%E6%9C%8D%E5%8A%A1"><span class="nav-text">协议和服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP%E5%8D%8F%E8%AE%AE%E6%A0%88"><span class="nav-text">TCP&#x2F;IP协议栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-text">封装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E7%9A%84%E8%A6%81%E7%82%B9"><span class="nav-text">分层体系结构的要点</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-text">2 应用层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E6%A6%82%E8%BF%B0"><span class="nav-text">网络应用概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BE%9B%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8"><span class="nav-text">提供网络应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%86%85%E5%AE%B9"><span class="nav-text">应用层协议的内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-text">应用层协议的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">网络应用的体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#C-S-%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">C&#x2F;S 体系结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#P2P%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">P2P体系结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-S%E5%92%8CP2P%E6%B7%B7%E5%90%88%E7%BB%93%E6%9E%84"><span class="nav-text">C&#x2F;S和P2P混合结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-text">进程通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%85%B3%E7%B3%BB%E4%B8%8E%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="nav-text">通信关系与端口号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E5%AF%B9%E4%BC%A0%E8%BE%93%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%A6%81%E6%B1%82%EF%BC%9A%E8%A1%A1%E9%87%8F%E6%8C%87%E6%A0%87"><span class="nav-text">网络应用对传输服务的要求：衡量指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E7%9A%84%E4%BC%A0%E8%BE%93%E5%B1%82%E6%9C%8D%E5%8A%A1"><span class="nav-text">因特网的传输层服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS"><span class="nav-text">DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E5%8D%8F%E8%AE%AE%E8%A6%81%E7%82%B9"><span class="nav-text">DNS协议要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E5%9F%9F%E5%90%8D%E7%9A%84%E6%9E%84%E6%88%90"><span class="nav-text">主机域名的构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%9F%9F"><span class="nav-text">区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">DNS服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E8%A7%A3%E6%9E%90"><span class="nav-text">DNS解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E6%9F%A5%E8%AF%A2"><span class="nav-text">迭代查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2"><span class="nav-text">递归查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E6%80%A7%E8%83%BD%E6%94%B9%E8%BF%9B%E6%8E%AA%E6%96%BD"><span class="nav-text">DNS性能改进措施</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E8%B5%84%E6%BA%90%E8%AE%B0%E5%BD%95"><span class="nav-text">DNS资源记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E5%8D%8F%E8%AE%AE%E6%B6%88%E6%81%AF"><span class="nav-text">DNS协议消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-text">DNS的安全性问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WWW%E5%BA%94%E7%94%A8%E5%92%8CHTTP"><span class="nav-text">WWW应用和HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WWW%E5%BA%94%E7%94%A8%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%9A%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-text">WWW应用的客户端：浏览器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WWW%E5%BA%94%E7%94%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%EF%BC%9AWeb%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">WWW应用的服务器端：Web服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WWW%E5%BA%94%E7%94%A8%E7%9A%84%E7%BC%96%E5%9D%80%EF%BC%9AURL"><span class="nav-text">WWW应用的编址：URL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E9%A1%B5%E7%B1%BB%E5%9E%8B"><span class="nav-text">网页类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E6%A6%82%E8%BF%B0"><span class="nav-text">HTTP概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-%E7%9A%84%E6%93%8D%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="nav-text">HTTP 的操作过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E6%8C%81%E4%B9%85%E8%BF%9E%E6%8E%A5"><span class="nav-text">非持久连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E8%BF%9E%E6%8E%A5"><span class="nav-text">持久连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E6%B6%88%E6%81%AF%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="nav-text">HTTP消息的格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%B6%88%E6%81%AF"><span class="nav-text">请求消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E6%B6%88%E6%81%AF"><span class="nav-text">响应消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cookie%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-text">Cookie的特性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Proxy-Server%EF%BC%89"><span class="nav-text">代理服务器（Proxy Server）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E6%9B%B4%E6%96%B0%EF%BC%9A%E6%9D%A1%E4%BB%B6GET"><span class="nav-text">缓存的更新：条件GET</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="nav-text">3 网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E6%A6%82%E8%BF%B0"><span class="nav-text">网络层概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="nav-text">网络层的主要功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BA%92%E8%81%94"><span class="nav-text">网络互联</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%EF%BC%9A%E4%B8%AD%E7%BB%A7%E5%99%A8-%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="nav-text">物理层：中继器&#x2F;集线器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%EF%BC%9A%E7%BD%91%E6%A1%A5-%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-text">数据链路层：网桥&#x2F;交换机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%9A%E8%B7%AF%E7%94%B1%E5%99%A8"><span class="nav-text">网络层：路由器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E9%AB%98%E5%B1%82%EF%BC%9A%E7%BD%91%E5%85%B3"><span class="nav-text">更高层：网关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BA%92%E8%81%94%EF%BC%9A%E5%B0%8F%E7%BB%93"><span class="nav-text">网络互联：小结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C"><span class="nav-text">源主机网络层的主要工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C"><span class="nav-text">路由器网络层的主要工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C"><span class="nav-text">目的主机网络层的主要工作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-text">网络层提供的服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E7%94%B5%E8%B7%AF%E7%BD%91%E7%BB%9C"><span class="nav-text">虚电路网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%BD%91%E7%BB%9C"><span class="nav-text">数据报网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%A5-vs-%E8%99%9A%E7%94%B5%E8%B7%AF"><span class="nav-text">数据报 vs 虚电路</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="nav-text">路由选择算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-text">路由选择算法的分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95"><span class="nav-text">静态选路算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E8%B7%AF%E7%94%B1%E8%A1%A8%E9%80%89%E8%B7%AF%E6%B3%95"><span class="nav-text">固定路由表选路法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95%EF%BC%9A%E6%B4%AA%E6%B3%9B%E6%B3%95"><span class="nav-text">静态选路算法：洪泛法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%B5%B0%E5%8A%A8%E9%80%89%E8%B7%AF%E6%B3%95"><span class="nav-text">随机走动选路法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95"><span class="nav-text">动态选路算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DVR%EF%BC%9A%E8%B7%9D%E7%A6%BB%E7%9F%A2%E9%87%8F%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95-Distance-Vector-Routing"><span class="nav-text">DVR：距离矢量选路算法 Distance Vector Routing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LSR%EF%BC%9A%E9%93%BE%E8%B7%AF%E7%8A%B6%E6%80%81%E9%80%89%E8%B7%AF%E7%AE%97%E6%B3%95-Link-State-Routing"><span class="nav-text">LSR：链路状态选路算法 Link State Routing</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E7%9A%84%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-text">因特网的网络层协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP%E5%9C%B0%E5%9D%80"><span class="nav-text">IP地址</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IP%E5%9C%B0%E5%9D%80%E6%9E%84%E6%88%90"><span class="nav-text">IP地址构成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%92%E5%88%86%E5%AD%90%E7%BD%91"><span class="nav-text">划分子网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E7%BD%91%E6%8E%A9%E7%A0%81"><span class="nav-text">子网掩码</span></a></li></ol></li></ol></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        23 posts in total
+                    </span>
+                    
+                        <span>
+                            84.1k words in total
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.7.1</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/libs/anime.min.js"></script>
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

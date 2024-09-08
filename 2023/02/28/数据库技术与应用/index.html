@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/02/28/数据库技术与应用/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="数据库课的笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库技术与应用">
+<meta property="og:url" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="数据库课的笔记">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png">
+<meta property="og:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png">
+<meta property="og:image" content="g:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png">
+<meta property="article:published_time" content="2023-02-28T11:14:21.000Z">
+<meta property="article:modified_time" content="2023-07-13T02:17:52.863Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="Note">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/300.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/300.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/300.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            数据库技术与应用 -
+        
+        SerendyLin Empire
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":true,"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"IF YOU CAN NOT BE A POET, BE THE POEM","subtitle":{"text":["做不了李白 就活成明月"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":false,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.7.1","navbar":{"auto_hide":false,"color":{"left":"#bd7ba7","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/300.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    CATEGORIES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    FRIENDS
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                CATEGORIES
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                FRIENDS
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">23</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://w.wallhaven.cc/full/5g/wallhaven-5gyrx5.png" alt="数据库技术与应用" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-center">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">数据库技术与应用</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/po5.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-02-28 19:14:21</span>
+        <span class="mobile">2023-02-28 19:14:21</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-07-13 10:17:52</span>
+            <span class="mobile">2023-07-13 10:17:52</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Note/">Note</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Note/">Note</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>4.1k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>14 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
+<p>通俗地讲数据模型就是现实世界的抽象和模拟。</p>
+<p>数据模型应满足三方面要求</p>
+<p><strong>能比较真实地模拟现实世界</strong></p>
+<p><strong>容易为人所理解</strong></p>
+<p><strong>便于在计算机上 实现</strong></p>
+<h3 id="两大类数据模型"><a href="#两大类数据模型" class="headerlink" title="两大类数据模型"></a>两大类数据模型</h3><p>(1) <strong>概念模型</strong>   也称信息模型，它是按用户的观点来对数据和信息建模，用于数据库设计。<br>(2) <strong>逻辑模型和物理模型</strong>   按计算机系统的观点对数据建模，用于DBMS的实现。<br>        逻辑模型主要包括网状模型、层次模型、关系模型、面向对象模型等，按计算机系统的观点对数据建模，用于DBMS实现。<br>        物理模型是对数据最底层的抽象，描述数据在系统内部的表示方式和存取方法，在磁盘或磁带上的存储方式和存取方法。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png" alt="image-20230228192613246" style="zoom:50%;">
+
+<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p><strong>概念模型的用途</strong><br>概念模型用于信息世界的建模<br>是现实世界到机器世界的一个中间层次<br>是数据库设计的有力工具<br>数据库设计人员和用户之间进行交流的语言<br><strong>对概念模型的基本要求</strong><br>较强的语义表达能力<br>能够方便、直接地表达应用中的各种语义知识<br>简单、清晰、易于用户理解</p>
+<h3 id="信息世界中的基本概念"><a href="#信息世界中的基本概念" class="headerlink" title="信息世界中的基本概念"></a>信息世界中的基本概念</h3><p><strong>(1) 实体（Entity）</strong></p>
+<p>客观存在并可相互区别的事物称为实体。可以是具体的人、事、物或抽象的概念。</p>
+<p><strong>(2) 属性（Attribute）</strong></p>
+<p>实体所具有的某一特性称为属性。一个实体可以由若干个属性来刻画。 </p>
+<p><strong>(3) 码（Key）</strong> </p>
+<p>唯一标识实体的属性集称为码</p>
+<p><strong>(4) 域（Domain）</strong> </p>
+<p>属性的取值范围称为该属性的域。 </p>
+<p><strong>(5) 实体型（Entity Type）</strong> </p>
+<p>用实体名及其属性名集合来抽象和刻画同类实体称为实体型</p>
+<p>例子：学生（学号、姓名、性别、出生年月）</p>
+<p><strong>(6) 实体集（Entity Set）</strong><br>同一类型实体的集合称为实体集：</p>
+<table>
+<thead>
+<tr>
+<th><strong>学号</strong></th>
+<th><strong>姓名</strong></th>
+<th><strong>性别</strong></th>
+<th><strong>出生日期</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>20021001</td>
+<td>张三</td>
+<td>男</td>
+<td>1978-5-6</td>
+</tr>
+<tr>
+<td>20021003</td>
+<td>李四</td>
+<td>女</td>
+<td>1980-1-24</td>
+</tr>
+<tr>
+<td>20021004</td>
+<td>王五</td>
+<td>男</td>
+<td>1979-11-12</td>
+</tr>
+</tbody></table>
+<p><strong>(7) 联系（Relationship）</strong>  </p>
+<p>现实世界：事物内部以及事物之间的联系<br>信息世界：实体内部的联系和实体之间的联系</p>
+<h3 id="两个实体型之间的联系"><a href="#两个实体型之间的联系" class="headerlink" title="两个实体型之间的联系"></a>两个实体型之间的联系</h3><h4 id="一对一联系（1-1）"><a href="#一对一联系（1-1）" class="headerlink" title="一对一联系（1 : 1）"></a>一对一联系（1 : 1）</h4><p><strong>实例</strong><br>一个班级只有一个正班长，一个班长只在一个班中任职<br><strong>定义：</strong><br>    如果对于实体集A中的每一个实体，实体集B中至多有一个（也可以没有）实体与之联系，反之亦然，<strong>则称实体集A与实体集B具有一对一联系，记为1:1</strong> </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png" alt="image-20230228193153537" style="zoom:33%;">
+
+<h4 id="一对多联系（1-n）"><a href="#一对多联系（1-n）" class="headerlink" title="一对多联系（1 : n）"></a>一对多联系（1 : n）</h4><p><strong>实例</strong><br>一个班级中有若干名学生，每个学生只在一个班级中学习<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中至多只有一个实体与之联系，则称<strong>实体集A与实体集B</strong>有一对多联系，记为1:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png" alt="image-20230228193321227" style="zoom:33%;">
+
+<p>注意一对多联系图中<strong>1</strong>的位置</p>
+<h4 id="多对多联系（m-n）"><a href="#多对多联系（m-n）" class="headerlink" title="多对多联系（m : n）"></a>多对多联系（m : n）</h4><p><strong>实例</strong><br>课程与学生之间的联系：<br>一门课程同时有若干个学生选修<br>一个学生可以同时选修多门课程<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中也有m个实体（m≥0）与之联系，则称实体集A与实体B具有多对多联系，记为m:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png" alt="image-20230228193313680" style="zoom:33%;">
+
+<h4 id="用图形来表示两个实体型之间的三类联系"><a href="#用图形来表示两个实体型之间的三类联系" class="headerlink" title="用图形来表示两个实体型之间的三类联系"></a>用图形来表示两个实体型之间的三类联系</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png" alt="image-20230228193406567" style="zoom:50%;">
+
+<h3 id="两个以上实体型之间的联系"><a href="#两个以上实体型之间的联系" class="headerlink" title="两个以上实体型之间的联系"></a>两个以上实体型之间的联系</h3><p>若实体型E1，E2，…，En存在联系，对于实体型Ej（j&#x3D;1，2，…，i-1，i+1，…，n）中的给定实体，最多只和Ei中的一个实体相联系，则我们说Ei与E1，E2，…，Ei-1，Ei+1，…，En之间的联系是<strong>一对多</strong>的</p>
+<p><strong>实例</strong></p>
+<p>课程、教师与参考书三个实体型</p>
+<p>每一个教师可以讲授若干门课程，每门课程可以使用若干本参考书</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png" alt="image-20230228193534803" style="zoom:50%;">
+
+<p><strong>两个以上实体型间的一对一联系</strong></p>
+<p><strong>两个以上实体型间的多对多联系</strong></p>
+<h3 id="单个实体型内的联系"><a href="#单个实体型内的联系" class="headerlink" title="单个实体型内的联系"></a>单个实体型内的联系</h3><p>同一实体集内的各实体之间的关系<br><strong>一对多联系</strong><br><strong>实例</strong><br>职工实体型内部具有领导与被领导的联系<br>某一职工（干部）“领导”若干名职工<br>一个职工仅被另外一个职工直接领导<br>这是一对多的联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png" alt="image-20230228193653846" style="zoom:50%;">
+
+<p><strong>一对一联系和多对多联系</strong></p>
+<h3 id="概念模型的一种表示方法"><a href="#概念模型的一种表示方法" class="headerlink" title="概念模型的一种表示方法"></a>概念模型的一种表示方法</h3><p><strong>实体－联系方法(E-R方法)</strong></p>
+<h4 id="E-R图"><a href="#E-R图" class="headerlink" title="E-R图"></a>E-R图</h4><p><strong>实体型</strong><br>用矩形表示，矩形框内写明实体名。</p>
+<p><strong>属性</strong><br>用椭圆形表示，并用无向边将其与相应的实体连接起来</p>
+<p><strong>联系</strong><br>联系本身：<br>   用菱形表示，菱形框内写明联系名，并用无向边分别与有关实体连接起来，同时在无向边旁标上联系的类型（1:1、1:n或m:n）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png" alt="image-20230228193805948" style="zoom:50%;">
+
+<h4 id="联系的表示方法"><a href="#联系的表示方法" class="headerlink" title="联系的表示方法"></a>联系的表示方法</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png" alt="image-20230228193826047" style="zoom:50%;">
+
+<h4 id="联系的属性"><a href="#联系的属性" class="headerlink" title="联系的属性"></a>联系的属性</h4><p>联系本身也是一种实体型，也   可以有属性。如果一个联系具有属性，则这些属性也要用无向边与该联系连接起来 </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png" alt="image-20230228193848342" style="zoom:50%;">
+
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>用E-R图表示某个工厂物资管理的概念模型<br>实体：<br>        仓库： 仓库号、面积、电话号码<br>        零件 ：零件号、名称、规格、单价、描述<br>        供应商：供应商号、姓名、地址、电话号码、帐号<br>        项目：项目号、预算、开工日期<br>        职工：职工号、姓名、年龄、职称<br>实体之间的联系如下：<br>        一个仓库可以存放多种零件，一种零件可以存放在多个仓库中。用库存量来表示某种零件在某个仓库中的数量<br>        一个仓库有多个职工当仓库保管员，一个职工只能在一个仓库工作<br>        职工之间具有领导-被领导关系。即仓库主任领导若干保管员</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png" alt="image-20230228194000378" style="zoom:67%;">
+
+<h3 id="数据模型的组成要素"><a href="#数据模型的组成要素" class="headerlink" title="数据模型的组成要素"></a>数据模型的组成要素</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>描述数据库的组成对象，以及对象之间的联系</strong></p>
+<p><strong>描述的内容</strong><br>与数据类型、内容、性质有关的对象<br>与数据之间联系有关的对象</p>
+<p><strong>数据结构是对系统静态特性的描述</strong></p>
+<h4 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h4><p>**对数据库中各种对象(型)的实例(值)允许执行的操作及有关的操作规则</p>
+<p><strong>数据操作的类型</strong><br>查询<br>更新(包括插入、删除、修改)</p>
+<p><strong>数据模型对操作的定义</strong><br>操作的确切含义<br>操作符号<br>操作规则（如优先级）<br>实现操作的语言</p>
+<p><strong>数据操作是对系统动态特性的描述</strong></p>
+<h4 id="完整性约束条件"><a href="#完整性约束条件" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h4><p><strong>一组完整性规则的集合。</strong><br>完整性规则：给定的数据模型中数据及其联系所具有的制约和储存规则，用以限定符合数据模型的数据库状态以及状态的变化，以保证数据的正确、有效、相容。</p>
+<p><strong>数据模型对完整性约束条件的定义</strong><br>必须遵守的基本的通用的完整性约束条件。<br>例如，关系模型中，任何关系必须满足实体完整性和参照完整性两个条件。</p>
+<p><strong>反映具体应用所涉及的特定的约束条件。</strong><br>例子：学校数据库中规定博士学生的年龄必须小于45岁<br>例子：银行的系统中规定帐号的余额不能小于1元</p>
+<h3 id="常用的数据模型"><a href="#常用的数据模型" class="headerlink" title="常用的数据模型"></a>常用的数据模型</h3><p>格式化模型<br>        层次模型(Hierarchical Model)<br>        网状模型(Network Model)</p>
+<p>关系模型(Relational Model)  </p>
+<p>面向对象模型(Object Oriented Model）</p>
+<p>对象关系模型(Object Relational Model)</p>
+<h4 id="层次模型"><a href="#层次模型" class="headerlink" title="层次模型"></a>层次模型</h4><p>层次模型用树形结构来表示各类实体以及实体间的联系 </p>
+<h5 id="层次模型-1"><a href="#层次模型-1" class="headerlink" title="层次模型"></a><strong>层次模型</strong></h5><p> 满足下面两个条件的基本层次联系的集合为层次模型</p>
+<p>1.有且只有一个结点没有双亲结点，这个结点称为根结点</p>
+<p>2.根以外的其它结点有且只有一个双亲结点</p>
+<h5 id="层次模型中的几个术语"><a href="#层次模型中的几个术语" class="headerlink" title="层次模型中的几个术语"></a><strong>层次模型中的几个术语</strong></h5><p>根结点，双亲结点，兄弟结点，叶结点</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png" alt="image-20230228194651033" style="zoom:50%;">
+
+<h5 id="表示方法"><a href="#表示方法" class="headerlink" title="表示方法"></a><strong>表示方法</strong></h5><p><strong>实体型：</strong>用记录类型描述，每个结点表示一个记录类型（实体）</p>
+<p><strong>属性：</strong>用字段描述，每个记录类型可包含若干个字段</p>
+<p><strong>联系：</strong>用结点之间的连线表示记录类型（实体）之间的<strong>一对多</strong>的父子联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png" alt="image-20230228194729758" style="zoom: 50%;">
+
+<h5 id="层次模型的数据操纵"><a href="#层次模型的数据操纵" class="headerlink" title="层次模型的数据操纵"></a><strong>层次模型的数据操纵</strong></h5><p>查询 插入 删除 更新</p>
+<h5 id="层次模型的完整性约束条件"><a href="#层次模型的完整性约束条件" class="headerlink" title="层次模型的完整性约束条件"></a><strong>层次模型的完整性约束条件</strong></h5><p>无相应的双亲结点值就不能插入子女结点值<br>如果删除双亲结点值，则相应的子女结点值也被同时删除</p>
+<h5 id="层次数据模型的存储结构"><a href="#层次数据模型的存储结构" class="headerlink" title="层次数据模型的存储结构"></a><strong>层次数据模型的存储结构</strong></h5><p><strong>邻接法</strong><br>按照层次树前序遍历的顺序把所有记录值依次邻接存放，即通过物理空间的位置相邻来实现层次顺序</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png" alt="image-20230228194950487" style="zoom:50%;">
+
+<p><strong>链接法</strong><br>用指引来反映数据之间的层次联系<br>子女－兄弟链接法<br>层次序列链接法</p>
+<p><strong>子女-兄弟链接法</strong><br>每个记录设两类指针，分别指向最左边的子女（每个记录型对应一个）和最近的兄弟</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png" alt="image-20230228195024242" style="zoom:50%;">
+
+<p><strong>层次序列链接法</strong></p>
+<p>按树的前序穿越顺序链接各记录值</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png" alt="image-20230228195039461" style="zoom:50%;">
+
+<h5 id="层次模型的优缺点"><a href="#层次模型的优缺点" class="headerlink" title="层次模型的优缺点"></a><strong>层次模型的优缺点</strong></h5><p><strong>优点</strong><br>层次模型的数据结构比较简单清晰<br>查询效率高，性能优于关系模型，不低于网状模型<br>层次数据模型提供了良好的完整性支持</p>
+<p><strong>缺点</strong><br>多对多联系表示不自然<br>对插入和删除操作的限制多，应用程序的编写比较复杂<br>查询子女结点必须通过双亲结点</p>
+<h4 id="网状模型"><a href="#网状模型" class="headerlink" title="网状模型"></a>网状模型</h4><p>满足下面两个条件的基本层次联系的集合：</p>
+<ol>
+<li>允许一个以上的结点无双亲；</li>
+<li>一个结点可以有多于一个的双亲。<br>允许两个结点之间有多种联系（复合联系）<br>网状模型可以更直接地去描述现实世界，层次模型实际上是网状模型的一个特例</li>
+</ol>
+<h5 id="多对多联系在网状模型中的表示"><a href="#多对多联系在网状模型中的表示" class="headerlink" title="多对多联系在网状模型中的表示"></a><strong>多对多联系在网状模型中的表示</strong></h5><p>​		用网状模型间接表示多对多联系<br>​		方法：将多对多联系直接分解成一对多联系</p>
+<h5 id="数据操作-1"><a href="#数据操作-1" class="headerlink" title="数据操作"></a><strong>数据操作</strong></h5><p>网状数据库系统（如DBTG）对数据操纵加了一些限制，提供了一定的完整性约束<br>码：唯一标识记录的数据项的集合<br>支持双亲记录和子女记录之间某些约束条件<br>    有些子女记录要求双亲记录存在才能插入，双亲记录删除时也连同删除。例如学生选课记录</p>
+<h5 id="网状数据模型的存储结构"><a href="#网状数据模型的存储结构" class="headerlink" title="网状数据模型的存储结构"></a>网状数据模型的存储结构</h5><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png" alt="image-20230228195613303" style="zoom:50%;">
+
+<h5 id="网状数据模型的优缺点"><a href="#网状数据模型的优缺点" class="headerlink" title="网状数据模型的优缺点"></a>网状数据模型的优缺点</h5><p><strong>优点</strong><br>能更为直接地描述现实世界，如一个结点可以有多个双亲</p>
+<p>具有良好的性能，存取效率较高</p>
+<p><strong>缺点</strong><br>结构比较复杂，而且随着应用环境的扩大，数据库的结构就变得越来越复杂，不利于最终用户掌握</p>
+<p>DDL、DML语言复杂，用户不容易使用</p>
+<p>记录类型联系变动后涉及链接指针的调整，扩充和维护都比较复杂 </p>
+<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>在用户观点下，关系模型中数据的逻辑结构是一张二维表，它由行和列组成。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png" alt="image-20230228195759196" style="zoom: 50%;">
+
+<p><strong>关系（Relation）</strong><br>一个关系对应通常说的一张表<br><strong>元组（Tuple）</strong><br>表中的一行即为一个元组<br><strong>属性（Attribute）</strong><br>表中的一列即为一个属性，给每一个属性起一个名称即属性名</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png" alt="image-20230228195837826" style="zoom:50%;">
+
+<p><strong>主码（Key）</strong><br>表中的某个属性组，它可以唯一确定一个元组。<br><strong>域（Domain）</strong><br>属性的取值范围。<br><strong>分量</strong><br>元组中的一个属性值。<br><strong>关系模式</strong><br>对关系的描述<br>关系名（属性1，属性2，…，属性n）<br>学生（学号，姓名，年龄，性别，系，年级）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png" alt="image-20230228200117047" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png" alt="image-20230228200133118" style="zoom:50%;">
+
+<h5 id="数据操作是集合操作，操作对象和结果都是关系"><a href="#数据操作是集合操作，操作对象和结果都是关系" class="headerlink" title="数据操作是集合操作，操作对象和结果都是关系"></a>数据操作是集合操作，操作对象和结果都是关系</h5><p>查询 插入 删除 更新</p>
+<h5 id="完整性约束条件-1"><a href="#完整性约束条件-1" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h5><p>实体完整性<br>参照完整性<br>用户定义的完整性</p>
+<h5 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h5><p>实体及实体间的联系都用表来表示<br>表以文件形式存储<br>有的DBMS一个表对应一个操作系统文件<br>有的DBMS自己设计文件结构</p>
+<h5 id="关系数据模型的优缺点"><a href="#关系数据模型的优缺点" class="headerlink" title="关系数据模型的优缺点"></a>关系数据模型的优缺点</h5><p><strong>优点</strong><br>建立在严格的数学概念的基础上<br>可以描述一对一、一对多和多对多的联系<br>概念单一<br>        实体和各类联系都用关系来表示<br>        对数据的检索结果也是关系<br>存取路径对用户透明<br>        用户只要指出“干什么”，不必详细说明“怎么干”<br>        具有更高的数据独立性，更好的安全保密性<br>        简化了程序员的工作和数据库开发建立的工作</p>
+<p><strong>缺点</strong><br>存取路径对用户透明导致查询效率往往不如非关系数据模型<br>为提高性能，必须对用户的查询请求进行优化增加了开发DBMS的难度</p>
+<h4 id="关系模式-ER图"><a href="#关系模式-ER图" class="headerlink" title="关系模式-&gt;ER图"></a>关系模式-&gt;ER图</h4><p>例：<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png" alt="image-20230307214952179" style="zoom:67%;"></p>
+<h3 id="E-R模型补充扩展"><a href="#E-R模型补充扩展" class="headerlink" title="E-R模型补充扩展"></a>E-R模型补充扩展</h3><p><strong>Movie database</strong><br><strong>Movie</strong>: title, year, length, genre<br><strong>Stars</strong>: name, address<br><strong>Studios</strong>: name, address</p>
+<p>a studio contracts with a particular start to act in a particular movie for some salary</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png" alt="image-20230307215104726" style="zoom:50%;">
+
+<h4 id="多实体集联系-多角色实体集"><a href="#多实体集联系-多角色实体集" class="headerlink" title="多实体集联系+多角色实体集"></a>多实体集联系+多角色实体集</h4><p>怎样表示Studio 2从studio 1租借某演员签约出演某电影？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png" alt="image-20230307215135547" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png" alt="image-20230307215534821" style="zoom: 33%;">
+
+<p>怎样去掉联系Contracts的属性salary？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png" alt="image-20230307215600082" style="zoom:50%;">
+
+<h4 id="“Is-a”联系"><a href="#“Is-a”联系" class="headerlink" title="“Is a”联系"></a>“Is a”联系</h4><p>怎样表示电影的两个子类“动画片”和“枪战片”</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png" alt="image-20230307215658701" style="zoom: 33%;">
+
+<h2 id="1-3-数据库系统结构"><a href="#1-3-数据库系统结构" class="headerlink" title="1.3 数据库系统结构"></a>1.3 数据库系统结构</h2><h4 id="分布式B-S结构数据库系统"><a href="#分布式B-S结构数据库系统" class="headerlink" title="分布式B&#x2F;S结构数据库系统"></a>分布式B&#x2F;S结构数据库系统</h4><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png" alt="image-20230307215809913" style="zoom:50%;">
+
+<h3 id="数据库系统模式的概念"><a href="#数据库系统模式的概念" class="headerlink" title="数据库系统模式的概念"></a>数据库系统模式的概念</h3><h4 id="“型”-和“值”-的概念"><a href="#“型”-和“值”-的概念" class="headerlink" title="“型” 和“值” 的概念"></a>“型” 和“值” 的概念</h4><p><strong>型(Type)</strong>  对某一类数据的结构和属性的说明<br><strong>值(Value)</strong>  是型的一个具体赋值<br>例如<br>学生记录型：<br>  （学号，姓名，性别，系别，年龄，籍贯）<br>一个记录值：<br>  （900201，李明，男，计算机，22，江苏）</p>
+<p><strong>模式（Schema）</strong><br>数据库逻辑结构和特征的描述<br>是型的描述<br>反映的是数据的结构及其联系<br>模式是相对稳定的</p>
+<p><strong>实例（Instance）</strong><br>模式的一个具体值<br>反映数据库某一时刻的状态<br>同一个模式可以有很多实例<br>实例随数据库中的数据的更新而变动</p>
+<h3 id="数据库系统的三级模式结构"><a href="#数据库系统的三级模式结构" class="headerlink" title="数据库系统的三级模式结构"></a>数据库系统的三级模式结构</h3><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png" alt="image-20230307220505091" style="zoom: 50%;">
+
+<h4 id="模式（也称逻辑模式）"><a href="#模式（也称逻辑模式）" class="headerlink" title="模式（也称逻辑模式）"></a>模式（也称逻辑模式）</h4><p>​		数据库中全体数据的逻辑结构和特征的描述<br>​		所有用户的公共数据视图，综合了所有用户的需求<br><strong>一个数据库只有一个模式</strong><br><strong>模式的地位：是数据库系统模式结构的中间层</strong><br>​		与数据的物理存储细节和硬件环境无关<br>​		与具体的应用程序、开发工具及高级程序设计语言无关</p>
+<p><strong>模式的定义</strong><br>        数据的逻辑结构（数据项的名字、类型、取值范围等）<br>        数据之间的联系<br>        数据有关的安全性、完整性要求</p>
+<h4 id="外模式（也称子模式或用户模式）"><a href="#外模式（也称子模式或用户模式）" class="headerlink" title="外模式（也称子模式或用户模式）"></a>外模式（也称子模式或用户模式）</h4><p>数据库用户（包括应用程序员和最终用户）使用的局部数据的逻辑结构和特征的描述<br>数据库用户的数据视图，是与某一应用有关的数据的逻辑表示</p>
+<h4 id="内模式（也称存储模式）"><a href="#内模式（也称存储模式）" class="headerlink" title="内模式（也称存储模式）"></a>内模式（也称存储模式）</h4><p>是数据物理结构和存储方式的描述<br>是数据在数据库内部的表示方式</p>
+<p><strong>一个数据库只有一个内模式</strong></p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png" alt="image-20230307220519463" style="zoom:67%;">
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 数据库技术与应用</li>
+        <li><strong>Author:</strong> Serendy</li>
+        <li><strong>Created at
+                :</strong> 2023-02-28 19:14:21</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2023-07-13 10:17:52
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://mapleqian.github.io/2023/02/28/数据库技术与应用/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/Note/">#Note</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/03/12/ContactME/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">ContactME</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/02/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">操作系统</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">数据库技术与应用</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%BB%AA%E8%AE%BA"><span class="nav-text">1 绪论</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-text">1.2 数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E5%A4%A7%E7%B1%BB%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-text">两大类数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B"><span class="nav-text">概念模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">信息世界中的基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%AE%9E%E4%BD%93%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-text">两个实体型之间的联系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E8%81%94%E7%B3%BB%EF%BC%881-1%EF%BC%89"><span class="nav-text">一对一联系（1 : 1）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E8%81%94%E7%B3%BB%EF%BC%881-n%EF%BC%89"><span class="nav-text">一对多联系（1 : n）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A%E8%81%94%E7%B3%BB%EF%BC%88m-n%EF%BC%89"><span class="nav-text">多对多联系（m : n）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E5%9B%BE%E5%BD%A2%E6%9D%A5%E8%A1%A8%E7%A4%BA%E4%B8%A4%E4%B8%AA%E5%AE%9E%E4%BD%93%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E4%B8%89%E7%B1%BB%E8%81%94%E7%B3%BB"><span class="nav-text">用图形来表示两个实体型之间的三类联系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E4%BB%A5%E4%B8%8A%E5%AE%9E%E4%BD%93%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-text">两个以上实体型之间的联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%B8%AA%E5%AE%9E%E4%BD%93%E5%9E%8B%E5%86%85%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-text">单个实体型内的联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%B8%80%E7%A7%8D%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-text">概念模型的一种表示方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#E-R%E5%9B%BE"><span class="nav-text">E-R图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E7%B3%BB%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-text">联系的表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E7%B3%BB%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">联系的属性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-text">举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%BB%84%E6%88%90%E8%A6%81%E7%B4%A0"><span class="nav-text">数据模型的组成要素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C"><span class="nav-text">数据操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%80%A7%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="nav-text">完整性约束条件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-text">常用的数据模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E6%A8%A1%E5%9E%8B"><span class="nav-text">层次模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%8A%B6%E6%A8%A1%E5%9E%8B"><span class="nav-text">网状模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="nav-text">关系模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%BC%8F-ER%E5%9B%BE"><span class="nav-text">关系模式-&gt;ER图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E-R%E6%A8%A1%E5%9E%8B%E8%A1%A5%E5%85%85%E6%89%A9%E5%B1%95"><span class="nav-text">E-R模型补充扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AE%9E%E4%BD%93%E9%9B%86%E8%81%94%E7%B3%BB-%E5%A4%9A%E8%A7%92%E8%89%B2%E5%AE%9E%E4%BD%93%E9%9B%86"><span class="nav-text">多实体集联系+多角色实体集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%80%9CIs-a%E2%80%9D%E8%81%94%E7%B3%BB"><span class="nav-text">“Is a”联系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="nav-text">1.3 数据库系统结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8FB-S%E7%BB%93%E6%9E%84%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F"><span class="nav-text">分布式B&#x2F;S结构数据库系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">数据库系统模式的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%80%9C%E5%9E%8B%E2%80%9D-%E5%92%8C%E2%80%9C%E5%80%BC%E2%80%9D-%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">“型” 和“值” 的概念</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%B8%89%E7%BA%A7%E6%A8%A1%E5%BC%8F%E7%BB%93%E6%9E%84"><span class="nav-text">数据库系统的三级模式结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%9F%E7%A7%B0%E9%80%BB%E8%BE%91%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-text">模式（也称逻辑模式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%9F%E7%A7%B0%E5%AD%90%E6%A8%A1%E5%BC%8F%E6%88%96%E7%94%A8%E6%88%B7%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-text">外模式（也称子模式或用户模式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%9F%E7%A7%B0%E5%AD%98%E5%82%A8%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-text">内模式（也称存储模式）</span></a></li></ol></li></ol></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        23 posts in total
+                    </span>
+                    
+                        <span>
+                            84.1k words in total
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.7.1</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/libs/anime.min.js"></script>
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>

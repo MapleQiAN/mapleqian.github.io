@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2023/05/02/加密算法逆向实践/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="加密算法逆向作业，是一次实战，将本次逆向过程完整地记录下来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="加密算法逆向实践">
+<meta property="og:url" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="加密算法逆向作业，是一次实战，将本次逆向过程完整地记录下来">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png">
+<meta property="article:published_time" content="2023-05-01T16:02:48.000Z">
+<meta property="article:modified_time" content="2023-05-11T05:27:58.590Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="汇编逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/300.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/300.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/300.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            加密算法逆向实践 -
+        
+        SerendyLin Empire
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":true,"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"IF YOU CAN NOT BE A POET, BE THE POEM","subtitle":{"text":["做不了李白 就活成明月"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":false,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.7.1","navbar":{"auto_hide":false,"color":{"left":"#bd7ba7","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/300.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    CATEGORIES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    FRIENDS
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                CATEGORIES
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                FRIENDS
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">13</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">23</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                
+                
+                <img src="https://w.wallhaven.cc/full/5g/wallhaven-5g57l1.jpg" alt="加密算法逆向实践" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75"/>
+                
+                <div class="w-full flex items-center absolute bottom-0 justify-center">
+                    <h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">加密算法逆向实践</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/po5.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-05-02 00:02:48</span>
+        <span class="mobile">2023-05-02 00:02:48</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-05-11 13:27:58</span>
+            <span class="mobile">2023-05-11 13:27:58</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Project/">Project</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">汇编逆向</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>2.4k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>8 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
+<p><strong>问题-2</strong>：需要结合具体的加密操作逻辑，说明所发现的加密算法。</p>
+<p>输入正确 flag 后的运行截图如下：</p>
+<img lazyload src="/images/loading.svg" data-src="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png" alt="img" style="zoom:50%;">
+
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>首先找到——FOR FUN—–的位置，使用IDA Pro</p>
+<p>Shift+F12进行字符串定位</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png" class title="image-20230428111417280">
+
+<p>追入</p>
+<p>发现有一个%s夹在两行———-中间，可以判断这个输入的%s就是“This program cannot be run …”</p>
+<p>查看main函数</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png" class title="image-20230428111553144">
+
+<p>发现在调用<code>printf</code>函数时输入了一个参数，其地址为<code>40004Eh</code></p>
+<p>==因此我们就找到了字符串“This program cannot be run …”的起始地址<code>40004Eh</code>==</p>
+<p>接下来找字符串长度，此时使用x32dbg进行动态调试</p>
+<p>因为我们已经知道了该字符串的起始地址，因此我们可以在程序运行到Entrypoint时直接定位到该字符串：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png" class title="image-20230511132011451">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png" class title="image-20230511132055593">
+
+<p>==数一数字符串长度 可知该字符串长度是43个字节==</p>
+<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>首先发现exe文件在输入错误的flag之后直接结束或者退出了，因此我们只能直接看汇编代码对该程序进行研究</p>
+<p>首先看提示的字符串” ———FOR FUN———-“以及”Please input your flag below:”，可以从这两个提示字符串入手研究该程序</p>
+<p>先看main函数的整体结构：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png" class title="image-20230503144347708">
+
+<p>首先调用了函数<code>sub_402320</code>，随后输出提示信息————–FOR FUN——————，接着连续调用了三个函数，因此可以从一个一个函数入手研究这个程序</p>
+<h4 id="第1个函数"><a href="#第1个函数" class="headerlink" title="第1个函数"></a>第1个函数</h4><p>发现在调用<code>printf</code>函数输出——-FOR FUN——–之前调用了一个函数<code>sub_402320</code></p>
+<p>追入该函数查看，利用IDA Pro的反汇编功能研究该函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png" class title="image-20230501231323379">
+
+<p>解读这段反汇编代码：这段代码的功能是执行一个函数表中的一系列函数，并在程序退出时再次执行一个特定函数。它的基本思路是：如果全局变量dword_407080的值为0，则将其设为1，然后执行一个函数表中的一系列函数，最后调用sub_4014C0函数，该函数的参数是sub_402290函数的地址。如果dword_407080的值不是0，则直接返回它（result）。</p>
+<p>具体来说，下面是每个步骤的解释：</p>
+<ol>
+<li><p>result = dword_407080;<br>将dword_407080的值赋给result变量。</p>
+</li>
+<li><p>if (!dword_407080)<br>如果dword_407080的值为0，执行以下代码块，否则跳过该代码块。</p>
+</li>
+<li><p>dword_407080 = 1;<br>将dword_407080的值设为1。</p>
+</li>
+<li><p>for (i = 0; dword_4033E0[i + 1]; ++i)<br>查找函数表dword_4033E0中最后一个函数的索引。该函数表是一个由地址组成的数组，最后一个地址为0，以便循环能够停止。</p>
+</li>
+<li><p>for (; i; –i)<br>执行函数表dword_4033E0中的函数，从最后一个函数开始一直到第一个函数。</p>
+</li>
+<li><p>((void (*)(void))dword_4033E0[i])();<br>将函数表dword_4033E0中第i个元素的地址强制转换为void (*)(void)类型的函数指针，然后执行该函数。</p>
+</li>
+<li><p>return sub_4014C0((_onexit_t)sub_402290);<br>调用sub_4014C0函数，并将sub_402290函数的地址转换为_onexit_t类型的函数指针作为参数。_onexit_t是一个函数指针类型，它指向一个函数，该函数在程序退出时执行。</p>
+</li>
+<li><p>return result;<br>如果dword_407080的值不为0，则直接返回该值。</p>
+</li>
+</ol>
+<p><u><strong>这段函数的功能是调用函数表</strong></u></p>
+<h4 id="第2个函数"><a href="#第2个函数" class="headerlink" title="第2个函数"></a>第2个函数</h4><p>追入<code>sub_4015C0</code>这个函数</p>
+<p>查看其汇编代码，这个函数的功能上，首先输出了提示信息：“Please input your flag below:”</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png" class title="image-20230503143435814">
+
+<p>接下来函数调用了scanf函数接收我们输入的flag：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png" class title="image-20230503143727587">
+
+<p>可以看到这个scanf函数是用于接收一个长度不小于9个字符的字符串输入，**<code>byte_407444</code>就是输入的字符串**</p>
+<p>接下来，该函数计算了输入的字符串长度，并将其与存储在内存地址 <code>byte_4040E4</code> 处的值进行比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png" class title="image-20230503145208387">
+
+<p>可以看到，如果输入的字符串长度不相等，则跳转到loc_40160F处，loc_40160F的功能是恢复函数栈寄存器并退出程序；如果相等则返回</p>
+<p>因此我们需要知道byte_4040E4的值，追入查看byte_4040E4</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png" class title="image-20230503145115142">
+
+<p>可以看到<code>4040E4</code>的值是9，也就是说，输入的字符串长度应当是<strong>9</strong></p>
+<p>因此，<strong>第二个函数的功能是输出提示信息，接收输入的字符串并将输入字符串的长度与预设的长度值9进行比较</strong>，如果长度不相等则退出程序</p>
+<h4 id="第3个函数"><a href="#第3个函数" class="headerlink" title="第3个函数"></a>第3个函数</h4><p>回到main函数，继续研究下一个函数<code>sub_401770</code></p>
+<p>查看其反汇编函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png" class title="image-20230503150657627">
+
+<p>可以看到，本段代码的功能是对字符串进行合法性判断</p>
+<p>以下是代码注释：</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; (<span class="type">unsigned</span> __int8)byte_4040E4 != i; ++i) <span class="comment">// 对每个字符，循环直到字符为0x00</span></span><br><span class="line">{</span><br><span class="line">  v1 = (<span class="type">unsigned</span> __int8)byte_407444[i]; <span class="comment">// 取出当前字符</span></span><br><span class="line">  v2 = <span class="number">48</span>; <span class="comment">// v2 为 ASCII 码 48，即字符 '0'</span></span><br><span class="line">  <span class="keyword">while</span> (v1 != v2 &amp;&amp; byte_407444[i] != <span class="number">95</span>) <span class="comment">// 如果当前字符不是 '0' 且不是下划线 '_'</span></span><br><span class="line">  {</span><br><span class="line">    <span class="keyword">if</span> (++v2 == <span class="number">58</span>) <span class="comment">// 如果 v2 递增后等于 ASCII 码 58，即字符 '9'+1，说明当前字符为大写字母</span></span><br><span class="line">    {</span><br><span class="line">      v3 = <span class="number">65</span>; <span class="comment">// v3 为 ASCII 码 65，即字符 'A'</span></span><br><span class="line">      <span class="keyword">while</span> (v1 != v3) <span class="comment">// 如果当前字符不是大写字母</span></span><br><span class="line">      {</span><br><span class="line">        <span class="keyword">if</span> (++v3 == <span class="number">91</span>) <span class="comment">// 如果 v3 递增后等于 ASCII 码 91，即字符 'Z'+1，说明当前字符不合法</span></span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">100876</span>); <span class="comment">// 结束程序并返回错误码 100876</span></span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">if</span> ((<span class="type">unsigned</span> __int8)byte_4040E4 - <span class="number">1</span> == i) <span class="comment">// 如果遍历完字符串后还未结束循环，则结束循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> sub_401700(); <span class="comment">// 调用 sub_401700() 函数并返回结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>因此，<strong>这个函数的目的是遍历一个字符串，并检查字符串中的每个字符是否是数字、大写字母或下划线，如果不是，则结束程序并返回错误码。</strong></p>
+<h4 id="第3个函数调用的函数"><a href="#第3个函数调用的函数" class="headerlink" title="第3个函数调用的函数"></a>第3个函数调用的函数</h4><p>如果字符串合法，则会跳转到<code>sub_401700</code>我们追入这个函数查看</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png" class title="image-20230503151526462">
+
+<p>查看其反汇编代码，发现这个函数就是<strong>关键的进行字符串比较的函数</strong></p>
+<p>这个函数的功能是将输入的字符串<code>byte_407444</code>与 <code>a1234567890Abcd</code> 字符串数组进行比较，如果相等，则将 <code>dword_4040C0</code> 数组中对应的元素设置为 <code>v3</code>并返回</p>
+<p>此时我们发现，关键的数组出现了，就是这个<code>a1234567890Abcd</code></p>
+<p>追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png" class title="image-20230503152011515">
+
+<p>它的值是：<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
+<h4 id="第4个函数"><a href="#第4个函数" class="headerlink" title="第4个函数"></a>第4个函数</h4><p>回到main函数，继续查看第四个函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png" class title="image-20230503152426933">
+
+<p>看到：<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png" class title="image-20230503153124833"></p>
+<p>发现这里对字符串进行了<strong>仿射加密</strong>：对输入的明文字符串利用<code>a1234567890Abcd</code>的字符集<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>进行仿射加密</p>
+<p>其中仿射加密的密钥<code>a=v6=9, b=v1=3</code></p>
+<h4 id="第4个函数调用的函数"><a href="#第4个函数调用的函数" class="headerlink" title="第4个函数调用的函数"></a>第4个函数调用的函数</h4><p>随后调用了一个函数<code>sub_40210C</code>，追入查看，并定位到关键代码段：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png" class title="image-20230503153420750">
+
+<p>这段代码中：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png" class title="image-20230503153741551">
+
+<p>将字符串合并为了一个长度为32字符长度的定长字符串，因此我们可以判断这个函数是一个<strong>哈希算法</strong>，用以输出定长的256位散列值</p>
+<p>随后定位到前面的关键函数<code>sub_401A14</code>，推测这个函数就是用来进行哈希的函数，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png" class title="image-20230503154219688">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png" class title="image-20230503154238457">
+
+<p><strong>可以判断这是一个MD5加密算法！！</strong></p>
+<p>因此函数<code>sub_40210C</code>的功能是将<code>Block</code> 变量分成多个32 字节的块，然后每个块都通过 <code>sub_401A14</code> 函数计算出其哈希值。最后，将所有块的哈希值合并成一个 128 位的哈希值，并将其转换为字符串格式写入 <code>Buffer</code> 变量中。</p>
+<p>回到函数<code>sub_40161C</code>，接下来函数进行了一个字符串比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png" class title="image-20230503154525848">
+
+<p>Str1是<code>sub_40120C</code>加密过后得到的散列值，因此判断<strong>Str2就是所比较的密文（散列值）</strong>，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png" class title="image-20230503154746972">
+
+<p>Str2的值是：<code>f8728f24e01c1aaf54e23f7f0d591384</code></p>
+<p>如果比较成功，即输入的值加密后和预设的密文散列值相同，进入下一个比较，如果<code>byte_407449</code>的值为<code>32Z2</code>，则比较成功，跳出成功得到flag的消息框</p>
+<p>我们发现<code>byte_407449</code>和输入字符串的<code>byte_407444</code>相差5，因此v4的strcmp**<code>407449</code>所比较的字符串就是输入字符串的后4个字节，因此我们可以知道flag的后四个字节是<code>32Z2</code>**</p>
+<h4 id="解密思路"><a href="#解密思路" class="headerlink" title="解密思路"></a>解密思路</h4><p>在网上找了个MD5解密轮子（Link:<a class="link" target="_blank" rel="noopener" href="https://www.somd5.com/%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%AF%86MD5%E5%BE%97%E5%88%B0%E6%98%8E%E6%96%87%EF%BC%9A%60K502G%60">https://www.somd5.com/），解密MD5得到明文：`K502G` <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我们就可以奖字符串进行拼接进行仿射解密了：<code>K502G32Z2</code></p>
+<p>仿射解密脚本如下（Python）：</p>
+<p>其中注意，由于解密是逆变换，所以密钥<code>a=3, b=9 </code></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    c = <span class="built_in">input</span>(<span class="string">'输入密文：'</span>)</span><br><span class="line">    a = <span class="number">3</span> <span class="comment">#根据逆向结果得到的密钥</span></span><br><span class="line">    b = <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    p = affine_decrypt(c, a, b)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"解密结果："</span> + p)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">affine_decrypt</span>(<span class="params">ciphertext, a, b</span>):</span><br><span class="line">    plaintext = <span class="string">""</span></span><br><span class="line">    m = <span class="built_in">len</span>(<span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>)</span><br><span class="line">    a_inv = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 计算 a 的逆元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m):</span><br><span class="line">        <span class="keyword">if</span> (i * a) % m == <span class="number">1</span>:</span><br><span class="line">            a_inv = i</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 对密文进行解密</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">if</span> char == <span class="string">'_'</span>:</span><br><span class="line">            char = <span class="string">' '</span></span><br><span class="line">        <span class="keyword">elif</span> char == <span class="string">'-'</span>:</span><br><span class="line">            char = <span class="string">'.'</span></span><br><span class="line">        <span class="comment"># 将字符映射到数字</span></span><br><span class="line">        num = <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>.index(char)</span><br><span class="line">        <span class="comment"># 计算解密后的数字</span></span><br><span class="line">        num = (a_inv * (num - b)) % m</span><br><span class="line">        <span class="comment"># 将数字映射回字符</span></span><br><span class="line">        plaintext += <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>[num]</span><br><span class="line">    <span class="keyword">return</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
+
+<p>然后把这个字符串拼接起来得到flag：<code>5M1LE_LOL</code></p>
+<p>输入这个flag，得到成功的提示:</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png" class title="image-20230511124146592">
+
+<h5 id="第一次尝试："><a href="#第一次尝试：" class="headerlink" title="第一次尝试："></a>第一次尝试：</h5><p>因此可以得到flag：<code>3WC9H32Z2</code>–&gt;它不对…. o(TヘTo)</p>
+<p>难道是md5解错了？还是仿射回去的时候错了?</p>
+<p>笑死 原来是仿射解密的密钥搞反了 解密是逆变换 密钥要反过来</p>
+<p>而且32Z2也要一起丢进去仿射解密</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> 加密算法逆向实践</li>
+        <li><strong>Author:</strong> Serendy</li>
+        <li><strong>Created at
+                :</strong> 2023-05-02 00:02:48</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2023-05-11 13:27:58
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://mapleqian.github.io/2023/05/02/加密算法逆向实践/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">#汇编逆向</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">加密算法逆向总结</span>
+                                <span class="post-nav-item">Prev posts</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/2023/04/21/MD5%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">MD5加密算法逆向</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">加密算法逆向实践</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%981"><span class="nav-text">问题1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%982"><span class="nav-text">问题2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC1%E4%B8%AA%E5%87%BD%E6%95%B0"><span class="nav-text">第1个函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC2%E4%B8%AA%E5%87%BD%E6%95%B0"><span class="nav-text">第2个函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC3%E4%B8%AA%E5%87%BD%E6%95%B0"><span class="nav-text">第3个函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC3%E4%B8%AA%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-text">第3个函数调用的函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC4%E4%B8%AA%E5%87%BD%E6%95%B0"><span class="nav-text">第4个函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC4%E4%B8%AA%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-text">第4个函数调用的函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%AF%86%E6%80%9D%E8%B7%AF"><span class="nav-text">解密思路</span></a></li></ol></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        23 posts in total
+                    </span>
+                    
+                        <span>
+                            84.1k words in total
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.7.1</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/libs/anime.min.js"></script>
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>
