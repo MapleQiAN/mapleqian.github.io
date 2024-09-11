@@ -3,7 +3,7 @@
   <entry>
     <title>ContactME</title>
     <url>/2023/03/12/ContactME/</url>
-    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#101;&#x72;&#101;&#x6e;&#100;&#121;&#108;&#x69;&#110;&#64;&#111;&#117;&#x74;&#108;&#111;&#111;&#x6b;&#46;&#x63;&#111;&#x6d;">&#115;&#101;&#x72;&#101;&#x6e;&#100;&#121;&#108;&#x69;&#110;&#64;&#111;&#117;&#x74;&#108;&#111;&#111;&#x6b;&#46;&#x63;&#111;&#x6d; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#x73;&#101;&#114;&#101;&#x6e;&#100;&#121;&#x6c;&#105;&#110;&#64;&#111;&#117;&#116;&#108;&#x6f;&#x6f;&#107;&#x2e;&#99;&#111;&#x6d;">&#x73;&#101;&#114;&#101;&#x6e;&#100;&#121;&#x6c;&#105;&#110;&#64;&#111;&#117;&#116;&#108;&#x6f;&#x6f;&#107;&#x2e;&#99;&#111;&#x6d; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>QQ: 15993469631 (备注博客)</p>
 ]]></content>
   </entry>
@@ -104,6 +104,720 @@
 ]]></content>
       <tags>
         <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2024/09/11/ADPzd25xDoIT37x9kSMc0heOnuc/</url>
+    <content><![CDATA[<h1 id="afl-源码分析"><a href="#afl-源码分析" class="headerlink" title="afl 源码分析"></a>afl 源码分析</h1><p><strong>写在前面的话：</strong>首先因为本人基础较差，所以本文会插入很多比较基础的知识，大家请选择性跳过。其次，本次阅读事实上主要分析的是 afl 中的 afl-as 实现的汇编级插桩，但是就性能上、实用性上 LLVM 才是需要分析的重点，各位可以以本文作为踏脚石，后续建议花更多的时间对 LLVM 模式的代码进行分析，了解如何通过编写 LLVM Pass 实现编译级别的插桩。这也将是我下一轮的学习方向，与诸位共勉。</p>
+<h2 id="分析工具"><a href="#分析工具" class="headerlink" title="分析工具"></a>分析工具</h2><p>understand 源码阅读器</p>
+<h2 id="源码阅读思路："><a href="#源码阅读思路：" class="headerlink" title="源码阅读思路："></a>源码阅读思路：</h2><ol>
+<li>阅读白皮书了解 afl 的整体设计思路</li>
+<li>阅读博客了解 AFL 整体架构，AFL 到底是如何运行的，每个代码部分分别对应哪个功能？既然准备研究定向模糊测试，那就先要确定定向模糊测试一般需要在 afl 的哪个运行环节进行改进。然后重点分析这部分代码。</li>
+<li>根据 <a class="link" href="https://www.ruanx.net/afl-source-1/">https://www.ruanx.net/afl-source-1/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>这篇博客的思路进行源码阅读</li>
+</ol>
+<p>　我们阅读源码的主要目标应该是：</p>
+<ol>
+<li>理清静态插桩过程（gcc、clang、llvm mode）</li>
+<li>理清 fuzz 过程：如何变异、如何将 input 传递给程序、如何收集覆盖度信息</li>
+</ol>
+<p>　　因此，我们决定阅读顺序：</p>
+<ol>
+<li>阅读 <code>afl-gcc.c</code> 和 <code>afl-as.c</code>，即静态插桩相关代码</li>
+<li>阅读 <code>afl-fuzz.c</code></li>
+</ol>
+<h2 id="源码阅读经验"><a href="#源码阅读经验" class="headerlink" title="源码阅读经验"></a>源码阅读经验</h2><p>在阅读 afl-as.c 与 afl-gcc.c 的过程中，发现在阅读之前应该对于程序整个的编译过程存在一个基础的认识。</p>
+<p>具体可以参考《深入理解计算机系统》的 P3，其中大致描述了一个 c 语言代码是如何一步步被编译成可执行文件的。</p>
+
+
+<p>如上图所示，一个 c 语言代码需要通过各个工具一步步被编译成可执行文件。其中 afl 利用的 gcc 工具负责处理预处理器与编译器的工作，生成汇编程序。而 as 则是汇编器，负责将汇编程序翻译为机械码，将程序转化为二进制目标文件。</p>
+<p>gcc 和 as 都是 GNU 中的工具，是直接安装在系统中的。我们可以通过 execve()等函数对这些工具进行调用。</p>
+<p>afl-gcc 是对 gcc 的封装，而 afl-as 是对 as 的封装。为了理解 afl 中相关的代码，我们需要对 gcc、as 本身接受什么参数进行了解。</p>
+<p>还需要说明的是，因为调用的是 GNU 重点工具，所以 afl 插桩所用到的汇编代码是 AT&amp;T 风格的，为了理解插桩汇编代码的作用，对该风格的汇编语言的语法进行了解是十分必要的。</p>
+<h3 id="GCC-是什么？"><a href="#GCC-是什么？" class="headerlink" title="GCC 是什么？"></a>GCC 是什么？</h3><p>GCC（GNU Compiler Collection）是一个编译器集合，其中包含多个编译器，其中之一是 C 编译器（通常称为 <code>gcc</code>）。GCC 的主要组成部分包括前端和后端。在编译源代码时，编译器执行以下主要步骤：</p>
+<ol>
+<li><strong>预处理（Preprocessing）：</strong> 预处理器 (<code>cpp</code>) 负责处理源代码中的预处理指令，例如 <code>#include</code>、<code>#define</code> 等，并将宏展开、头文件包含等操作应用到源代码上。</li>
+<li><strong>编译（Compilation）：</strong> C 编译器 (<code>gcc</code>) 接收预处理后的源代码，将其转换为汇编代码。这个阶段主要包括语法分析、语义分析和中间代码生成。</li>
+<li><strong>汇编（Assembly）：</strong> 汇编器 (<code>as</code>) 接收编译器生成的汇编代码，将其转换为目标文件。目标文件包含了机器代码的二进制表示，以及有关程序的其他信息。</li>
+<li><strong>链接（Linking）：</strong> 链接器 (<code>ld</code>) 接收一个或多个目标文件，以及可能的库文件，将它们合并成一个可执行文件。链接器解析符号引用，处理重定位信息，确保所有的代码和数据正确地连接在一起。</li>
+</ol>
+<p>在这个流程中，编译器 (<code>gcc</code>) 负责前两个阶段（预处理和编译），而汇编器 (<code>as</code>) 负责将生成的汇编代码转换为目标文件。因此，它们是编译过程中两个关键的组件。这两个组件的工作协同，确保最终生成的可执行文件能够正确地执行程序的逻辑。</p>
+<p>afl 的插桩过程是在编译过程中实现的，所以我们需要分析 afl 与编译相关的组件，其中就包括了 afl-gcc 与 afl-as。这两个文件分别是 gcc 与 as 的包装。在具体执行中会先调用 afl-gcc 然后再调用 afl-as</p>
+<h2 id="afl-白皮书（技术细节）"><a href="#afl-白皮书（技术细节）" class="headerlink" title="afl 白皮书（技术细节）"></a>afl 白皮书（技术细节）</h2><p>阅读 afl 技术细节文档有助于理解具体的代码实现。</p>
+<h3 id="覆盖率检测"><a href="#覆盖率检测" class="headerlink" title="覆盖率检测"></a>覆盖率检测</h3><p>afl 采用分支命中次数来统计覆盖率</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">cur_location = &lt;COMPILE_TIME_RANDOM&gt;;</span><br><span class="line">shared_mem[cur_location ^ prev_location]++; </span><br><span class="line">prev_location = cur_location &gt;&gt; 1;</span><br></pre></td></tr></table></figure></div>
+
+<p>实现覆盖率的计算。</p>
+<p><code>cur_location</code> 值是随机生成的，以简化链接复杂项目的过程，并且使用 XOR 来保持输出均匀分布。<code>shared_mem[]</code> 数组是一个 64 kB 的 SHM(内存共享) 区域，由调用者传递给被插桩的二进制文件。 输出映射(map)中的每个字节集合都可以是对于元组 (branch_src, branch_dst) 的一次命中 hit。</p>
+<p>这个产生的数组足够的小，所以可以很方便的放入二级缓存。</p>
+<p>至于采用机制的原理不多赘述，看原版白皮书就好。总的来说就是相比于基本块命中率，这种机制能记录更多关于执行路径的信息。</p>
+<h3 id="路经检测"><a href="#路经检测" class="headerlink" title="路经检测"></a>路经检测</h3><p>在 afl 中，我们要如何判断是否执行了一个新的路径呢？</p>
+<p>下面是两条执行路径</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">A -&gt; B -&gt; C -&gt; D -&gt; E (tuples: AB, BC, CD, DE)</span><br><span class="line">A -&gt; B -&gt; D -&gt; C -&gt; E (tuples: AB, BD, DC, CE)</span><br></pre></td></tr></table></figure></div>
+
+<p>afl 会维护小括号里面的元组，记录执行的路径，当产生新的元组元素的时候就判断产生了新的路径。值得注意的是及时存在一个全新的控制流，如果没有产生新的元组，afl 仍然会丢弃相对应的种子。</p>
+<p>当命中次数区间发生改变的时候也会认为该种子产生了有趣的变化。</p>
+<h3 id="输入队列变异"><a href="#输入队列变异" class="headerlink" title="输入队列变异"></a>输入队列变异</h3><p>afl 选择将上一轮中选择的有趣的种子添加到输入队列中，而不是直接替换掉原有的种子。</p>
+<h3 id="语料库的精简"><a href="#语料库的精简" class="headerlink" title="语料库的精简"></a>语料库的精简</h3><p>为了优化模糊测试的效果，AFL 周期性地使用一种快速算法重新评估队列，该算法选择一小部分仍然覆盖到目前为止看到的每个元组的测试用例，并且它们的特征使它们对工具特别有利。</p>
+<p>该算法通过为每个队列条目分配一个与其执行延迟和文件大小成比例的分数，然后选择每个元组的最低分候选者来工作。</p>
+<p>在这个过程中，AFL 会生成一个“喜爱”的输入文件集合，这些文件集合通常比起始数据集小 5-10 倍。非“喜爱”的输入文件不会被丢弃，但当它们在队列中遇到时，会以不同的概率被跳过。具体跳过算法看白皮书。</p>
+<h3 id="修剪输入文件"><a href="#修剪输入文件" class="headerlink" title="修剪输入文件"></a>修剪输入文件</h3><p>因为 fuzz 过程中会不断为种子增加信息，而文件大小太大的种子会影响 fuzz 的性能，所以 fuzz 设计了修剪输入文件机制来限制、减小种子文件的大小，保证 fuzz 效率。</p>
+<p>该机制主要包括两个部分，一个是对种子中不重要的部分进行裁剪，另一个是限制种子文件的最大大小。</p>
+<h3 id="模糊测试的策略"><a href="#模糊测试的策略" class="headerlink" title="模糊测试的策略"></a>模糊测试的策略</h3><div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://lcamtuf.blogspot.com/2014/08/binary-fuzzing-strategies-what-works.html</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p><em>这篇文章讨论了二进制__fuzzing__的策略，以及它们的有效性和限制。文章提到，成功的 fuzzer 取决于它们的 fuzzing 策略。如果对输入文件做出的更改过于保守，fuzzer 将实现非常有限的覆盖率。如果调整过于激进，则会导致大多数输入在非常早期的阶段失败解析，浪费__CPU__周期并产生难以调查和排除故障的混乱__测试用例__。</em><br><em>文章介绍了 AFL（American Fuzzy <strong>Lop__）的设计，该设计提供了一种罕见的反馈循环：您可以仔细测量哪些类型的更改实际上导致代码中新分支的发现。AFL 通过一系列逐渐复杂但详尽和确定性的__fuzzing__策略（例如顺序位翻转和简单算术）来接近每个新输入文件，然后再进入纯随机行为。这样做的原因是先生成最简单和最优雅的__测试用例__；但是，该设计还提供了一种非常好的方法来量化每种新策略带来的价值 - 以及我们是否需要它。_<br>_文章提到了几种具体的__fuzzing__策略，包括 Walking bit flips、Walking byte flips、Simple arithmetics、Known integers、Stacked tweaks 和__Test case</strong> splicing。每种策略都有其独特的优点和缺点，并且效果因格式而异。例如，Walking bit flips 是最基本的策略之一，可以发现大约 70 个新路径，但成本相对较高，每个输入文件的每个字节需要八个 execve()调用。另一方面，Simple arithmetics 可以以相对较低的成本发现更复杂的条件，但成本仍然相对较高，每个输入文件的每个字节需要约 20 个 execve()调用。</em><br><em>总之，文章提供了有关二进制__fuzzing__策略的详细信息，以及这些策略的有效性和限制。这对于正在开发自己的 fuzzer 的人们来说可能会很有用。</em></p>
+</blockquote>
+<p>以上部分看起来更像是变异策略的选择与分析。之后进行定向模糊测试的时候可以考虑看看。</p>
+<p><em>特别是在</em><strong>早期阶段，afl-fuzz 大部分工作都是高度确定性的</strong><em>，只有在后期才会逐渐转向随机堆叠修改和__测试用例__拼接。这些确定性策略包括：</em></p>
+<ul>
+<li><em>顺序位翻转，步长与翻转长度可变</em></li>
+<li><em>对小整数进行顺序加减</em></li>
+<li><em>顺序插入特殊整数（0、1、__INT_MAX__等）</em></li>
+</ul>
+<p><strong>sequential bit flips 和 simple arithmetics 之所以被称为确定性变异，是因为它们在相同输入上产生相同的输出，这对于测试工具的一致性和可重复性非常重要。</strong></p>
+<p><em>这些策略往往会产生紧凑的__测试用例__，并且非崩溃和崩溃输入之间的差异较小。</em></p>
+<p><em>在确定性__fuzzing__完成后，AFL 会使用非确定性策略，包括堆叠位翻转、插入、删除、算术运算和不同__测试用例__的拼接。这些策略的相对收益和 execve()成本在上述博客文章中进行了讨论。</em></p>
+<p><em>AFL 通常不会去考虑特定变异和程序状态之间的关系，主要是出于性能、简单性和可靠性的考虑。__fuzzing__步骤通常是盲目(随机)的，只由输入队列的进化设计来指导。</em></p>
+<p><em>即便如此，这套规则也有一个（不太重要的）例外：当一个新的队列条目经过初始的确定性__fuzzing__步骤时，如果观察到对文件中某些区域的调整对执行路径的__校验和__没有影响，那么它们可以被排除在确定性 fuzzing 的其余阶段之外，fuzzer 可以直接进行随机调整。特别是对于冗长的、可读性高的__数据格式__，这可以将执行次数降低 10-40%，而覆盖率几乎没有下降。在极端情况下，例如通常块对齐的__tar__档案，收益可能高达 90%。</em></p>
+<p><em>AFL 中的一种优化技巧，即”</em><strong>修剪输入文件和控制文件大小</strong><em>”。</em><br><em>具体来说，AFL 使用一种称为”effector maps”的机制来记录测试过程中每个输入文件的状态和效果，并根据这些信息来决定下一步的操作。这些”effector maps”是本地的，即每个队列条目都有自己的”effector maps”，并且只在不改变底层文件大小或布局的确定性阶段保持有效。通过这种机制，AFL 能够高效、可靠地进行__fuzzing__测试，并且这种机制的实现也相对简单。</em></p>
+<h3 id="字典的构建"><a href="#字典的构建" class="headerlink" title="字典的构建"></a>字典的构建</h3><p>字典是什么？字典的作用是什么？字典是如何被应用到 afl 中的？</p>
+<p>在 AFL（American Fuzzy Lop）中，字典（Dictionary）是指一个包含已知有效输入或有趣输入的文件。字典可以帮助 AFL 在模糊测试时更快地发现有趣的输入，因为这些输入可能已经被证明可以导致程序中的特定路径或行为。</p>
+<h3 id="崩溃去重"><a href="#崩溃去重" class="headerlink" title="崩溃去重"></a>崩溃去重</h3><p>我们应该如何判断哪些崩溃属于同一类的崩溃。</p>
+<p>仅查看故障地址可能会导致完全不相关的问题被聚集在一起，如果故障发生在常见的库函数（例如 strcmp、strcpy）中，则会出现这种情况；而对调用栈回溯进行校验和可能会导致崩溃计数极度膨胀，如果故障可以通过许多不同的、可能是递归的代码路径到达。</p>
+<p>afl-fuzz 实现的解决方案认为，如果满足以下两个条件之一，崩溃就是唯一的：</p>
+<p>这种方法在早期可能会存在一些路径数量膨胀的问题，但它展示了非常强的自我限制(self-limiting)效果，类似于 afl-这种去重方式与执行路径分析的逻辑一起构成了 afl-fuzz 的基石。</p>
+<h3 id="崩溃调查"><a href="#崩溃调查" class="headerlink" title="崩溃调查"></a>崩溃调查</h3><p>afl 提供了一种崩溃探索模式用于验证崩溃的可用性。</p>
+<h3 id="fork-服务器"><a href="#fork-服务器" class="headerlink" title="fork 服务器"></a>fork 服务器</h3><p>为了提高性能，afl-fuzz 使用了一个”fork server”，其中 fuzzing 过程中只需经过一次 execve()、链接和 libc 初始化，然后通过利用写时复制(copy-on-write)从停止的进程映像中复制、clone。</p>
+<p><code>execve()</code> 是一个系统调用（system call），用于在一个新的进程中执行一个程序。</p>
+<h3 id="并行处理"><a href="#并行处理" class="headerlink" title="并行处理"></a>并行处理</h3><p>请参阅 <code>parallel_fuzzing.txt</code></p>
+<h3 id="二进制插桩"><a href="#二进制插桩" class="headerlink" title="二进制插桩"></a>二进制插桩</h3><p>没看懂</p>
+<h3 id="afl-分析工具"><a href="#afl-分析工具" class="headerlink" title="afl 分析工具"></a>afl 分析工具</h3><h3 id="动机分析"><a href="#动机分析" class="headerlink" title="动机分析"></a>动机分析</h3><p>很长 看白皮书 对于 fuzz 的论文编写有一定的启发性</p>
+<h1 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h1><ul>
+<li><p><strong>插桩模块</strong></p>
+<ol>
+<li><code>afl-as.h, afl-as.c, afl-gcc.c</code>：普通插桩模式，针对源码插桩，编译器可以使用 gcc， clang；</li>
+<li><code>llvm_mode</code>：llvm 插桩模式，针对源码插桩，编译器使用 clang；</li>
+<li><code>qemu_mode</code>：qemu 插桩模式，针对二进制文件插桩。</li>
+</ol>
+</li>
+<li><p><strong>fuzzer 模块</strong></p>
+</li>
+<li><p><code>afl-fuzz.c</code>：fuzzer 实现的核心代码，AFL 的主体。</p>
+</li>
+<li><p><strong>其他辅助模块</strong></p>
+<ol>
+<li><code>afl-analyze</code>：对测试用例进行分析，通过分析给定的用例，确定是否可以发现用例中有意义的字段；</li>
+<li><code>afl-plot</code>：生成测试任务的状态图；</li>
+<li><code>afl-tmin</code>：对测试用例进行最小化；</li>
+<li><code>afl-cmin</code>：对语料库进行精简操作；</li>
+<li><code>afl-showmap</code>：对单个测试用例进行执行路径跟踪；</li>
+<li><code>afl-whatsup</code>：各并行例程 fuzzing 结果统计；</li>
+<li><code>afl-gotcpu</code>：查看当前 CPU 状态。</li>
+</ol>
+</li>
+<li><p><strong>部分头文件说明</strong></p>
+<ol>
+<li><code>alloc-inl.h</code>：定义带检测功能的内存分配和释放操作；</li>
+<li><code>config.h</code>：定义配置信息；</li>
+<li><code>debug.h</code>：与提示信息相关的宏定义；</li>
+<li><code>hash.h</code>：哈希函数的实现定义；</li>
+<li><code>types.h</code>：部分类型及宏的定义。</li>
+</ol>
+</li>
+</ul>
+<h1 id="关键变量"><a href="#关键变量" class="headerlink" title="关键变量"></a>关键变量</h1><p>为了方便我们理解 afl 的工作，必须首先对一些变量进行解释。源码中对这些变量的解释过于简单，导致如果不分析具体代码就很难理解这些变量究竟代表什么。</p>
+<p>trace_bits</p>
+<p>源码注释：EXP_ST u8* trace_bits;                &#x2F;* SHM with instrumentation bitmap  *&#x2F;</p>
+<p>个人解释：关键变量，这是一个字节指针，指向一片内存空间，也可以理解为一个字节数组。这片空间是为了进行父子进程通信而开辟的共享内存。这片内存储存了测试用例在输入被测程序后执行的路径。trace_bits 上每一个字节代表一条基本块到基本块的边，这个字节的值代表这条边被执行的次数。</p>
+<p>trace_mini[]</p>
+<p>源码注释：u8* trace_mini;                     &#x2F;* Trace bytes, if kept             *&#x2F;</p>
+<p>个人解释：每个测试用例都可能维护的一个简化版的，压缩版的 trace_bits。记录了这个测试用例会执行的路径。</p>
+<p>virgin_bits</p>
+<p>源码注释：EXP_ST u8  virgin_bits[MAP_SIZE],     &#x2F;* Regions yet untouched by fuzzing *&#x2F;</p>
+<p>个人解释：这玩意记录了所有还未被探索的边，其中每个个位置的边与 trace_bits 中的边一一对应。值得注意的是这玩意每个元素的初始值为 1，标志该位置未被探索。<br>正因如此，在函数 has_new_bits 中会使用 <code>*virgin &amp;= ~*current;</code> 对已探索位置置零。</p>
+<p>top_rated[]</p>
+<p>源码注释：static struct queue_entry*  top_rated[MAP_SIZE];                &#x2F;* Top entries for bitmap bytes  *&#x2F;</p>
+<p>个人解释：afl 会为 trace_bits 中每一个字节，也即是每一条边，挑选出一个最佳的（文件大小最小、执行时间最短）的测试用例。</p>
+<h1 id="插桩模块"><a href="#插桩模块" class="headerlink" title="插桩模块"></a>插桩模块</h1><h2 id="普通插桩模式"><a href="#普通插桩模式" class="headerlink" title="普通插桩模式"></a>普通插桩模式</h2><h3 id="afl-gcc-c"><a href="#afl-gcc-c" class="headerlink" title="afl-gcc.c"></a>afl-gcc.c</h3><h4 id="文件概述："><a href="#文件概述：" class="headerlink" title="文件概述："></a>文件概述：</h4><p>是 GCC 或 clang 的一个 wrapper（封装），常规的使用方法是在调用 <code>./configure</code> 时通过 <code>CC</code>（编译器的命令）将路径传递给 <code>afl-gcc</code> 或 <code>afl-clang</code>。（对于 C++ 代码，则使用 <code>CXX</code> 并将其指向 <code>afl-g++</code>&#x2F;<code>afl-clang++</code>。）<code>afl-clang</code>,<code>afl-clang++</code>，<code>afl-g++</code> 均为指向 <code>afl-gcc</code> 的一个符号链接。<br>上面这段话的关键意义在于我们会在 afl-gcc 中决定使用哪个编译器。<br><code>afl-gcc</code> 的主要作用是实现对于关键节点的代码插桩，属于汇编级，从而记录程序执行路径之类的关键信息，对程序的运行情况进行反馈。<br>afl-gcc.c 会被放在我们电脑上的 GCC 源代码的 gcc 文件夹中,以此构成我们的 afl-gcc</p>
+<h4 id="源码："><a href="#源码：" class="headerlink" title="源码："></a>源码：</h4><ol>
+<li>关键变量</li>
+</ol>
+<div class="highlight-container" data-rel="Cpp"><figure class="iseeu highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> u8*  as_path;                <span class="comment">/* Path to the AFL &#x27;as&#x27; wrapper，AFL的as的路径&quot;AS&quot; 是 &quot;Auto Dictionary Sync&quot; 的缩写</span></span><br><span class="line"><span class="comment">                                    指的是自动字典同步。这是AFL的一个特性，它用于自动创建和维护测试用例的字典，以改进模糊测试的效率。      */</span></span><br><span class="line"><span class="type">static</span> u8** cc_params;              <span class="comment">/* Parameters passed to the real CC，CC实际使用的编译器参数 */</span></span><br><span class="line"><span class="type">static</span> u32  cc_par_cnt = <span class="number">1</span>;         <span class="comment">/* Param count, including argv0 ，参数计数 */</span></span><br><span class="line"><span class="type">static</span> u8   be_quiet,               <span class="comment">/* Quiet mode，静默模式      */</span></span><br><span class="line">            clang_mode;             <span class="comment">/* Invoked as afl-clang*? ，是否使用afl-clang*模式 */</span></span><br><span class="line"># 数据类型说明</span><br><span class="line"><span class="meta"># typedef uint8_t  u8;</span></span><br><span class="line"><span class="meta"># typedef uint16_t u16;</span></span><br><span class="line"><span class="meta"># typedef uint32_t u32;</span></span><br></pre></td></tr></table></figure></div>
+
+<ol>
+<li>main 函数</li>
+</ol>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>** argv)</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (isatty(<span class="number">2</span>) &amp;&amp; !getenv(<span class="string">&quot;AFL_QUIET&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">    SAYF(cCYA <span class="string">&quot;afl-cc &quot;</span> cBRI VERSION cRST <span class="string">&quot; by &lt;lcamtuf@google.com&gt;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">else</span> be_quiet = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (argc &lt; <span class="number">2</span>) &#123;</span><br><span class="line"></span><br><span class="line">    SAYF(<span class="string">&quot;\n&quot;</span></span><br><span class="line">         <span class="string">&quot;This is a helper application for afl-fuzz. It serves as a drop-in replacement\n&quot;</span></span><br><span class="line">         <span class="string">&quot;for gcc or clang, letting you recompile third-party code with the required\n&quot;</span></span><br><span class="line">         <span class="string">&quot;runtime instrumentation. A common use pattern would be one of the following:\n\n&quot;</span></span><br><span class="line"></span><br><span class="line">         <span class="string">&quot;  CC=%s/afl-gcc ./configure\n&quot;</span></span><br><span class="line">         <span class="string">&quot;  CXX=%s/afl-g++ ./configure\n\n&quot;</span></span><br><span class="line"></span><br><span class="line">         <span class="string">&quot;You can specify custom next-stage toolchain via AFL_CC, AFL_CXX, and AFL_AS.\n&quot;</span></span><br><span class="line">         <span class="string">&quot;Setting AFL_HARDEN enables hardening optimizations in the compiled code.\n\n&quot;</span>,</span><br><span class="line">         BIN_PATH, BIN_PATH);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  find_as(argv[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">  edit_params(argc, argv);</span><br><span class="line"></span><br><span class="line">  execvp(cc_params[<span class="number">0</span>], (<span class="type">char</span>**)cc_params);</span><br><span class="line"></span><br><span class="line">  FATAL(<span class="string">&quot;Oops, failed to execute &#x27;%s&#x27; - check your PATH&quot;</span>, cc_params[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到三个调用的函数</p>
+<ul>
+<li><code>find_as(argv[0])</code>：查找使用的汇编器，这里查找汇编器只是为了在调用编译器之后可以指定执行 afl 设定的 as 也即是汇编器进行插桩。</li>
+<li><code>edit_params(argc, argv)</code>：处理传入的编译参数，将确定好的参数放入 <code>cc_params[]</code> 数组</li>
+<li>调用 <code>execvp(cc_params[0], (cahr**)cc_params)</code> 执行 <code>afl-gcc</code></li>
+</ul>
+<p>这个函数十分关键的一个步骤是为 gcc 设置了选项 -B 将之覆盖为了 afl 代码所在地址，这个设置让 gcc 会选择执行 afl 中的 as 而不是原本的 as。下面是对 -B 选项的解释：</p>
+<blockquote>
+<p><strong>-B</strong><em>prefix</em><br>这个选项指出在何处寻找可执行文件,库文件,以及编译器自己的数据文件.<br>编译器驱动程序需要执行某些下面的子程序: <code>**cpp**&#39;, </code> <strong>cc1</strong>‘ (或 C++ 的 <code>**cc1plus**&#39;), </code> <strong>as</strong>‘和 <code>**ld**&#39;.他把_prefix_当作欲执行的程序的 前缀,既可以包括也可以不包括</code> <em>machine</em><strong>&#x2F;</strong><em>version</em><strong>&#x2F;</strong>‘.<br>对于要运行的子程序,编译器驱动程序首先试着加上 <code>**-B**&#39;前缀(如果存在).如果没有找到文件,或没有指定 </code><strong>-B</strong>‘选项,编译器接着会试验两个标准前缀 <code>**/usr/lib/gcc/**&#39;和 </code><strong>&#x2F;usr&#x2F;local&#x2F;lib&#x2F;gcc-lib&#x2F;</strong>‘.如果仍然没能够找到所需文件,编译器就在 <code>**PATH**&#39;环境变量 指定的路径中寻找没加任何前缀的文件名. 如果有需要,运行时(run-time)支持文件</code> <strong>libgcc.a</strong>‘也在 <code>**-B**&#39;前缀的搜索范围之内. 如果这里没有找到,就在上面提到的两个标准前缀中寻找,仅此而已.如果上述方法没有找到这个文件,就不连接他了.多数 情况的多数机器上, </code> <strong>libgcc.a</strong>‘并非必不可少.<br>你可以通过环境变量 <strong>GCC_EXEC_PREFIX</strong> 获得近似的效果;如果定义了这个变量,其值就和上面说的 一样用做前缀.如果同时指定了 <code>**-B**&#39;选项和**GCC_EXEC_PREFIX**变量,编译器首先使用 </code><strong>-B</strong>‘选项,然后才尝试环境变量值.</p>
+</blockquote>
+<h3 id="afl-as-c"><a href="#afl-as-c" class="headerlink" title="afl-as.c"></a>afl-as.c</h3><h4 id="文件概述：-1"><a href="#文件概述：-1" class="headerlink" title="文件概述："></a>文件概述：</h4><p><code>afl-as.c</code> 文件用于修改汇编器的行为，以在目标程序的汇编代码中插入额外的代码，这些需要插入的代码储存在 afl-as.h 文件中。这些插入的代码通常用于记录程序执行的路径信息，并帮助 AFL 生成更多的测试用例来覆盖不同的执行路径。通过这种方式，AFL 可以监视和控制输入数据的变化，以提高模糊测试的效率。</p>
+<h4 id="源码：-1"><a href="#源码：-1" class="headerlink" title="源码："></a>源码：</h4><ol>
+<li>关键变量</li>
+<li>main 函数</li>
+<li>edit_param 函数：关键问题在于：先要理解 as 到底接受什么参数？然后才能理解 edit 函数为什么会进行这样的修改。as 到底在哪个位置？<br>as 是 gnu 中的汇编器，它是安装在系统中的，而不是 afl 下某个具体的文件。afl 会生成 as 文件作为 as 的封装调用 as 进行插桩等操作。</li>
+<li>add_instrumentation 函数<br>值得注意的是 afl-gcc 生成的是 AT&amp;T 风格的汇编语言，与 intel 风格的汇编语言存在差异性。在 AT&amp;T 风格中，汇编语言格式如下：<br>可以看到代码被.section 划分为一个个段，我们在进行插桩的时候只会针对.text 部分也即是代码部分进行插桩，所以在该函数中主要工作识别当前是否进入.text 段，如果不在则跳过当前读入的代码。</li>
+</ol>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!pass_thru &amp;&amp; !skip_intel &amp;&amp; !skip_app &amp;&amp; !skip_csect &amp;&amp; instr_ok &amp;&amp;</span><br><span class="line">    instrument_next &amp;&amp; line[0] == <span class="string">&#x27;\t&#x27;</span> &amp;&amp; isalpha(line[1])) &#123;</span><br><span class="line">    //这里执行的就是插桩，把一部分代码输出到了out中，因为在函数中先插入已经读入的语句</span><br><span class="line">    // 再判断该语句是否需要插桩，所以事实上是在检测到符合条件的语句后面进行插桩</span><br><span class="line">  fprintf(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,</span><br><span class="line">          R(MAP_SIZE));</span><br><span class="line"></span><br><span class="line">  instrument_next = 0;</span><br><span class="line">  ins_lines++;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="trampoline-fmt-64-桩代码"><a href="#trampoline-fmt-64-桩代码" class="headerlink" title="trampoline_fmt_64 桩代码"></a>trampoline_fmt_64 桩代码</h4><p>我们插入的代码按照白皮书所言，事实上插入的 trampoline_fmt_64 这段汇编代码等价于下面这三行代码</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">//生成随机值作为当前基本块的标号，作为当前位置</span><br><span class="line">//这个随机值是在程序编译的时候就已经确定了的，所以后续每次运行时每个基本快的标识是固定的</span><br><span class="line">cur_location = &lt;COMPILE_TIME_RANDOM&gt;;</span><br><span class="line">//在共享内存空间中对当前执行的边的计数器加一</span><br><span class="line">//注意这里操作的内存空间对应afl-fuzz中的trace_bits</span><br><span class="line">shared_mem[cur_location ^ prev_location]++; </span><br><span class="line">//将当前位置右移一位并赋值给前置位置</span><br><span class="line">prev_location = cur_location &gt;&gt; 1;</span><br></pre></td></tr></table></figure></div>
+
+<p>为什么这里要右移呢？是为了帮助我们判断基本块的执行顺序。<br>读到这里可能你可能仍然对这个边的概念仍然比较模糊，下面我用一个例子来详细解释一下：</p>
+
+<p>为了理解 main_playload 有必要详细的分析插入的 trampoline_fmt_64</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">_/* --- AFL TRAMPOLINE (64-BIT) --- */_</span><br><span class="line">.align 4</span><br><span class="line"></span><br><span class="line">leaq -(128+24)(%rsp), %rsp //栈顶下降（因为内存中栈往低地址也就是下方生长，所以此处意为栈增长了）</span><br><span class="line">movq %rdx,  0(%rsp) //存入rdx</span><br><span class="line">movq %rcx,  8(%rsp) //存入rcx</span><br><span class="line">movq %rax, 16(%rsp) //存入rax</span><br><span class="line">//将一个随机生成的值传入rcx，解释了 cur_location 的来历。它是随机生成的，现在存放在 rcx 寄存器中。</span><br><span class="line">//接下来调用 __afl_maybe_log ，可以猜测，它要实现「mem 自增」和「保存 prev_location」两项任务。</span><br><span class="line">movq <span class="variable">$0x</span>%08x, %%rcx </span><br><span class="line"> //调用__afl_maybe_log</span><br><span class="line">call __afl_maybe_log</span><br><span class="line">//恢复三个寄存器的值，栈顶上升</span><br><span class="line">movq 16(%rsp), %rax</span><br><span class="line">movq  8(%rsp), %rcx</span><br><span class="line">movq  0(%rsp), %rdx</span><br><span class="line">leaq (128+24)(%rsp), %rsp</span><br><span class="line">_/* --- END --- */_</span><br></pre></td></tr></table></figure></div>
+
+<p>上面这段代码调用了：</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line">// __afl_maybe_log的定义</span><br><span class="line">__afl_maybe_log:</span><br><span class="line">   lahf                  ; 将标志寄存器（flags register）的状态加载到 %ah 寄存器中</span><br><span class="line">   seto %al              ; 将溢出标志位设置到 %al 寄存器（如果溢出则 %al 置为 1，否则置为 0）</span><br><span class="line"></span><br><span class="line">   /* 检查 SHM 区域是否已经映射。*/</span><br><span class="line">   movl  __afl_area_ptr, %edx  ; 将全局变量 __afl_area_ptr 的值加载到 %edx 寄存器中</span><br><span class="line">   testl %edx, %edx       ; 测试 %edx 寄存器的值是否为零</span><br><span class="line">   je    __afl_setup      ; 如果 %edx 的值为零，跳转到 __afl_setup 标签</span><br><span class="line">   //跟上面代码是连续的，如果上面没有发生跳转就会顺序执行下面的代码</span><br><span class="line">__afl_store:</span><br><span class="line"></span><br><span class="line">  _/* Calculate and store hit <span class="keyword">for</span> the code location specified <span class="keyword">in</span> rcx. */_</span><br><span class="line"></span><br><span class="line">  xorq __afl_prev_loc(%rip), %rcx //将pre和cur异或</span><br><span class="line">  xorq %rcx, __afl_prev_loc(%rip) //通过异或的自反性将cur值存入pre中</span><br><span class="line">  shrq <span class="variable">$1</span>, __afl_prev_loc(%rip)   //pre右移一位</span><br><span class="line"></span><br><span class="line">  incb (%rdx, %rcx, 1) //命中计数器加一</span><br><span class="line"></span><br><span class="line">__afl_return:</span><br><span class="line"></span><br><span class="line">  addb <span class="variable">$127</span>, %al</span><br><span class="line">  sahf</span><br><span class="line">  ret</span><br></pre></td></tr></table></figure></div>
+
+<p><code>__afl_store</code> 执行过程为：</p>
+<ol>
+<li>将目前存储着 <code>cur_loc</code> 的 <code>rcx</code> 寄存器异或上 <code>prev_loc</code></li>
+<li>将 <code>prev_loc</code> 设为 <code>cur_loc</code> （这里利用了异或运算的自反性）</li>
+<li>将 <code>prev_loc</code> 右移一位</li>
+<li>增加 hit count<br>__afl_maybe_log 中存在两个指令 <code>lahf</code> 和 <code>seto  %al</code> ，这两行代码负责存储 eflags 寄存器的值——将低 8 位保存在 <code>ah</code>，将 OF 位保存在 <code>al</code>，<br>__afl_return 在代码中执行 <code>addb $127, %al</code> 和 <code>sahf</code> 恢复现场，<strong>使得整个桩代码对原程序透明</strong>。</li>
+</ol>
+<h4 id="main-playload-桩代码"><a href="#main-playload-桩代码" class="headerlink" title="main_playload 桩代码"></a>main_playload 桩代码</h4><p>在完成所有代码的写入后还会写入一段 main_playload</p>
+<p>这段汇编代码与 forkserver 模块息息相关，为了理解后面介绍的汇编代码，我们首先应该了解什么是 fork 函数。</p>
+<p>一个进程，包括代码、数据和分配给进程的资源。fork（）函数通过系统调用创建一个与原来进程几乎完全相同的进程，也就是两个进程可以做完全相同的事，但如果初始参数或者传入的变量不同，两个进程也可以做不同的事。</p>
+<p>一个进程调用 fork（）函数后，系统先给新的进程分配资源，例如存储数据和代码的空间。然后把原来的进程的所有值都复制到新的新进程中，只有少数值与原来的进程的值不同。相当于克隆了一个自己。</p>
+<p><strong>fork 调用的一个奇妙之处就是它仅仅被调用一次，却能够返回两次，它可能有三种不同的返回值：</strong><br>1）在父进程中，fork 返回新创建子进程的进程 ID；<br>2）在子进程中，fork 返回 0；<br>3）如果出现错误，fork 返回一个负值；</p>
+<p>在大致了解 fork 函数是个什么东西之后，我们就能开始看 main_payload 了。下面这段代码的主要作用是在被测程序的尾部插入 main_payload:</p>
+<div class="highlight-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (ins_lines)</span><br><span class="line">   fputs(use_64bit ? main_payload_64 : main_payload_32, outf);//插入main_playload与fork_server有关</span><br></pre></td></tr></table></figure></div>
+
+<p>为了理解什么是 fork_server，我们需要具体分析 main_payload，具体代码在 afl-as.h 里面<br>main_payload 代码如下，事实上我们稍加观察就能看到前面讨论的汇编代码其实存在于 main_payload 里面</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">.text</span><br><span class="line">.att_syntax</span><br><span class="line">.code64</span><br><span class="line">.align 8</span><br><span class="line"></span><br><span class="line">__afl_maybe_log:</span><br><span class="line"></span><br><span class="line">#if defined(__OpenBSD__)  || (defined(__FreeBSD__) &amp;&amp; (__FreeBSD__ &lt; 9))</span><br><span class="line">  .byte 0x9f /* lahf */</span><br><span class="line">#else</span><br><span class="line">  lahf</span><br><span class="line">#endif /* ^__OpenBSD__, etc */</span><br><span class="line">  seto  %al</span><br><span class="line"></span><br><span class="line">  /* Check if SHM region is already mapped. */</span><br><span class="line"></span><br><span class="line">  movq  __afl_area_ptr(%rip), %rdx</span><br><span class="line">  testq %rdx, %rdx</span><br><span class="line">  je    __afl_setup</span><br><span class="line"></span><br><span class="line">__afl_store:</span><br><span class="line"></span><br><span class="line">  /* Calculate and store hit for the code location specified in rcx. */</span><br><span class="line"></span><br><span class="line">#ifndef COVERAGE_ONLY</span><br><span class="line">  xorq __afl_prev_loc(%rip), %rcx</span><br><span class="line">  xorq %rcx, __afl_prev_loc(%rip)</span><br><span class="line">  shrq $1, __afl_prev_loc(%rip)</span><br><span class="line">#endif /* ^!COVERAGE_ONLY */</span><br><span class="line"></span><br><span class="line">#ifdef SKIP_COUNTS</span><br><span class="line">  orb  $1, (%rdx, %rcx, 1)</span><br><span class="line">#else</span><br><span class="line">  incb (%rdx, %rcx, 1)</span><br><span class="line">#endif /* ^SKIP_COUNTS */</span><br><span class="line"></span><br><span class="line">__afl_return:</span><br><span class="line"></span><br><span class="line">  addb $127, %al</span><br><span class="line">#if defined(__OpenBSD__)  || (defined(__FreeBSD__) &amp;&amp; (__FreeBSD__ &lt; 9))</span><br><span class="line">  .byte 0x9e /* sahf */</span><br><span class="line">#else</span><br><span class="line">  sahf</span><br><span class="line">#endif /* ^__OpenBSD__, etc */</span><br><span class="line">  ret</span><br><span class="line"></span><br><span class="line">.align 8</span><br><span class="line"></span><br><span class="line">__afl_setup:</span><br><span class="line"></span><br><span class="line">  /* Do not retry setup if we had previous failures. */</span><br><span class="line"></span><br><span class="line">  cmpb $0, __afl_setup_failure(%rip)</span><br><span class="line">  jne __afl_return</span><br><span class="line"></span><br><span class="line">  /* Check out if we have a global pointer on file. */</span><br><span class="line"></span><br><span class="line">#ifndef __APPLE__</span><br><span class="line">  movq  __afl_global_area_ptr@GOTPCREL(%rip), %rdx</span><br><span class="line">  movq  (%rdx), %rdx</span><br><span class="line">#else</span><br><span class="line">  movq  __afl_global_area_ptr(%rip), %rdx</span><br><span class="line">#endif /* !^__APPLE__ */</span><br><span class="line">  testq %rdx, %rdx</span><br><span class="line">  je    __afl_setup_first</span><br><span class="line"></span><br><span class="line">  movq %rdx, __afl_area_ptr(%rip)</span><br><span class="line">  jmp  __afl_store</span><br><span class="line"></span><br><span class="line">__afl_setup_first:</span><br><span class="line"></span><br><span class="line">  /* Save everything that is not yet saved and that may be touched by</span><br><span class="line">     getenv() and several other libcalls we&#x27;ll be relying on. */</span><br><span class="line"></span><br><span class="line">  leaq -352(%rsp), %rsp</span><br><span class="line"></span><br><span class="line">  movq %rax,   0(%rsp)</span><br><span class="line">  movq %rcx,   8(%rsp)</span><br><span class="line">  movq %rdi,  16(%rsp)</span><br><span class="line">  movq %rsi,  32(%rsp)</span><br><span class="line">  movq %r8,   40(%rsp)</span><br><span class="line">  movq %r9,   48(%rsp)</span><br><span class="line">  movq %r10,  56(%rsp)</span><br><span class="line">  movq %r11,  64(%rsp)</span><br><span class="line"></span><br><span class="line">  movq %xmm0,  96(%rsp)</span><br><span class="line">  movq %xmm1,  112(%rsp)</span><br><span class="line">  movq %xmm2,  128(%rsp)</span><br><span class="line">  movq %xmm3,  144(%rsp)</span><br><span class="line">  movq %xmm4,  160(%rsp)</span><br><span class="line">  movq %xmm5,  176(%rsp)</span><br><span class="line">  movq %xmm6,  192(%rsp)</span><br><span class="line">  movq %xmm7,  208(%rsp)</span><br><span class="line">  movq %xmm8,  224(%rsp)</span><br><span class="line">  movq %xmm9,  240(%rsp)</span><br><span class="line">  movq %xmm10, 256(%rsp)</span><br><span class="line">  movq %xmm11, 272(%rsp)</span><br><span class="line">  movq %xmm12, 288(%rsp)</span><br><span class="line">  movq %xmm13, 304(%rsp)</span><br><span class="line">  movq %xmm14, 320(%rsp)</span><br><span class="line">  movq %xmm15, 336(%rsp)</span><br><span class="line"></span><br><span class="line">  /* Map SHM, jumping to __afl_setup_abort if something goes wrong. */</span><br><span class="line"></span><br><span class="line">  /* The 64-bit ABI requires 16-byte stack alignment. We&#x27;ll keep the</span><br><span class="line">     original stack ptr in the callee-saved r12. */</span><br><span class="line"></span><br><span class="line">  pushq %r12</span><br><span class="line">  movq  %rsp, %r12</span><br><span class="line">  subq  $16, %rsp</span><br><span class="line">  andq  $0xfffffffffffffff0, %rsp</span><br><span class="line"></span><br><span class="line">  leaq .AFL_SHM_ENV(%rip), %rdi</span><br><span class="line">  CALL_L64(&quot;getenv&quot;)</span><br><span class="line"></span><br><span class="line">  testq %rax, %rax</span><br><span class="line">  je    __afl_setup_abort</span><br><span class="line"></span><br><span class="line">  movq  %rax, %rdi</span><br><span class="line">  CALL_L64(&quot;atoi&quot;)</span><br><span class="line"></span><br><span class="line">  xorq %rdx, %rdx   /* shmat flags    */</span><br><span class="line">  xorq %rsi, %rsi   /* requested addr */</span><br><span class="line">  movq %rax, %rdi   /* SHM ID         */</span><br><span class="line">  CALL_L64(&quot;shmat&quot;)</span><br><span class="line"></span><br><span class="line">  cmpq $-1, %rax</span><br><span class="line">  je   __afl_setup_abort</span><br><span class="line"></span><br><span class="line">  /* Store the address of the SHM region. */</span><br><span class="line"></span><br><span class="line">  movq %rax, %rdx</span><br><span class="line">  movq %rax, __afl_area_ptr(%rip)</span><br><span class="line"></span><br><span class="line">#ifdef __APPLE__</span><br><span class="line">  movq %rax, __afl_global_area_ptr(%rip)</span><br><span class="line">#else</span><br><span class="line">  movq __afl_global_area_ptr@GOTPCREL(%rip), %rdx</span><br><span class="line">  movq %rax, (%rdx)</span><br><span class="line">#endif /* ^__APPLE__ */</span><br><span class="line">  movq %rax, %rdx</span><br><span class="line"></span><br><span class="line">__afl_forkserver:</span><br><span class="line"></span><br><span class="line">  /* Enter the fork server mode to avoid the overhead of execve() calls. We</span><br><span class="line">     push rdx (area ptr) twice to keep stack alignment neat. */</span><br><span class="line"></span><br><span class="line">  pushq %rdx</span><br><span class="line">  pushq %rdx</span><br><span class="line"></span><br><span class="line">  /* Phone home and tell the parent that we&#x27;re OK. (Note that signals with</span><br><span class="line">     no SA_RESTART will mess it up). If this fails, assume that the fd is</span><br><span class="line">     closed because we were execve()d from an instrumented binary, or because</span><br><span class="line">     the parent doesn&#x27;t want to use the fork server. */</span><br><span class="line"></span><br><span class="line">  movq $4, %rdx               /* length    */</span><br><span class="line">  leaq __afl_temp(%rip), %rsi /* data      */</span><br><span class="line">  movq $6, %rdi       /* file desc */</span><br><span class="line">  CALL_L64(&quot;write&quot;)</span><br><span class="line"></span><br><span class="line">  cmpq $4, %rax</span><br><span class="line">  jne  __afl_fork_resume</span><br><span class="line"></span><br><span class="line">__afl_fork_wait_loop:</span><br><span class="line"></span><br><span class="line">  /* Wait for parent by reading from the pipe. Abort if read fails. */</span><br><span class="line"></span><br><span class="line">  movq $4, %rdx               /* length    */</span><br><span class="line">  leaq __afl_temp(%rip), %rsi /* data      */</span><br><span class="line">  movq $5, %rdi             /* file desc */</span><br><span class="line">  CALL_L64(&quot;read&quot;)</span><br><span class="line">  cmpq $4, %rax</span><br><span class="line">  jne  __afl_die</span><br><span class="line"></span><br><span class="line">  /* Once woken up, create a clone of our process. This is an excellent use</span><br><span class="line">     case for syscall(__NR_clone, 0, CLONE_PARENT), but glibc boneheadedly</span><br><span class="line">     caches getpid() results and offers no way to update the value, breaking</span><br><span class="line">     abort(), raise(), and a bunch of other things :-( */</span><br><span class="line"></span><br><span class="line">  CALL_L64(&quot;fork&quot;)</span><br><span class="line">  cmpq $0, %rax</span><br><span class="line">  jl   __afl_die</span><br><span class="line">  je   __afl_fork_resume</span><br><span class="line"></span><br><span class="line">  /* In parent process: write PID to pipe, then wait for child. */</span><br><span class="line"></span><br><span class="line">  movl %eax, __afl_fork_pid(%rip)</span><br><span class="line"></span><br><span class="line">  movq $4, %rdx                   /* length    */</span><br><span class="line">  leaq __afl_fork_pid(%rip), %rsi /* data      */</span><br><span class="line">  movq $6, %rdi             /* file desc */</span><br><span class="line">  CALL_L64(&quot;write&quot;)</span><br><span class="line"></span><br><span class="line">  movq $0, %rdx                   /* no flags  */</span><br><span class="line">  leaq __afl_temp(%rip), %rsi     /* status    */</span><br><span class="line">  movq __afl_fork_pid(%rip), %rdi /* PID       */</span><br><span class="line">  CALL_L64(&quot;waitpid&quot;)</span><br><span class="line">  cmpq $0, %rax</span><br><span class="line">  jle  __afl_die</span><br><span class="line"></span><br><span class="line">  /* Relay wait status to pipe, then loop back. */</span><br><span class="line"></span><br><span class="line">  movq $4, %rdx               /* length    */</span><br><span class="line">  leaq __afl_temp(%rip), %rsi /* data      */</span><br><span class="line">  movq $5, %rdi         /* file desc */</span><br><span class="line">  CALL_L64(&quot;write&quot;)</span><br><span class="line"></span><br><span class="line">  jmp  __afl_fork_wait_loop</span><br><span class="line"></span><br><span class="line">__afl_fork_resume:</span><br><span class="line"></span><br><span class="line">  /* In child process: close fds, resume execution. */</span><br><span class="line"></span><br><span class="line">  movq $5, %rdi</span><br><span class="line">  CALL_L64(&quot;close&quot;)</span><br><span class="line"></span><br><span class="line">  movq $6, %rdi</span><br><span class="line">  CALL_L64(&quot;close&quot;)</span><br><span class="line"></span><br><span class="line">  popq %rdx</span><br><span class="line">  popq %rdx</span><br><span class="line"></span><br><span class="line">  movq %r12, %rsp</span><br><span class="line">  popq %r12</span><br><span class="line"></span><br><span class="line">  movq  0(%rsp), %rax</span><br><span class="line">  movq  8(%rsp), %rcx</span><br><span class="line">  movq 16(%rsp), %rdi</span><br><span class="line">  movq 32(%rsp), %rsi</span><br><span class="line">  movq 40(%rsp), %r8</span><br><span class="line">  movq 48(%rsp), %r9</span><br><span class="line">  movq 56(%rsp), %r10</span><br><span class="line">  movq 64(%rsp), %r11</span><br><span class="line"></span><br><span class="line">  movq  96(%rsp), %xmm0</span><br><span class="line">  movq 112(%rsp), %xmm1</span><br><span class="line">  movq 128(%rsp), %xmm2</span><br><span class="line">  movq 144(%rsp), %xmm3</span><br><span class="line">  movq 160(%rsp), %xmm4</span><br><span class="line">  movq 176(%rsp), %xmm5</span><br><span class="line">  movq 192(%rsp), %xmm6</span><br><span class="line">  movq 208(%rsp), %xmm7</span><br><span class="line">  movq 224(%rsp), %xmm8</span><br><span class="line">  movq 240(%rsp), %xmm9</span><br><span class="line">  movq 256(%rsp), %xmm10</span><br><span class="line">  movq 272(%rsp), %xmm11</span><br><span class="line">  movq 288(%rsp), %xmm12</span><br><span class="line">  movq 304(%rsp), %xmm13</span><br><span class="line">  movq 320(%rsp), %xmm14</span><br><span class="line">  movq 336(%rsp), %xmm15</span><br><span class="line"></span><br><span class="line">  leaq 352(%rsp), %rsp</span><br><span class="line"></span><br><span class="line">  jmp  __afl_store</span><br><span class="line"></span><br><span class="line">__afl_die:</span><br><span class="line"></span><br><span class="line">  xorq %rax, %rax</span><br><span class="line">  CALL_L64(&quot;_exit&quot;)</span><br><span class="line"></span><br><span class="line">__afl_setup_abort:</span><br><span class="line"></span><br><span class="line">  /* Record setup failure so that we do not keep calling</span><br><span class="line">     shmget() / shmat() over and over again. */</span><br><span class="line">     </span><br><span class="line">  incb __afl_setup_failure(%rip)</span><br><span class="line"></span><br><span class="line">  movq %r12, %rsp</span><br><span class="line">  popq %r12</span><br><span class="line"></span><br><span class="line">  movq  0(%rsp), %rax</span><br><span class="line">  movq  8(%rsp), %rcx</span><br><span class="line">  movq 16(%rsp), %rdi</span><br><span class="line">  movq 32(%rsp), %rsi</span><br><span class="line">  movq 40(%rsp), %r8</span><br><span class="line">  movq 48(%rsp), %r9</span><br><span class="line">  movq 56(%rsp), %r10</span><br><span class="line">  movq 64(%rsp), %r11</span><br><span class="line"></span><br><span class="line">  movq  96(%rsp), %xmm0</span><br><span class="line">  movq 112(%rsp), %xmm1</span><br><span class="line">  movq 128(%rsp), %xmm2</span><br><span class="line">  movq 144(%rsp), %xmm3</span><br><span class="line">  movq 160(%rsp), %xmm4</span><br><span class="line">  movq 176(%rsp), %xmm5</span><br><span class="line">  movq 192(%rsp), %xmm6</span><br><span class="line">  movq 208(%rsp), %xmm7</span><br><span class="line">  movq 224(%rsp), %xmm8</span><br><span class="line">  movq 240(%rsp), %xmm9</span><br><span class="line">  movq 256(%rsp), %xmm10</span><br><span class="line">  movq 272(%rsp), %xmm11</span><br><span class="line">  movq 288(%rsp), %xmm12</span><br><span class="line">  movq 304(%rsp), %xmm13</span><br><span class="line">  movq 320(%rsp), %xmm14</span><br><span class="line">  movq 336(%rsp), %xmm15</span><br><span class="line"></span><br><span class="line">  leaq 352(%rsp), %rsp</span><br><span class="line"></span><br><span class="line">  jmp __afl_return</span><br><span class="line"></span><br><span class="line">.AFL_VARS:</span><br><span class="line"></span><br><span class="line">#ifdef __APPLE__</span><br><span class="line"></span><br><span class="line">  .comm   __afl_area_ptr, 8</span><br><span class="line">#ifndef COVERAGE_ONLY</span><br><span class="line">  .comm   __afl_prev_loc, 8</span><br><span class="line">#endif /* !COVERAGE_ONLY */</span><br><span class="line">  .comm   __afl_fork_pid, 4</span><br><span class="line">  .comm   __afl_temp, 4</span><br><span class="line">  .comm   __afl_setup_failure, 1</span><br><span class="line"></span><br><span class="line">#else</span><br><span class="line"></span><br><span class="line">  .lcomm   __afl_area_ptr, 8</span><br><span class="line">#ifndef COVERAGE_ONLY</span><br><span class="line">  .lcomm   __afl_prev_loc, 8</span><br><span class="line">#endif /* !COVERAGE_ONLY */</span><br><span class="line">  .lcomm   __afl_fork_pid, 4</span><br><span class="line">  .lcomm   __afl_temp, 4</span><br><span class="line">  .lcomm   __afl_setup_failure, 1</span><br><span class="line"></span><br><span class="line">#endif /* ^__APPLE__ */</span><br><span class="line"></span><br><span class="line">  .comm    __afl_global_area_ptr, 8, 8</span><br><span class="line"></span><br><span class="line">.AFL_SHM_ENV:</span><br><span class="line">  .asciz &quot;AFL_SHM_ENV&quot;</span><br><span class="line"></span><br><span class="line">/* --- END --- */</span><br></pre></td></tr></table></figure></div>
+
+<p>从汇编中，我们看到，如果 <code>__afl_area_ptr</code> 等于 0，则认为 shm 没有映射好，进入 <code>__afl_setup</code> 逻辑。这里提一句， <code>afl_area_ptr</code> 这个 8 字节的变量是定义在 main payload 的末尾，一个 <code>.lcomm</code> 伪指令。在汇编阶段完成后，它被放在 <code>.bss</code> 段。</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">//只有当afl_maybe_log中je  __afl_setup执行时才会跳转到这部分代码</span><br><span class="line">//__afl_setup的定义,应注意64为汇编代码与32位存在差异，这里分析的是64位版本的</span><br><span class="line">__afl_setup:</span><br><span class="line"></span><br><span class="line">  /* Do not retry setup if we had previous failures. */</span><br><span class="line"></span><br><span class="line">  cmpb $0, __afl_setup_failure(%rip)</span><br><span class="line">  jne __afl_return</span><br><span class="line"></span><br><span class="line">  /* Check out if we have a global pointer on file. */</span><br><span class="line">  movq  __afl_global_area_ptr(%rip), %rdx</span><br><span class="line"></span><br><span class="line">  testq %rdx, %rdx</span><br><span class="line">  je    __afl_setup_first</span><br><span class="line"></span><br><span class="line">  movq %rdx, __afl_area_ptr(%rip)</span><br><span class="line">  jmp  __afl_store</span><br></pre></td></tr></table></figure></div>
+
+<p>首先，如果发现 <code>__afl_setup_failure</code> 变量不等于 0，则直接返回；接着，尝试从 GOT 表中取 <code>__afl_global_area_ptr</code>，如果发现有值，则用其覆盖 <code>__afl_area_ptr</code> ，跳转到 <code>__afl_store</code> ，执行常规的 hit count++；如果发现 GOT 表中的这个 <code>__afl_global_area_ptr</code> 指针为 0，则跳转到 <code>__afl_setup_first</code> ，开始初始化共享内存区域。</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">__afl_setup_first:</span><br><span class="line"></span><br><span class="line">  _/* Save everything that is not yet saved and that may be touched by</span><br><span class="line">__     getenv() and several other libcalls we&#x27;ll be relying on. */_</span><br><span class="line">//这里基本就是保存寄存器的值方便之后恢复现场</span><br><span class="line">  leaq -352(%rsp), %rsp</span><br><span class="line"></span><br><span class="line">  movq %rax,   0(%rsp)</span><br><span class="line">  movq %rcx,   8(%rsp)</span><br><span class="line">  movq %rdi,  16(%rsp)</span><br><span class="line">  movq %rsi,  32(%rsp)</span><br><span class="line">  movq %r8,   40(%rsp)</span><br><span class="line">  movq %r9,   48(%rsp)</span><br><span class="line">  movq %r10,  56(%rsp)</span><br><span class="line">  movq %r11,  64(%rsp)</span><br><span class="line"></span><br><span class="line">  movq %xmm0,  96(%rsp)</span><br><span class="line">  movq %xmm1,  112(%rsp)</span><br><span class="line">  movq %xmm2,  128(%rsp)</span><br><span class="line">  movq %xmm3,  144(%rsp)</span><br><span class="line">  movq %xmm4,  160(%rsp)</span><br><span class="line">  movq %xmm5,  176(%rsp)</span><br><span class="line">  movq %xmm6,  192(%rsp)</span><br><span class="line">  movq %xmm7,  208(%rsp)</span><br><span class="line">  movq %xmm8,  224(%rsp)</span><br><span class="line">  movq %xmm9,  240(%rsp)</span><br><span class="line">  movq %xmm10, 256(%rsp)</span><br><span class="line">  movq %xmm11, 272(%rsp)</span><br><span class="line">  movq %xmm12, 288(%rsp)</span><br><span class="line">  movq %xmm13, 304(%rsp)</span><br><span class="line">  movq %xmm14, 320(%rsp)</span><br><span class="line">  movq %xmm15, 336(%rsp)</span><br><span class="line"></span><br><span class="line">  _/* Map SHM, jumping to __afl_setup_abort if something goes wrong. */_</span><br><span class="line"></span><br><span class="line">  _/* The 64-bit ABI requires 16-byte stack alignment. We&#x27;ll keep the</span><br><span class="line">__     original stack ptr in the callee-saved r12. */_</span><br><span class="line">//　保存 r12 寄存器的值；然后用 r12 寄存器记录原始的 rsp；把 rsp 减去 16，并清空最低 4 bit。</span><br><span class="line">//  注释中提到，根据 [ABI](https://docs.oracle.com/cd/E19253-01/816-5138/fcowb/index.html) 要求，栈地址要做 16 字节对齐。这样一顿操作之后， rsp 一定是 16 的倍数了。</span><br><span class="line">  pushq %r12</span><br><span class="line">  movq  %rsp, %r12</span><br><span class="line">  subq  $16, %rsp</span><br><span class="line">  andq  $0xfffffffffffffff0, %rsp</span><br><span class="line"></span><br><span class="line">  leaq .AFL_SHM_ENV(%rip), %rdi</span><br><span class="line">call getenv@PLT</span><br><span class="line">//如果没有获取到环境变量就会转入abort进行错误处理</span><br><span class="line">  testq %rax, %rax</span><br><span class="line">  je    __afl_setup_abort</span><br><span class="line"></span><br><span class="line">。。。。。。后续还有但是先看看错误处理代码吧</span><br></pre></td></tr></table></figure></div>
+
+<p>我们先来看看错误处理代码：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">__afl_setup_abort:</span><br><span class="line"></span><br><span class="line">  /* Record setup failure so that we do not keep calling</span><br><span class="line">     shmget() / shmat() over and over again. */</span><br><span class="line">     </span><br><span class="line">  incb __afl_setup_failure(%rip)</span><br><span class="line"></span><br><span class="line">  movq %r12, %rsp</span><br><span class="line">  popq %r12</span><br><span class="line"></span><br><span class="line">  movq  0(%rsp), %rax</span><br><span class="line">  movq  8(%rsp), %rcx</span><br><span class="line">  movq 16(%rsp), %rdi</span><br><span class="line">  movq 32(%rsp), %rsi</span><br><span class="line">  movq 40(%rsp), %r8</span><br><span class="line">  movq 48(%rsp), %r9</span><br><span class="line">  movq 56(%rsp), %r10</span><br><span class="line">  movq 64(%rsp), %r11</span><br><span class="line"></span><br><span class="line">  movq  96(%rsp), %xmm0</span><br><span class="line">  movq 112(%rsp), %xmm1</span><br><span class="line">  movq 128(%rsp), %xmm2</span><br><span class="line">  movq 144(%rsp), %xmm3</span><br><span class="line">  movq 160(%rsp), %xmm4</span><br><span class="line">  movq 176(%rsp), %xmm5</span><br><span class="line">  movq 192(%rsp), %xmm6</span><br><span class="line">  movq 208(%rsp), %xmm7</span><br><span class="line">  movq 224(%rsp), %xmm8</span><br><span class="line">  movq 240(%rsp), %xmm9</span><br><span class="line">  movq 256(%rsp), %xmm10</span><br><span class="line">  movq 272(%rsp), %xmm11</span><br><span class="line">  movq 288(%rsp), %xmm12</span><br><span class="line">  movq 304(%rsp), %xmm13</span><br><span class="line">  movq 320(%rsp), %xmm14</span><br><span class="line">  movq 336(%rsp), %xmm15</span><br><span class="line"></span><br><span class="line">  leaq 352(%rsp), %rsp</span><br><span class="line"></span><br><span class="line">  jmp __afl_return</span><br></pre></td></tr></table></figure></div>
+
+<p>上面这段代码就是把 <code>__afl_setup_failure</code> 变量自增，还原所有寄存器并返回。至此，我们发现，如果环境变量 <code>__AFL_SHM_ID</code> 不存在，则共享内存的初始化会失败，但整个桩代码对于目标程序是透明的——无非是保存了一些寄存器、执行了一些无副作用的代码、最后恢复寄存器——因此目标程序可以正常执行。这也解释了为何我们不使用 <code>afl-fuzz</code> 而直接运行插桩后的目标程序，也能执行如常。这个设计体现了 AFL 的用户友好性。</p>
+<p>好了我们看回 setup_first 后续的代码：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">_<span class="comment">/* 此时 %rax 是指向环境变量 __AFL_SHM_ID 的指针  */</span>_</span><br><span class="line">  movq  <span class="operator">%</span>rax, <span class="operator">%</span>rdi</span><br><span class="line"><span class="keyword">call</span> atoi<span class="variable">@PLT</span> <span class="operator">/</span><span class="operator">/</span> 将id转化为整数</span><br><span class="line"></span><br><span class="line">  xorq <span class="operator">%</span>rdx, <span class="operator">%</span>rdx   _<span class="comment">/* shmat flags    */</span>_</span><br><span class="line">  xorq <span class="operator">%</span>rsi, <span class="operator">%</span>rsi   _<span class="comment">/* requested addr */</span>_</span><br><span class="line">  movq <span class="operator">%</span>rax, <span class="operator">%</span>rdi   _<span class="comment">/* SHM ID         */</span>_</span><br><span class="line"><span class="keyword">call</span> shmat<span class="variable">@PLT</span> <span class="operator">/</span><span class="operator">/</span>调用库函数创建共享内存</span><br><span class="line"></span><br><span class="line">  cmpq $<span class="number">-1</span>, <span class="operator">%</span>rax</span><br><span class="line">  je   __afl_setup_abort</span><br></pre></td></tr></table></figure></div>
+
+<p><code>shmat</code> 是 shared memory attach 的缩写，用于 attach 共享内存。&#x2F;&#x2F;如果想了解这些函数需要阅读 linux 相关的文档或数据</p>
+<p>这里简单的介绍 shmget 和 shmat 函数：</p>
+<blockquote>
+</blockquote>
+<p><code>shmget</code> 和 <code>shmat</code> 是用于在 Unix&#x2F;Linux 系统上进行进程间共享内存的系统调用。它们通常用于在多个进程之间共享数据，而无需通过进程间通信的其他方式来传递信息。</p>
+<blockquote>
+<ol>
+<li><code>shmget</code> 函数：</li>
+</ol>
+</blockquote>
+<ul>
+<li><code>shmget</code> 用于创建共享内存段或获取已经存在的共享内存段的标识符。</li>
+<li>原型：<code>int shmget(key_t key, size_t size, int shmflg);</code></li>
+<li><code>key</code> 是用于标识共享内存段的键值。</li>
+<li><code>size</code> 指定共享内存的大小。</li>
+<li><code>shmflg</code> 是一组标志，用于指定共享内存的访问权限和行为。</li>
+</ul>
+<blockquote>
+<ol start="2">
+<li><code>shmat</code> 函数：</li>
+</ol>
+</blockquote>
+<ul>
+<li><code>shmat</code> 用于将共享内存段连接到调用进程的地址空间。</li>
+<li>原型：<code>void *shmat(int shmid, const void *shmaddr, int shmflg);</code></li>
+<li><code>shmid</code> 是由 <code>shmget</code> 返回的共享内存标识符。</li>
+<li><code>shmaddr</code> 是指定共享内存连接到进程地址空间的位置，通常设为 <code>NULL</code> 以由系统选择适当的位置。</li>
+<li><code>shmflg</code> 包含连接共享内存的选项。</li>
+</ul>
+<blockquote>
+<p>关于父子进程的问题，一般情况下，如果你希望共享内存在父子进程之间共享数据，那么在每个进程中都需要调用 <code>shmat</code> 进行连接。这是因为每个进程有自己独立的地址空间，共享内存需要被映射到每个进程的地址空间中。<br>请注意，当一个进程结束时，它使用的共享内存不会自动被释放。你需要在每个进程中调用 <code>shmdt</code> 来断开连接，并且在不再需要共享内存时调用 <code>shmctl</code> 来删除共享内存段。<br>总之，在父子进程中都需要调用 <code>shmat</code> 来连接共享内存，除非你有其他特定的设计需求。</p>
+</blockquote>
+<blockquote>
+<p>shmat 函数的返回值是共享内存起点的位置。若 attach 失败，则返回 −1。<br>上面的汇编代码中，如果发现 attach 失败，则进入 AFL 的错误处理流程。不过读到这里，我们有一个小疑问：一片共享内存，首先应当由 <code>shmget()</code> 创建，再由 <code>shmat()</code> 映射到当前程序的虚拟内存空间中。那么，<strong>这片<strong><strong>虚拟内存</strong></strong>是什么时候创建的？</strong>答案是 <code>afl-fuzz</code> 在 <code>setup_shm()</code> 流程中调用 <code>shmget()</code> 创建了虚拟内存，并将 shm id 写入 <code>__AFL_SHM_ID</code> 环境变量。如果我们并非通过 <code>afl-fuzz</code> 运行程序，自然这片虚拟内存不会被创建，也不会存在 <code>__AFL_SHM_ID</code> 环境变量了。<br>至此，程序成功地将 <code>afl-fuzz</code> 进程所创建的一片共享内存，映射到了自己的虚拟地址空间内。接着看汇编：</p>
+</blockquote>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">_/* Store the address of the SHM region. */_</span><br><span class="line"></span><br><span class="line">  movq %rax, %rdx</span><br><span class="line">  movq %rax, __afl_area_ptr(%rip)</span><br><span class="line"></span><br><span class="line">  movq __afl_global_area_ptr@GOTPCREL(%rip), %rdx</span><br><span class="line">  movq %rax, (%rdx)</span><br><span class="line">  movq %rax, %rdx</span><br><span class="line"></span><br><span class="line">__afl_forkserver:</span><br><span class="line">_/* ...... */_</span><br></pre></td></tr></table></figure></div>
+
+<p>将共享内存地址读入__afl_area_ptr，以及全局变量__afl_global_area_ptr。这两个变量存在什么区别呢？<br>可以看到，<code>__afl_area_ptr</code> 是一个 <code>lcomm</code>，而 <code>__afl_global_area_ptr</code> 是一个 <code>comm</code> 。根据一篇 <a class="link" href="https://stackoverflow.com/questions/34157895/asm-what-is-a-local-common-area-and-difference-between-lcomm-and-comm">Stackoverflow 问答 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>，<code>lcomm</code> 有点类似于全局 static 变量，不同文件中的重名 <code>lcomm</code> 是指向不同的地址；但 <code>comm</code> 有点类似于全局变量，不同文件中的重名 <code>comm</code> 指向同一个地址。</p>
+<p>因此，这个问题的解答是：假如目标程序是多份代码链接形成的，那么，每份汇编文件都拥有 AFL main payload；对于编译出的每个代码片段，都会有自己对应的 <code>__afl_area_ptr</code> 。但 <code>__afl_global_area_ptr</code> 只有一份，只需要优先参考 <code>__afl_global_area_ptr</code> ，就能让所有桩代码访问的 shm 保持一致。</p>
+<p><strong>接下来我们就进入到 forkserver 相关代码了</strong></p>
+<p>forkserver 中为了提高执行效率，采用了 copy-on-write 技术</p>
+<p>Copy-on-write (COW) 是一种内存管理技术，其核心思想是在需要修改数据时才会进行实际的复制操作，而在此之前，多个引用会共享相同的数据。这种方式可以节省内存，并提高性能，特别是在涉及大型数据结构时。</p>
+<p>具体而言，当多个进程或线程共享相同的资源（如内存区域）时，初始阶段它们都指向同一个数据块。只有在其中一个尝试修改数据时，才会触发实际的数据复制，确保修改操作不会影响其他引用。这种延迟复制的方式有效减少了不必要的数据复制，提高了系统的效率。</p>
+<p>在操作系统和编程语言中，COW 技术通常应用于以下场景：</p>
+<p>总体而言，COW 技术是一种优化策略，通过延迟数据复制来降低内存开销，提高系统性能。</p>
+<p>显而易见的是，这里我们主要是把这个技术应用于进程复制。</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">__afl_forkserver:</span><br><span class="line"></span><br><span class="line">  _<span class="comment">/* Enter the fork server mode to avoid the overhead of execve() calls. We</span></span><br><span class="line"><span class="comment">__     push rdx (area ptr) twice to keep stack alignment neat. */</span>_</span><br><span class="line"></span><br><span class="line">  _<span class="comment">/* 此时 %rdx 内保存 shm 地址 */</span>_</span><br><span class="line">  pushq <span class="operator">%</span>rdx</span><br><span class="line">  pushq <span class="operator">%</span>rdx</span><br><span class="line"></span><br><span class="line">  _<span class="comment">/* Phone home and tell the parent that we&#x27;re OK. (Note that signals with</span></span><br><span class="line"><span class="comment">     no SA_RESTART will mess it up). If this fails, assume that the fd is</span></span><br><span class="line"><span class="comment">     closed because we were execve()d from an instrumented binary, or because</span></span><br><span class="line"><span class="comment">__     the parent doesn&#x27;t want to use the fork server. */</span>_</span><br><span class="line"></span><br><span class="line">  movq $<span class="number">4</span>, <span class="operator">%</span>rdx               _<span class="comment">/* length    */</span>_</span><br><span class="line">  leaq __afl_temp(<span class="operator">%</span>rip), <span class="operator">%</span>rsi _<span class="comment">/* data      */</span>_</span><br><span class="line">  movq $(<span class="number">198</span> <span class="operator">+</span> <span class="number">1</span>), <span class="operator">%</span>rdi       _<span class="comment">/* file desc */</span>_</span><br><span class="line"><span class="keyword">call</span> write<span class="variable">@PLT</span></span><br><span class="line"></span><br><span class="line">  cmpq $<span class="number">4</span>, <span class="operator">%</span>rax</span><br><span class="line">  jne  __afl_fork_resume</span><br><span class="line"></span><br><span class="line">__afl_fork_wait_loop:</span><br><span class="line">_<span class="comment">/* ...... */</span>_</span><br></pre></td></tr></table></figure></div>
+
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">把 shm 地址连续压栈两次（以保证 esp 仍然是 16 的倍数），然后调用 `write(198+1, __afl_temp, 4)`。其中，198 这一 magic number，是 `config.h` 中的 `FORKSRV_FD` 常量。fork server 使用 198、199 这两个 fd 传递指令。而 `__afl_temp` 是 bss 段的长度 4 字节的变量。</span><br></pre></td></tr></table></figure></div>
+
+<p>这里需要说明的是，如果想要理解 198 和 199 这两个 fd（文件描述符），我们首先需要了解 linux 中的 pipe 函数，它是用于进程间通信的函数，存在两个文件描述符，分别对应写入端与读出端。管道是一个单向的队列。在 afl_fuzz.c 文件中大概率会存在该函数的调用，建议先了解完这个函数再往后看。</p>
+<p>　　如果这四个字节写入失败（<code>write()</code> 的返回不等于 4），则直接进入 <code>__afl_fork_resume</code> 逻辑；否则，进入 <code>__afl_fork_wait_loop</code> 逻辑。</p>
+<p>　　跟进 <code>__afl_fork_wait_loop</code>：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">__afl_fork_wait_loop:</span><br><span class="line"></span><br><span class="line">  _/* Wait for parent by reading from the pipe. Abort if read fails. */_</span><br><span class="line"></span><br><span class="line">  movq $4, %rdx               _/* length    */_</span><br><span class="line">  leaq __afl_temp(%rip), %rsi _/* data      */_</span><br><span class="line">  movq $198, %rdi             _/* file desc */_</span><br><span class="line">call read@PLT</span><br><span class="line">  cmpq $4, %rax</span><br><span class="line">  jne  __afl_die</span><br></pre></td></tr></table></figure></div>
+
+<p>从 fd 198 中读取四个字节（注意 <code>read()</code> 函数是阻塞的）。如果读取失败，则跳转到 <code>__afl_die</code>。如果读取成功，则执行下面的代码：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">_<span class="comment">/* Once woken up, create a clone of our process. This is an excellent use</span></span><br><span class="line"><span class="comment">     case for syscall(__NR_clone, 0, CLONE_PARENT), but glibc boneheadedly</span></span><br><span class="line"><span class="comment">     caches getpid() results and offers no way to update the value, breaking</span></span><br><span class="line"><span class="comment">__     abort(), raise(), and a bunch of other things :-( */</span>_</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>因为fork函数的特性，如果是子进程调用该函数，返回值为<span class="number">0</span>，所以子进程会执行__afl_fork_resume</span><br><span class="line"><span class="keyword">call</span> fork<span class="variable">@PLT</span></span><br><span class="line">  cmpq $<span class="number">0</span>, <span class="operator">%</span>rax</span><br><span class="line">  jl   __afl_die</span><br><span class="line">  je   __afl_fork_resume</span><br></pre></td></tr></table></figure></div>
+
+<p>在这里进行 fork，如果失败了则跳转到 <code>__afl_die</code>。对于子进程，跳转到 <code>__afl_fork_resume</code> ；对于父进程，则继续执行以下逻辑：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">_<span class="comment">/* In parent process: write PID to pipe, then wait for child. */</span>_</span><br><span class="line"></span><br><span class="line">  movl <span class="operator">%</span>eax, __afl_fork_pid(<span class="operator">%</span>rip)</span><br><span class="line"></span><br><span class="line">  movq $<span class="number">4</span>, <span class="operator">%</span>rdx                   _<span class="comment">/* length    */</span>_</span><br><span class="line">  leaq __afl_fork_pid(<span class="operator">%</span>rip), <span class="operator">%</span>rsi _<span class="comment">/* data      */</span>_</span><br><span class="line">  movq $(<span class="number">198</span> <span class="operator">+</span> <span class="number">1</span>), <span class="operator">%</span>rdi             _<span class="comment">/* file desc */</span>_</span><br><span class="line"><span class="keyword">call</span> write<span class="variable">@PLT</span></span><br><span class="line"></span><br><span class="line">  movq $<span class="number">0</span>, <span class="operator">%</span>rdx                   _<span class="comment">/* no flags  */</span>_</span><br><span class="line">  leaq __afl_temp(<span class="operator">%</span>rip), <span class="operator">%</span>rsi     _<span class="comment">/* status    */</span>_</span><br><span class="line">  movq __afl_fork_pid(<span class="operator">%</span>rip), <span class="operator">%</span>rdi _<span class="comment">/* PID       */</span>_</span><br><span class="line"><span class="keyword">call</span> waitpid<span class="variable">@PLT</span></span><br><span class="line">  cmpq $<span class="number">0</span>, <span class="operator">%</span>rax</span><br><span class="line">  jle  __afl_die</span><br><span class="line"></span><br><span class="line">  _<span class="comment">/* Relay wait status to pipe, then loop back. */</span>_</span><br><span class="line"></span><br><span class="line">  movq $<span class="number">4</span>, <span class="operator">%</span>rdx               _<span class="comment">/* length    */</span>_</span><br><span class="line">  leaq __afl_temp(<span class="operator">%</span>rip), <span class="operator">%</span>rsi _<span class="comment">/* data      */</span>_</span><br><span class="line">  movq $(<span class="number">198</span> <span class="operator">+</span> <span class="number">1</span>), <span class="operator">%</span>rdi         _<span class="comment">/* file desc */</span>_</span><br><span class="line"><span class="keyword">call</span> write<span class="variable">@PLT</span></span><br><span class="line"></span><br><span class="line">  jmp  __afl_fork_wait_loop</span><br></pre></td></tr></table></figure></div>
+
+<p>这段代码逻辑是：将子进程的 pid 保存到 <code>__afl_fork_pid</code> 变量；向 fd 199 写入子进程的 pid；调用 <code>waitpid()</code> 等待子进程执行完毕（如果等待失败，则进入 <code>__afl_die</code>）；将子进程的退出原因写进 fd 199，并回到 <code>__afl_fork_wait_loop</code>。</p>
+<p>之前提到，fork 之后，子进程会跳转到 <code>__afl_fork_resume</code> 逻辑。跟进：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">__afl_fork_resume:</span><br><span class="line"></span><br><span class="line">  _<span class="comment">/* In child process: close fds, resume execution. */</span>_</span><br><span class="line"></span><br><span class="line">  movq $<span class="number">198</span>, <span class="operator">%</span>rdi</span><br><span class="line"><span class="keyword">call</span> <span class="keyword">close</span><span class="variable">@PLT</span></span><br><span class="line"></span><br><span class="line">  movq $(<span class="number">198</span> <span class="operator">+</span> <span class="number">1</span>), <span class="operator">%</span>rdi</span><br><span class="line"><span class="keyword">call</span> <span class="keyword">close</span><span class="variable">@PLT</span></span><br><span class="line"></span><br><span class="line">  popq <span class="operator">%</span>rdx</span><br><span class="line">  popq <span class="operator">%</span>rdx</span><br><span class="line"></span><br><span class="line">  movq <span class="operator">%</span>r12, <span class="operator">%</span>rsp</span><br><span class="line">  popq <span class="operator">%</span>r12</span><br><span class="line"></span><br><span class="line">  movq  <span class="number">0</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>rax</span><br><span class="line">  movq  <span class="number">8</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>rcx</span><br><span class="line">  movq <span class="number">16</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>rdi</span><br><span class="line">  movq <span class="number">32</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>rsi</span><br><span class="line">  movq <span class="number">40</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>r8</span><br><span class="line">  movq <span class="number">48</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>r9</span><br><span class="line">  movq <span class="number">56</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>r10</span><br><span class="line">  movq <span class="number">64</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>r11</span><br><span class="line"></span><br><span class="line">  movq  <span class="number">96</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm0</span><br><span class="line">  movq <span class="number">112</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm1</span><br><span class="line">  movq <span class="number">128</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm2</span><br><span class="line">  movq <span class="number">144</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm3</span><br><span class="line">  movq <span class="number">160</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm4</span><br><span class="line">  movq <span class="number">176</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm5</span><br><span class="line">  movq <span class="number">192</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm6</span><br><span class="line">  movq <span class="number">208</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm7</span><br><span class="line">  movq <span class="number">224</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm8</span><br><span class="line">  movq <span class="number">240</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm9</span><br><span class="line">  movq <span class="number">256</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm10</span><br><span class="line">  movq <span class="number">272</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm11</span><br><span class="line">  movq <span class="number">288</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm12</span><br><span class="line">  movq <span class="number">304</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm13</span><br><span class="line">  movq <span class="number">320</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm14</span><br><span class="line">  movq <span class="number">336</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>xmm15</span><br><span class="line"></span><br><span class="line">  leaq <span class="number">352</span>(<span class="operator">%</span>rsp), <span class="operator">%</span>rsp</span><br><span class="line"></span><br><span class="line">  jmp  __afl_store</span><br></pre></td></tr></table></figure></div>
+
+<p>很明显这里主要做的是恢复现场的工作，首先关闭父进程中开启的两个用于传递信息的文件，然后恢复各个寄存器的值，最后跳转到 <code>__afl_store</code>。而 <code>__afl_store</code> 在增加 hit count 之后，跳转回 AFL 往基本块头部插入的桩代码——到此为止，子进程恢复所有状态，开始了程序中第一个基本块的执行。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><blockquote>
+<p><strong>所以回顾一下之前的内容，forkserver 是在程序一开始就执行的么？这几段代码是如何实现让程序停在了第一个<strong><strong>基本块</strong></strong>的位置的？又是如何唤醒<strong><strong>子进程</strong></strong>让其开始执行的？copy_and_write 技术在这段汇编代码中体现在哪里呢？</strong><br>AFL main payload 设计得相当精妙。它让程序在第一个基本块处停下，初始化共享内存，并每次从这个位置 fork 出子进程、恢复程序状态、继续执行业务逻辑；子进程执行完后，fork server 则向 fuzzer 报告执行情况，开始新一轮执行。通过 fork server，AFL 得以避免频繁的 <code>execve</code> 调用，从而提升了 fuzz 效率。<br>　　共享内存由 <code>afl-fuzz</code> 程序建立，其 shm id 记录在环境变量 <code>__AFL_SHM_ID</code> 中。目标程序初始化时，会将这块共享内存 attach 到自己的虚拟地址空间，从而 <code>afl-fuzz</code> 进程可以统计 hit count。<br>　　fork server 的动作由 <code>afl-fuzz</code> 进程控制。目标程序与 <code>afl-fuzz</code> 透过 fd 传递信息——fd 198 用于 fuzzer 向 fork server 发送启动指令，fd 199 用于 fork server 向 fuzzer 报告子进程的 pid 和执行结果。<br>　　与直觉相反，一个运行超时的子进程，并不是由 fork server 结束的，而是由 <code>afl-fuzz</code> 结束的。这些内容要等到我们阅读 <code>afl-fuzz.c</code> 时才能细致掌握。</p>
+</blockquote>
+<p>　　总之，我们已经阅读完了 <code>afl-gcc.c</code> 和 <code>afl-as.c</code> 这两份代码，对插桩过程有了详细的了解。</p>
+<p>afl 中存在另外两种插桩模式，但是因为我主要关注 fuzz 流程的优化，所以这里暂时先看看 afl_fuzz.c 文件吧。</p>
+<h1 id="AFL-的-Fuzzer-afl-fuzz-c"><a href="#AFL-的-Fuzzer-afl-fuzz-c" class="headerlink" title="AFL 的 Fuzzer: afl-fuzz.c"></a>AFL 的 Fuzzer: afl-fuzz.c</h1><h2 id="文件概述：-2"><a href="#文件概述：-2" class="headerlink" title="文件概述："></a>文件概述：</h2><p>afl_fuzz.c 是 afl 的核心文件，也是代码量最大的程序。在该文件中负责控制整个 fuzz 的流程。<br>main 函数中的内容大概可以划分为四个部分：</p>
+<ol>
+<li>模糊测试开始前的准备阶段</li>
+<li>模糊测试开始前的第一次 dry_run</li>
+<li>死循环前的准备</li>
+<li>进行模糊测试的死循环</li>
+<li>收尾工作</li>
+</ol>
+<h2 id="源码：-2"><a href="#源码：-2" class="headerlink" title="源码："></a>源码：</h2><p>这里开始会分段的说明 main 函数中的代码</p>
+<h3 id="模糊测试开始前的准备阶段"><a href="#模糊测试开始前的准备阶段" class="headerlink" title="模糊测试开始前的准备阶段"></a>模糊测试开始前的准备阶段</h3><h4 id="用户输入参数处理"><a href="#用户输入参数处理" class="headerlink" title="用户输入参数处理"></a>用户输入参数处理</h4><p>main 函数首先出现的是处理用户输入参数的代码</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">while ((opt <span class="operator">=</span> getopt(argc, argv, &quot;+i:o:f:m:b:t:T:dnCB:S:M:x:QV&quot;)) <span class="operator">&gt;</span> <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">   switch (opt) &#123;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;i&#x27;</span>: <span class="comment">/* input dir */</span></span><br><span class="line"></span><br><span class="line">       if (in_dir) FATAL(&quot;Multiple -i options not supported&quot;);</span><br><span class="line">       in_dir <span class="operator">=</span> optarg;</span><br><span class="line"></span><br><span class="line">       if (<span class="operator">!</span>strcmp(in_dir, &quot;-&quot;)) in_place_resume <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;o&#x27;</span>: <span class="comment">/* output dir */</span></span><br><span class="line"></span><br><span class="line">       if (out_dir) FATAL(&quot;Multiple -o options not supported&quot;);</span><br><span class="line">       out_dir <span class="operator">=</span> optarg;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;M&#x27;</span>: &#123; <span class="comment">/* master sync ID */</span></span><br><span class="line"></span><br><span class="line">         u8<span class="operator">*</span> c;</span><br><span class="line"></span><br><span class="line">         if (sync_id) FATAL(&quot;Multiple -S or -M options not supported&quot;);</span><br><span class="line">         sync_id <span class="operator">=</span> ck_strdup(optarg);</span><br><span class="line"></span><br><span class="line">         if ((c <span class="operator">=</span> strchr(sync_id, <span class="string">&#x27;:&#x27;</span>))) &#123;</span><br><span class="line"></span><br><span class="line">           <span class="operator">*</span>c <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">           if (sscanf(c <span class="operator">+</span> <span class="number">1</span>, &quot;%u/%u&quot;, <span class="operator">&amp;</span>master_id, <span class="operator">&amp;</span>master_max) <span class="operator">!=</span> <span class="number">2</span> <span class="operator">||</span></span><br><span class="line">               <span class="operator">!</span>master_id <span class="operator">||</span> <span class="operator">!</span>master_max <span class="operator">||</span> master_id <span class="operator">&gt;</span> master_max <span class="operator">||</span></span><br><span class="line">               master_max <span class="operator">&gt;</span> <span class="number">1000000</span>) FATAL(&quot;Bogus master ID passed to -M&quot;);</span><br><span class="line"></span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         force_deterministic <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;S&#x27;</span>: </span><br><span class="line"></span><br><span class="line">       if (sync_id) FATAL(&quot;Multiple -S or -M options not supported&quot;);</span><br><span class="line">       sync_id <span class="operator">=</span> ck_strdup(optarg);</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;f&#x27;</span>: <span class="comment">/* target file */</span></span><br><span class="line"></span><br><span class="line">       if (out_file) FATAL(&quot;Multiple -f options not supported&quot;);</span><br><span class="line">       out_file <span class="operator">=</span> optarg;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;x&#x27;</span>: <span class="comment">/* dictionary */</span></span><br><span class="line"></span><br><span class="line">       if (extras_dir) FATAL(&quot;Multiple -x options not supported&quot;);</span><br><span class="line">       extras_dir <span class="operator">=</span> optarg;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;t&#x27;</span>: &#123; <span class="comment">/* timeout */</span></span><br><span class="line"></span><br><span class="line">         u8 suffix <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">         if (timeout_given) FATAL(&quot;Multiple -t options not supported&quot;);</span><br><span class="line"></span><br><span class="line">         if (sscanf(optarg, &quot;%u%c&quot;, <span class="operator">&amp;</span>exec_tmout, <span class="operator">&amp;</span>suffix) <span class="operator">&lt;</span> <span class="number">1</span> <span class="operator">||</span></span><br><span class="line">             optarg[<span class="number">0</span>] <span class="operator">=</span><span class="operator">=</span> <span class="string">&#x27;-&#x27;</span>) FATAL(&quot;Bad syntax used for -t&quot;);</span><br><span class="line"></span><br><span class="line">         if (exec_tmout <span class="operator">&lt;</span> <span class="number">5</span>) FATAL(&quot;Dangerously low value of -t&quot;);</span><br><span class="line"></span><br><span class="line">         if (suffix <span class="operator">=</span><span class="operator">=</span> <span class="string">&#x27;+&#x27;</span>) timeout_given <span class="operator">=</span> <span class="number">2</span>; <span class="keyword">else</span> timeout_given <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">         break;</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;m&#x27;</span>: &#123; <span class="comment">/* mem limit */</span></span><br><span class="line"></span><br><span class="line">         u8 suffix <span class="operator">=</span> <span class="string">&#x27;M&#x27;</span>;</span><br><span class="line"></span><br><span class="line">         if (mem_limit_given) FATAL(&quot;Multiple -m options not supported&quot;);</span><br><span class="line">         mem_limit_given <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">         if (<span class="operator">!</span>strcmp(optarg, &quot;none&quot;)) &#123;</span><br><span class="line"></span><br><span class="line">           mem_limit <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">           break;</span><br><span class="line"></span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         if (sscanf(optarg, &quot;%llu%c&quot;, <span class="operator">&amp;</span>mem_limit, <span class="operator">&amp;</span>suffix) <span class="operator">&lt;</span> <span class="number">1</span> <span class="operator">||</span></span><br><span class="line">             optarg[<span class="number">0</span>] <span class="operator">=</span><span class="operator">=</span> <span class="string">&#x27;-&#x27;</span>) FATAL(&quot;Bad syntax used for -m&quot;);</span><br><span class="line"></span><br><span class="line">         switch (suffix) &#123;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">case</span> <span class="string">&#x27;T&#x27;</span>: mem_limit <span class="operator">*</span><span class="operator">=</span> <span class="number">1024</span> <span class="operator">*</span> <span class="number">1024</span>; break;</span><br><span class="line">           <span class="keyword">case</span> <span class="string">&#x27;G&#x27;</span>: mem_limit <span class="operator">*</span><span class="operator">=</span> <span class="number">1024</span>; break;</span><br><span class="line">           <span class="keyword">case</span> <span class="string">&#x27;k&#x27;</span>: mem_limit <span class="operator">/</span><span class="operator">=</span> <span class="number">1024</span>; break;</span><br><span class="line">           <span class="keyword">case</span> <span class="string">&#x27;M&#x27;</span>: break;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">default</span>:  FATAL(&quot;Unsupported suffix or bad syntax for -m&quot;);</span><br><span class="line"></span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         if (mem_limit <span class="operator">&lt;</span> <span class="number">5</span>) FATAL(&quot;Dangerously low value of -m&quot;);</span><br><span class="line"></span><br><span class="line">         if (sizeof(rlim_t) <span class="operator">=</span><span class="operator">=</span> <span class="number">4</span> <span class="operator">&amp;&amp;</span> mem_limit <span class="operator">&gt;</span> <span class="number">2000</span>)</span><br><span class="line">           FATAL(&quot;Value of -m out of range on 32-bit systems&quot;);</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       break;</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;b&#x27;</span>: &#123; <span class="comment">/* bind CPU core */</span></span><br><span class="line"></span><br><span class="line">         if (cpu_to_bind_given) FATAL(&quot;Multiple -b options not supported&quot;);</span><br><span class="line">         cpu_to_bind_given <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">         if (sscanf(optarg, &quot;%u&quot;, <span class="operator">&amp;</span>cpu_to_bind) <span class="operator">&lt;</span> <span class="number">1</span> <span class="operator">||</span></span><br><span class="line">             optarg[<span class="number">0</span>] <span class="operator">=</span><span class="operator">=</span> <span class="string">&#x27;-&#x27;</span>) FATAL(&quot;Bad syntax used for -b&quot;);</span><br><span class="line"></span><br><span class="line">         break;</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;d&#x27;</span>: <span class="comment">/* skip deterministic */</span></span><br><span class="line"></span><br><span class="line">       if (skip_deterministic) FATAL(&quot;Multiple -d options not supported&quot;);</span><br><span class="line">       skip_deterministic <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">       use_splicing <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;B&#x27;</span>: <span class="comment">/* load bitmap */</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">/* This is a secret undocumented option! It is useful if you find</span></span><br><span class="line"><span class="comment">          an interesting test case during a normal fuzzing process, and want</span></span><br><span class="line"><span class="comment">          to mutate it without rediscovering any of the test cases already</span></span><br><span class="line"><span class="comment">          found during an earlier run.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          To use this mode, you need to point -B to the fuzz_bitmap produced</span></span><br><span class="line"><span class="comment">          by an earlier run for the exact same binary... and that&#x27;s it.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">          I only used this once or twice to get variants of a particular</span></span><br><span class="line"><span class="comment">          file, so I&#x27;m not making this an official setting. */</span></span><br><span class="line"></span><br><span class="line">       if (in_bitmap) FATAL(&quot;Multiple -B options not supported&quot;);</span><br><span class="line"></span><br><span class="line">       in_bitmap <span class="operator">=</span> optarg;</span><br><span class="line">       read_bitmap(in_bitmap);</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;C&#x27;</span>: <span class="comment">/* crash mode */</span></span><br><span class="line"></span><br><span class="line">       if (crash_mode) FATAL(&quot;Multiple -C options not supported&quot;);</span><br><span class="line">       crash_mode <span class="operator">=</span> FAULT_CRASH;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;n&#x27;</span>: <span class="comment">/* dumb mode */</span></span><br><span class="line"></span><br><span class="line">       if (dumb_mode) FATAL(&quot;Multiple -n options not supported&quot;);</span><br><span class="line">       if (getenv(&quot;AFL_DUMB_FORKSRV&quot;)) dumb_mode <span class="operator">=</span> <span class="number">2</span>; <span class="keyword">else</span> dumb_mode <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;T&#x27;</span>: <span class="comment">/* banner */</span></span><br><span class="line"></span><br><span class="line">       if (use_banner) FATAL(&quot;Multiple -T options not supported&quot;);</span><br><span class="line">       use_banner <span class="operator">=</span> optarg;</span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;Q&#x27;</span>: <span class="comment">/* QEMU mode */</span></span><br><span class="line"></span><br><span class="line">       if (qemu_mode) FATAL(&quot;Multiple -Q options not supported&quot;);</span><br><span class="line">       qemu_mode <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">       if (<span class="operator">!</span>mem_limit_given) mem_limit <span class="operator">=</span> MEM_LIMIT_QEMU;</span><br><span class="line"></span><br><span class="line">       break;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">case</span> <span class="string">&#x27;V&#x27;</span>: <span class="comment">/* Show version number */</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">/* Version number has been printed already, just quit. */</span></span><br><span class="line">       exit(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">     <span class="keyword">default</span>:</span><br><span class="line"></span><br><span class="line">       usage(argv[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到函数对各个可选参数进行操作，具体的参数说明如下：<br>{暂时空缺}<br>这里面有两个个人认为比较重要的函数：setup_shm()和 read_testcase()<br>这个函数负责创建共享内存，这里创建的共享内存就是之前介绍过的 afl-gcc 中的共享内存。所以为了理解 afl-gcc 与 afl-fuzz 间如何建立共享内存，有必要再看看这个函数</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Append new test case to the queue. */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> void add_to_queue(u8<span class="operator">*</span> fname, u32 len, u8 passed_det) &#123;</span><br><span class="line"></span><br><span class="line">  struct queue_entry<span class="operator">*</span> q <span class="operator">=</span> ck_alloc(sizeof(struct queue_entry));</span><br><span class="line"></span><br><span class="line">  q<span class="operator">-</span><span class="operator">&gt;</span>fname        <span class="operator">=</span> fname;</span><br><span class="line">  q<span class="operator">-</span><span class="operator">&gt;</span>len          <span class="operator">=</span> len;</span><br><span class="line">  q<span class="operator">-</span><span class="operator">&gt;</span>depth        <span class="operator">=</span> cur_depth <span class="operator">+</span> <span class="number">1</span>;</span><br><span class="line">  q<span class="operator">-</span><span class="operator">&gt;</span>passed_det   <span class="operator">=</span> passed_det;</span><br><span class="line"></span><br><span class="line">  if (q<span class="operator">-</span><span class="operator">&gt;</span>depth <span class="operator">&gt;</span> max_depth) max_depth <span class="operator">=</span> q<span class="operator">-</span><span class="operator">&gt;</span>depth;</span><br><span class="line"></span><br><span class="line">  if (queue_top) &#123;</span><br><span class="line"></span><br><span class="line">    queue_top<span class="operator">-</span><span class="operator">&gt;</span>next <span class="operator">=</span> q;</span><br><span class="line">    queue_top <span class="operator">=</span> q;</span><br><span class="line"></span><br><span class="line">  &#125; <span class="keyword">else</span> q_prev100 <span class="operator">=</span> queue <span class="operator">=</span> queue_top <span class="operator">=</span> q;</span><br><span class="line"></span><br><span class="line">  queued_paths<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line">  pending_not_fuzzed<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line"></span><br><span class="line">  cycles_wo_finds <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Set next_100 pointer for every 100th element (index 0, 100, etc) to allow faster iteration. */</span></span><br><span class="line">  if ((queued_paths <span class="operator">-</span> <span class="number">1</span>) <span class="operator">%</span> <span class="number">100</span> <span class="operator">=</span><span class="operator">=</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> queued_paths <span class="operator">&gt;</span> <span class="number">1</span>) &#123;</span><br><span class="line"></span><br><span class="line">    q_prev100<span class="operator">-</span><span class="operator">&gt;</span>next_100 <span class="operator">=</span> q;</span><br><span class="line">    q_prev100 <span class="operator">=</span> q;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  last_path_time <span class="operator">=</span> get_cur_time();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="perform-dry-run"><a href="#perform-dry-run" class="headerlink" title="perform_dry_run()"></a>perform_dry_run()</h3><p><code>perform_dry_run</code> 是 AFL 中的一种预处理步骤，它的目的是在进行正常的模糊测试之前执行一次“干跑”（dry run）。这个干跑的主要目的有以下几点：<br><strong>确定执行路径：</strong> 干跑能够帮助 AFL 确定程序的一些基本执行路径。在正常的干跑中，AFL 不进行变异，只是简单地运行程序，监测其执行路径。这有助于建立一个基本的执行路径图，作为测试的起点。<br><strong>初始化<strong><strong>基本块</strong></strong>计数：</strong> AFL 使用基本块计数（basic block counting）的方式来评估测试用例的质量。在干跑中，AFL 可以初始化基本块计数，为之后的正常模糊测试建立基准。<br><strong>提高变异效率：</strong> 干跑可以帮助 AFL 识别程序中的一些基本块，从而有助于在变异阶段集中精力变异那些尚未被探索的执行路径。这有助于提高变异的效率，使测试更有可能发现新的执行路径。<br><strong>筛选不良样本：</strong> 干跑还可以用于筛选掉一些“不良”样本，例如那些导致程序崩溃或无法正常执行的输入。这有助于确保在正常的模糊测试中使用的样本是有效的，从而提高测试效率。<br>总体而言，perform_dry_run 是一个预处理步骤，通过一次简单的运行来收集一些基本信息，以便更好地引导正常的模糊测试过程，提高测试效率，发现更多的执行路径和潜在的漏洞。</p>
+<p>这个函数主要分为两步：</p>
+<blockquote>
+<p>AFL 关键函数:<code>calibrate_case(char** argv, struct queue_entry* q, u8* use_mem,u32 handicap, u8 from_queue)</code> 校准一个新的测试用例。这是在处理输入目录时完成的，以便在早期就警告有问题的测试用例;当发现新的路径来检测变量行为等等。<br>这个函数是 AFL 的重点函数之一，在 <code>perform_dry_run，save_if_interesting，fuzz_one，pilot_fuzzing,core_fuzzing</code> 函数中均有调用。</p>
+<p><strong>步骤：</strong></p>
+<ol>
+<li>进行一系列参数设置，包括当前阶段 stage_cur，阶段名称 stage_name，新比特 new_bit 等初始化设置。</li>
+<li>最后一个参数_from_queue_，判断是否是为队列中的 || 刚恢复 fuzz 以此设置较长的时间延迟。testcase 参数_q-&gt;cal_failed++_ 是否校准失败参数 ++</li>
+<li>判断是否已经启动 forkserver ,调用函数 <code>init_forkserver()</code> 启动 fork 服务。如果是第一次接触 linux<br>中 fork()函数，不妨看一下 <a class="link" href="https://www.cnblogs.com/dongguolei/p/8086346.html">https://www.cnblogs.com/dongguolei/p/8086346.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 该函数的理解，<code>init_forkserver()</code> 的详细内容见 2.4</li>
+<li>拷贝 trace_bits 到 first_trace,并获取开始时间 start_us；</li>
+<li>-loop- 该 loop 循环多次执行这个 testcase，循环的次数 8 次或者 3 次，取决于是否快速校准。_对同一个初始 testcase 多次运行的意义可能是，觉得有些 targetApp 执行同一个 testcase 可能也会出现不同的路径（这是我的猜测_）</li>
+<li><code>static void write_to_testcase(void* mem, u32 len)</code> 将修改后的数据写入文件进行测试。如果 use_stdin 被清除了，那么取消旧文件链接并创建一个新文件。否则，prog_in_fd 将被缩短。将 testcase 写入到文件中去。该函数较简单，不做单独解释。</li>
+<li><code>run_target</code> 详细内容见 2.5 主要作用是通知 forkserver 可以开始 fork 并且 fuzz 了。</li>
+<li><code>cksum = hash32(trace_bits, MAP_SIZE, HASH_CONST)</code> 校验此次运行的 trace_bits，检查是否出现新的情况。hash32 函数较为简单，不多做分析。</li>
+<li>这段代码的主要意思是先用 cksum 也就是本次运行的出现 trace_bits 哈希和本次 testcase q-&gt;exec_cksum 对比。如果发现不同，则调用 <code>has_new_bits</code> 函数(见 2.6)和我们的总表_virgin_bits_ 对比。</li>
+<li>判断_q-&gt;exec_cksum_ 是否为 0，不为 0 那说明不是第一次执行。后面运行的时候如果，和前面第一次 trace_bits 结果不同，则需要多运行几次。这里把校准次数设为 40…</li>
+<li>-loop-end-</li>
+<li>接着收集一些关于这个测试用例性能的统计数据。比如执行时间延迟，校准错误？，bitmap 大小等等。</li>
+<li><code>update_bitmap_score(q)</code> 对这个测试用例的每一个 byte 进行排序，用一个 top_rate[]来维护它的最佳入口。维护完成之后，我们这个函数在  我并不认可博客中的这个解释，我的理解在下面具体介绍函数时说明。</li>
+<li>如果这种情况没有从检测中得到 new_bit，则告诉父程序。这是一个无关紧要的问题，但是需要提醒用户注意。<br><strong>总结：</strong><code>calibratecase</code> 函数到此为止，该函数主要用途是 init_forkserver；将 testcase 运行多次；用 update_bitmap_score 进行初始的 byte 排序。<br>函数 calibrate_case()函数之所以重要，是因为里面又涉及四个十分关键的函数：</li>
+</ol>
+</blockquote>
+<ol>
+<li>init_forkserver() 负责创建 forkserver</li>
+<li>run_target()  负责把测试用例输入并执行被测程序</li>
+<li>has_new_bits()判断有没有检测到新的基本块</li>
+<li>update_bitmap_score()根据运行结果对各个元组选择一个最佳的测试用例</li>
+</ol>
+<h5 id="init-forkserver"><a href="#init-forkserver" class="headerlink" title="init_forkserver()"></a>init_forkserver()</h5><p>这个函数很长，主要分为创建子进程、子进程执行的代码、父进程与子进程进行通信并根据子进程返回结果向用户报告 forkserver 创建结果<br>首先函数通过 fork 函数创建子进程</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Spin up fork server (instrumented mode only). The idea is explained here:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   http://lcamtuf.blogspot.com/2014/10/fuzzing-binaries-without-execve.html</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   In essence, the instrumentation allows us to skip execve(), and just keep</span></span><br><span class="line"><span class="comment">   cloning a stopped child. So, we just execute once, and then send commands</span></span><br><span class="line"><span class="comment">   through a pipe. The other part of this logic is in afl-as.h. */</span></span><br><span class="line"></span><br><span class="line">EXP_ST void init_forkserver(<span class="type">char</span><span class="operator">*</span><span class="operator">*</span> argv) &#123;<span class="operator">/</span><span class="operator">/</span>理论上来讲这里应该执行execve()函数，然后开始fork,这里的代码是如何与afl_as中关联起来的呢？</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> struct itimerval it;</span><br><span class="line">  <span class="type">int</span> st_pipe[<span class="number">2</span>], ctl_pipe[<span class="number">2</span>];</span><br><span class="line">  <span class="type">int</span> status;</span><br><span class="line">  s32 rlen;</span><br><span class="line"></span><br><span class="line">  ACTF(&quot;Spinning up the fork server...&quot;);</span><br><span class="line"></span><br><span class="line">  if (pipe(st_pipe) <span class="operator">||</span> pipe(ctl_pipe)) PFATAL(&quot;pipe() failed&quot;);</span><br><span class="line"></span><br><span class="line">  forksrv_pid <span class="operator">=</span> fork();<span class="operator">/</span><span class="operator">/</span>创建子进程</span><br><span class="line"></span><br><span class="line">  if (forksrv_pid <span class="operator">&lt;</span> <span class="number">0</span>) PFATAL(&quot;fork() failed&quot;);</span><br></pre></td></tr></table></figure></div>
+
+<p>然后就会通过一个条件判断语句让子进程执行自己的代码</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">if (!forksrv_pid) &#123;//当为子进程时，因为子进程运行fork()返回值为0</span><br><span class="line"></span><br><span class="line">    struct rlimit r;</span><br><span class="line"></span><br><span class="line">    //针对OpenBSD的特殊处理，不用看</span><br><span class="line">    /*------------------------------------------------------------------------------------*/</span><br><span class="line"></span><br><span class="line">    /* Umpf. On OpenBSD, the default fd limit for root users is set to</span><br><span class="line">       soft 128. Let&#x27;s try to fix that... */</span><br><span class="line"></span><br><span class="line">    if (!getrlimit(RLIMIT_NOFILE, &amp;r) &amp;&amp; r.rlim_cur &lt; FORKSRV_FD + 2) &#123;</span><br><span class="line"></span><br><span class="line">      r.rlim_cur = FORKSRV_FD + 2;</span><br><span class="line">      setrlimit(RLIMIT_NOFILE, &amp;r); /* Ignore errors */</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (mem_limit) &#123;</span><br><span class="line"></span><br><span class="line">      r.rlim_max = r.rlim_cur = ((rlim_t)mem_limit) &lt;&lt; 20;</span><br><span class="line"></span><br><span class="line">#ifdef RLIMIT_AS</span><br><span class="line"></span><br><span class="line">      setrlimit(RLIMIT_AS, &amp;r); /* Ignore errors */</span><br><span class="line"></span><br><span class="line">#else</span><br><span class="line"></span><br><span class="line">      /* This takes care of OpenBSD, which doesn&#x27;t have RLIMIT_AS, but</span><br><span class="line">         according to reliable sources, RLIMIT_DATA covers anonymous</span><br><span class="line">         maps - so we should be getting good protection against OOM bugs. */</span><br><span class="line"></span><br><span class="line">      setrlimit(RLIMIT_DATA, &amp;r); /* Ignore errors */</span><br><span class="line"></span><br><span class="line">#endif /* ^RLIMIT_AS */</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    //针对OpenBSD的特殊处理结束</span><br><span class="line">/*------------------------------------------------------------------------------------*/</span><br><span class="line">    /* Dumping cores is slow and can lead to anomalies if SIGKILL is delivered</span><br><span class="line">       before the dump is complete. */</span><br><span class="line"></span><br><span class="line">    r.rlim_max = r.rlim_cur = 0;</span><br><span class="line"></span><br><span class="line">    setrlimit(RLIMIT_CORE, &amp;r); /* Ignore errors */</span><br><span class="line"></span><br><span class="line">    /* Isolate the process and configure standard descriptors. If out_file is</span><br><span class="line">       specified, stdin is /dev/null; otherwise, out_fd is cloned instead. */</span><br><span class="line"></span><br><span class="line">    setsid();</span><br><span class="line">    /*设置守护进程，执行这条语句后，子进程成为领头进程，不再受终端影响</span><br><span class="line">    其实这里我们创建的子进程就转生成为forkserver进程了，负责创建新的</span><br><span class="line">    子进程进行模糊测试。值得一提的是虽然我们让forkserver成为了领头进程，但之前创建的</span><br><span class="line">    父子进程之间的管道仍然可用，所以父进程还是可以和forkserver进程进行通信的*/</span><br><span class="line">    </span><br><span class="line">    //创建设置管道</span><br><span class="line">    dup2(dev_null_fd, 1);</span><br><span class="line">    dup2(dev_null_fd, 2);</span><br><span class="line"></span><br><span class="line">    if (out_file) &#123;</span><br><span class="line"></span><br><span class="line">      dup2(dev_null_fd, 0);</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line"></span><br><span class="line">      dup2(out_fd, 0);</span><br><span class="line">      close(out_fd);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /* Set up control and status pipes, close the unneeded original fds. */</span><br><span class="line"></span><br><span class="line">    if (dup2(ctl_pipe[0], FORKSRV_FD) &lt; 0) PFATAL(&quot;dup2() failed&quot;);</span><br><span class="line">    if (dup2(st_pipe[1], FORKSRV_FD + 1) &lt; 0) PFATAL(&quot;dup2() failed&quot;);</span><br><span class="line"></span><br><span class="line">    close(ctl_pipe[0]);</span><br><span class="line">    close(ctl_pipe[1]);</span><br><span class="line">    close(st_pipe[0]);</span><br><span class="line">    close(st_pipe[1]);</span><br><span class="line"></span><br><span class="line">    close(out_dir_fd);</span><br><span class="line">    close(dev_null_fd);</span><br><span class="line">    close(dev_urandom_fd);</span><br><span class="line">    close(fileno(plot_file));</span><br><span class="line">    </span><br><span class="line">    //一堆获取环境变量的操作</span><br><span class="line">    /* This should improve performance a bit, since it stops the linker from</span><br><span class="line">       doing extra work post-fork(). */</span><br><span class="line"></span><br><span class="line">    if (!getenv(&quot;LD_BIND_LAZY&quot;)) setenv(&quot;LD_BIND_NOW&quot;, &quot;1&quot;, 0);</span><br><span class="line"></span><br><span class="line">    /* Set sane defaults for ASAN if nothing else specified. */</span><br><span class="line"></span><br><span class="line">    setenv(&quot;ASAN_OPTIONS&quot;, &quot;abort_on_error=1:&quot;</span><br><span class="line">                           &quot;detect_leaks=0:&quot;</span><br><span class="line">                           &quot;symbolize=0:&quot;</span><br><span class="line">                           &quot;allocator_may_return_null=1&quot;, 0);</span><br><span class="line"></span><br><span class="line">    /* MSAN is tricky, because it doesn&#x27;t support abort_on_error=1 at this</span><br><span class="line">       point. So, we do this in a very hacky way. */</span><br><span class="line"></span><br><span class="line">    setenv(&quot;MSAN_OPTIONS&quot;, &quot;exit_code=&quot; STRINGIFY(MSAN_ERROR) &quot;:&quot;</span><br><span class="line">                           &quot;symbolize=0:&quot;</span><br><span class="line">                           &quot;abort_on_error=1:&quot;</span><br><span class="line">                           &quot;allocator_may_return_null=1:&quot;</span><br><span class="line">                           &quot;msan_track_origins=0&quot;, 0);</span><br><span class="line"></span><br><span class="line">    execv(target_path, argv);</span><br><span class="line">    //执行被测程序，这里的参数是作为本函数的参数传入的；</span><br><span class="line">    //这里就会开始执行已经插桩的被测程序，被测程序中的汇编代码将通过管道与forkserver进程通信</span><br><span class="line">    /* </span><br><span class="line">             execv()会替换原有进程空间为目标程序，所以后续执行的都是目标程序。</span><br><span class="line">             第一个目标程序会进入__afl_maybe_log里的__afl_fork_wait_loop，并充当fork server。</span><br><span class="line">             在整个过程中，每次要fuzz一次目标程序，都会从这个fork server再fork出来一个子进程去fuzz。</span><br><span class="line">             因此可以看作是三段式：fuzzer -&gt; fork server -&gt; target子进程</span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">    /* Use a distinctive bitmap signature to tell the parent about execv()</span><br><span class="line">       falling through. */</span><br><span class="line"></span><br><span class="line">    *(u32*)trace_bits = EXEC_FAIL_SIG;//通过在共享内存中写入信号表示forkserver执行完毕</span><br><span class="line">    exit(0);//子进程退出</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  //子进程执行部分结束</span><br></pre></td></tr></table></figure></div>
+
+<p>然后就是父进程需要干的活了，首先父进程会设置一下管道，并且等待 forkserver 的创建结果</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Close the unneeded endpoints. */</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">close</span>(ctl_pipe[<span class="number">0</span>]);</span><br><span class="line"> <span class="keyword">close</span>(st_pipe[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line"> fsrv_ctl_fd <span class="operator">=</span> ctl_pipe[<span class="number">1</span>];<span class="operator">/</span><span class="operator">/</span> 父进程只能发送命令</span><br><span class="line"> fsrv_st_fd  <span class="operator">=</span> st_pipe[<span class="number">0</span>]; <span class="operator">/</span><span class="operator">/</span> 父进程只能读取状态</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="comment">/* Wait for the fork server to come up, but don&#x27;t wait too long. */</span></span><br><span class="line"></span><br><span class="line"> it.it_value.tv_sec <span class="operator">=</span> ((exec_tmout <span class="operator">*</span> FORK_WAIT_MULT) <span class="operator">/</span> <span class="number">1000</span>);</span><br><span class="line"> it.it_value.tv_usec <span class="operator">=</span> ((exec_tmout <span class="operator">*</span> FORK_WAIT_MULT) <span class="operator">%</span> <span class="number">1000</span>) <span class="operator">*</span> <span class="number">1000</span>;</span><br><span class="line"></span><br><span class="line"> setitimer(ITIMER_REAL, <span class="operator">&amp;</span>it, <span class="keyword">NULL</span>);</span><br><span class="line"></span><br><span class="line"> rlen <span class="operator">=</span> read(fsrv_st_fd, <span class="operator">&amp;</span>status, <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line"> it.it_value.tv_sec <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"> it.it_value.tv_usec <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> setitimer(ITIMER_REAL, <span class="operator">&amp;</span>it, <span class="keyword">NULL</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p>之后父进程会根据 forkserver 的创建结果对用户进行反馈，代码很多这里就不贴出来了。其实就是把错误信息打到屏幕上。<br>forkserver 的相关机制可以参考下面这段</p>
+<blockquote>
+<p><strong>实际流程：</strong>fuzzer(调用 init_forkserver)-&gt;fork fueezer–targetApp(forkserver) call fork -&gt;targetAppfork(实际 fuzz 的程序)。fuzzer 还是实际 fuzzer 程序的祖父进程。这样接下来的代码就很容易理解了</p>
+
+<p>下图可以很好的总结 forkserver 和被 fuzzed 程序之间的状态。</p>
+
+<p>首先 alf-fuzz 会创建两个管道(init_forkserver())，然后会去执行 afl-gcc 编译出来的目标程序。结合之前的分析，目标程序的 main 函数位置已经被插桩，程序的控制流会交到_afl_maybe_log 手中。如 fuzz 是第一次运行，则此时的程序便成为了 fuzz server，之后运行的目标程序都是由该 server fork 出来的子进程。fuzz 进行的时候，fuzz server 会一直 fork 子进程，并且将子进程的结束状态通过 pipe 传递给 afl-fuzz。<br>这里有几点需要注意：afl 在这里利用了 fork()的特性(creates a new process by duplicating the calling process)来实现目标程序反复执行。实际的 fuzz server(_afl_maybe_log)由 afl 事先插桩在目标程序中，在进入 main 函数之前，fuzz server 便会 fork()新的进程，进行 fuzz。</p>
+</blockquote>
+<h5 id="run-target"><a href="#run-target" class="headerlink" title="run_target()"></a>run_target()</h5><p>我们再上一个函数中已经创建了一个 forkserver，这个函数主要就是通知 forkserver 运行目标程序。这个函数也是挺长的，并且需要处理 dumb 模式的情况。</p>
+<blockquote>
+<p>在 AFL（American Fuzzy Lop）中，<code>dumb_mode</code> 是一种模式，用于指示 AFL 在模糊测试中是否启用 “dumb 模式”。Dumb 模式是一种简单的测试模式，它通常用于一些特殊的情况或调试目的。<br>在 Dumb 模式下，AFL 不会使用其复杂的启发式策略，而是采用一种简单的测试策略。具体来说，Dumb 模式中 AFL 通常会采用随机测试或其他基本的测试生成方法，而不使用更复杂的输入变异或路径导向的测试生成技术。<br>让我们看看这个函数的代码吧</p>
+</blockquote>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Execute target application, monitoring for timeouts. Return status</span></span><br><span class="line"><span class="comment">   information. The called program will update trace_bits[]. */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> u8 run_target(<span class="type">char</span><span class="operator">*</span><span class="operator">*</span> argv, u32 timeout) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> struct itimerval it;</span><br><span class="line">  <span class="keyword">static</span> u32 prev_timed_out <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">static</span> u64 exec_ms <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> status <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  u32 tb4;</span><br><span class="line"></span><br><span class="line">  child_timed_out <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* After this memset, trace_bits[] are effectively volatile, so we</span></span><br><span class="line"><span class="comment">     must prevent any earlier operations from venturing into that</span></span><br><span class="line"><span class="comment">     territory. */</span></span><br><span class="line"></span><br><span class="line">  memset(trace_bits, <span class="number">0</span>, MAP_SIZE); <span class="operator">/</span><span class="operator">/</span>将trace_bits中数据归零</span><br><span class="line">  MEM_BARRIER();<span class="operator">/</span><span class="operator">/</span>插入内存屏障，这个概念不是很懂，需要查一下</span><br></pre></td></tr></table></figure></div>
+
+<p>首先函数创建了一些变量，最为关键的，这里对 trace_bits 这个关键的共享变量进行了初始化以及并行保护。确保共享数据的一致性和可预测性是非常重要的，因此这些初始化和同步操作是为了提供正确的并发行为。<br>因为我不太在意 dumb 模式，所以这里就跳过 dumb 相关的代码了。程序之后会通过管道通知 forkserver 开始干活，并获取创建的子进程的 pid，并根据返回结果通知 calibrate_case()执行结果</p>
+<h5 id="has-new-bits"><a href="#has-new-bits" class="headerlink" title="has_new_bits()"></a>has_new_bits()</h5><blockquote>
+<p>检查当前执行路径是否为 virgin_bits 带来了新内容。更新 virgin_bits 以反映发现。如果唯一更改的是特定元组的命中计数，则返回 1;如果有新的元组出现，则返回 2。更新 virgin_bits，这样后续调用该函数将始终返回 0。<br>这个函数是在相当大的缓冲区上的每个 exec()之后调用的，因此它需要非常快。我们以 32 位和 64 位的方式做这件事。</p>
+</blockquote>
+<h5 id="update-bitmap-score"><a href="#update-bitmap-score" class="headerlink" title="update_bitmap_score()"></a>update_bitmap_score()</h5><p>这个函数不长，为了理解这个函数我们首先应该明确两个变量。<br>trace_bits 是字节数组，是共享内存，记录了一个测试用例执行过的边。trace_bits[i]就是一条边被命中的次数。<br>top_rated[]是一个测试用例数组，top_rated[i]对应着 trace_bits[i]  。top_rated[i]代表执行该边的最佳测试用例。<br>现在我们来看看代码</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* When we bump into a new path, we call this to see if the path appears</span></span><br><span class="line"><span class="comment">   more &quot;favorable&quot; than any of the existing ones. The purpose of the</span></span><br><span class="line"><span class="comment">   &quot;favorables&quot; is to have a minimal set of paths that trigger all the bits</span></span><br><span class="line"><span class="comment">   seen in the bitmap so far, and focus on fuzzing them at the expense of</span></span><br><span class="line"><span class="comment">   the rest.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">   The first step of the process is to maintain a list of top_rated[] entries</span></span><br><span class="line"><span class="comment">   for every byte in the bitmap. We win that slot if there is no previous</span></span><br><span class="line"><span class="comment">   contender, or if the contender has a more favorable speed x size factor. */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> void update_bitmap_score(struct queue_entry<span class="operator">*</span> q) &#123;</span><br><span class="line"></span><br><span class="line">  u32 i;</span><br><span class="line">  u64 fav_factor <span class="operator">=</span> q<span class="operator">-</span><span class="operator">&gt;</span>exec_us <span class="operator">*</span> q<span class="operator">-</span><span class="operator">&gt;</span>len;<span class="operator">/</span><span class="operator">/</span>利用执行轮次与测试用例长度的乘积作为排序的键值</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* For every byte set in trace_bits[], see if there is a previous winner,</span></span><br><span class="line"><span class="comment">     and how it compares to us. */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i <span class="operator">=</span> <span class="number">0</span>; i <span class="operator">&lt;</span> MAP_SIZE; i<span class="operator">+</span><span class="operator">+</span>)</span><br><span class="line"></span><br><span class="line">    if (trace_bits[i]) &#123;</span><br><span class="line"></span><br><span class="line">       if (top_rated[i]) &#123;<span class="operator">/</span><span class="operator">/</span>维护一个队列，每个数组元素即是一个最佳的测试用例</span><br><span class="line"></span><br><span class="line">         <span class="comment">/* Faster-executing or smaller test cases are favored. */</span></span><br><span class="line"></span><br><span class="line">         if (fav_factor <span class="operator">&gt;</span> top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>exec_us <span class="operator">*</span> top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>len) continue;</span><br><span class="line"></span><br><span class="line">         <span class="comment">/* Looks like we&#x27;re going to win. Decrease ref count for the</span></span><br><span class="line"><span class="comment">            previous winner, discard its trace_bits[] if necessary. */</span></span><br><span class="line">         <span class="operator">/</span><span class="operator">/</span>trace_mini是额外的信息，只有当一个种子是最佳用例时才会维护这个变量，当它不再优秀时选择释放这个变量</span><br><span class="line">         if (<span class="operator">!</span><span class="comment">--top_rated[i]-&gt;tc_ref) &#123;</span></span><br><span class="line">           ck_free(top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>trace_mini);</span><br><span class="line">           top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>trace_mini <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/* Insert ourselves as the new winner. */</span></span><br><span class="line"></span><br><span class="line">       top_rated[i] <span class="operator">=</span> q;</span><br><span class="line">       q<span class="operator">-</span><span class="operator">&gt;</span>tc_ref<span class="operator">+</span><span class="operator">+</span>;<span class="operator">/</span><span class="operator">/</span>代表一个测试用例被选为最佳种子的次数</span><br><span class="line"></span><br><span class="line">       if (<span class="operator">!</span>q<span class="operator">-</span><span class="operator">&gt;</span>trace_mini) &#123;</span><br><span class="line">         q<span class="operator">-</span><span class="operator">&gt;</span>trace_mini <span class="operator">=</span> ck_alloc(MAP_SIZE <span class="operator">&gt;&gt;</span> <span class="number">3</span>);</span><br><span class="line">         minimize_bits(q<span class="operator">-</span><span class="operator">&gt;</span>trace_mini, trace_bits);<span class="operator">/</span><span class="operator">/</span>trace_mini是trace_bits的简化表示,会被利用与队列筛选环节，帮助判断哪些路径还没有探索</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       score_changed <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>可以看到这个函数主要工作就是为了更新 top_rated 数组，为接下来的 cull_queue 做准备。在这一步我们筛选出了对于每个边最佳的测试用例。在下一个函数中就会在这些最佳用例中挑选对应着新的路径的测试用例，并将之标记为感兴趣的。<strong>这个函数是种子选择中的关键步骤，每一轮的<strong><strong>模糊测试</strong></strong>中都会调用这个函数。这个函数是唯一更新 top_rated 数组的函数，而 cull_queue 函数对种子的选择依赖于 top_rated，所以理解该函数以及该函数被调用的方式十分重要。让我们看看它的调用情况：</strong></p>
+
+
+<h3 id="死循环前的准备工作"><a href="#死循环前的准备工作" class="headerlink" title="死循环前的准备工作"></a>死循环前的准备工作</h3><h4 id="cull-queue"><a href="#cull-queue" class="headerlink" title="cull_queue"></a>cull_queue</h4><p>完成干运行后，main 函数会进行一次队列筛选操作。主要目的是从现有的测试用例集合中，挑选出一个能够覆盖已探索路径的最小测试用例集合。<br>让我们看看代码</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* The second part of the mechanism discussed above is a routine that</span></span><br><span class="line"><span class="comment">   goes over top_rated[] entries, and then sequentially grabs winners for</span></span><br><span class="line"><span class="comment">   previously-unseen bytes (temp_v) and marks them as favored, at least</span></span><br><span class="line"><span class="comment">   until the next run. The favored entries are given more air time during</span></span><br><span class="line"><span class="comment">   all fuzzing steps. */</span></span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>主要是要被感兴趣种子的favored设为<span class="number">1</span></span><br><span class="line"><span class="keyword">static</span> void cull_queue(void) &#123;</span><br><span class="line"></span><br><span class="line">  struct queue_entry<span class="operator">*</span> q;</span><br><span class="line">  <span class="keyword">static</span> u8 temp_v[MAP_SIZE <span class="operator">&gt;&gt;</span> <span class="number">3</span>];<span class="operator">/</span><span class="operator">/</span>这里当比特数值为<span class="number">1</span>则代表仍未探索</span><br><span class="line">  u32 i;</span><br><span class="line"></span><br><span class="line">  if (dumb_mode <span class="operator">||</span> <span class="operator">!</span>score_changed) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  score_changed <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  memset(temp_v, <span class="number">255</span>, MAP_SIZE <span class="operator">&gt;&gt;</span> <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">  queued_favored  <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  pending_favored <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  q <span class="operator">=</span> queue;</span><br><span class="line">  <span class="operator">/</span><span class="operator">/</span>初始化所有测试用例的favored属性</span><br><span class="line">  while (q) &#123;</span><br><span class="line">    q<span class="operator">-</span><span class="operator">&gt;</span>favored <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    q <span class="operator">=</span> q<span class="operator">-</span><span class="operator">&gt;</span>next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Let&#x27;s see if anything in the bitmap isn&#x27;t captured in temp_v.</span></span><br><span class="line"><span class="comment">     If yes, and if it has a top_rated[] contender, let&#x27;s use it. */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i <span class="operator">=</span> <span class="number">0</span>; i <span class="operator">&lt;</span> MAP_SIZE; i<span class="operator">+</span><span class="operator">+</span>)</span><br><span class="line">    if (top_rated[i] <span class="operator">&amp;&amp;</span> (temp_v[i <span class="operator">&gt;&gt;</span> <span class="number">3</span>] <span class="operator">&amp;</span> (<span class="number">1</span> <span class="operator">&lt;&lt;</span> (i <span class="operator">&amp;</span> <span class="number">7</span>)))) &#123;</span><br><span class="line"></span><br><span class="line">      u32 j <span class="operator">=</span> MAP_SIZE <span class="operator">&gt;&gt;</span> <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">      <span class="comment">/* Remove all bits belonging to the current entry from temp_v. */</span></span><br><span class="line"></span><br><span class="line">      while (j<span class="comment">--) </span></span><br><span class="line">        if (top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>trace_mini[j])</span><br><span class="line">          temp_v[j] <span class="operator">&amp;</span><span class="operator">=</span> <span class="operator">~</span>top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>trace_mini[j];<span class="operator">/</span><span class="operator">/</span>将探索过的基本块置零</span><br><span class="line"></span><br><span class="line">      top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>favored <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">      queued_favored<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line"></span><br><span class="line">      if (<span class="operator">!</span>top_rated[i]<span class="operator">-</span><span class="operator">&gt;</span>was_fuzzed) pending_favored<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  q <span class="operator">=</span> queue;</span><br><span class="line"></span><br><span class="line">  while (q) &#123;</span><br><span class="line">    mark_as_redundant(q, <span class="operator">!</span>q<span class="operator">-</span><span class="operator">&gt;</span>favored);</span><br><span class="line">    q <span class="operator">=</span> q<span class="operator">-</span><span class="operator">&gt;</span>next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><code> if (top_rated[i] &amp;&amp; (temp_v[i &gt;&gt; 3] &amp; (1 &lt;&lt; (i &amp; 7))))</code> 这条条件判断语句到底是什么意思呢？<br>afl 在这里不知道出于什么需求，搞了个骚操作。首先把 temp_v 设置成了一个压缩后的数组，temp_v 中的一个元素代表 trace_bits 中的四个基本块元素。然后又利用 <code>temp_v[i &gt;&gt; 3] &amp; (1 &lt;&lt; (i &amp; 7))</code> 实现了 temp_v 元素中的后四个比特分别代表 trace_bits 中的四个基本块元素是否被探索过。只能说很抽象。可能是为了和 trace_mini 配套吧，方便节约内存空间。<br>让我们看看其他人是如何评价这段代码的：</p>
+<blockquote>
+<p>为了优化模糊工作，AFL 使用快速算法定期重新评估队列，该算法选择一个较小的测试用例子集，该子集仍覆盖到目前为止所看到的每个元组，并且其特征使它们对 Fuzzing 特别有利。该算法通过为每个队列条目分配与其执行延迟和文件大小成正比的分数来工作;然后为每个 tuples 选择最低得分候选者。<br>cull_queue()遍历 top_rated[]中的 queue，然后提取出发现新的 edge 的 entry，并标记为 favored，使得在下次遍历 queue 时，这些 entry 能获得更多执行 fuzz 的机会。<br>这里本质上采用了<strong>贪婪算法</strong>，如果 top_rated[i]存在，且对应 temp_v[]中对应 bit 位还没抹去，即这一轮选出的 queue 还没覆盖 bit_map[i]对应的边，则取出这个 top_rated[i]。抹去 temp_v 中 top_rated[i]能访问到的位。最后将这个 top_rated[i]标记为 favored,如果这个 queue 还没 fuzzed，pending_favored++.</p>
+</blockquote>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">show_init_stats();<span class="operator">/</span><span class="operator">/</span>进入主循环前的准备工作使用的函数之一，主要作用为在处理输入目录的末尾显示统计信息，警告信息以及硬编码的常量</span><br><span class="line"></span><br><span class="line">  seek_to <span class="operator">=</span> find_start_position();<span class="operator">/</span><span class="operator">/</span>用于寻找resume时开始fuzz的队列的位置</span><br><span class="line"></span><br><span class="line">  write_stats_file(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  save_auto();</span><br><span class="line"></span><br><span class="line">  if (stop_soon) goto stop_fuzzing;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Woop woop woop */</span></span><br><span class="line"></span><br><span class="line">  if (<span class="operator">!</span>not_on_tty) &#123;</span><br><span class="line">    sleep(<span class="number">4</span>);</span><br><span class="line">    start_time <span class="operator">+</span><span class="operator">=</span> <span class="number">4000</span>;</span><br><span class="line">    if (stop_soon) goto stop_fuzzing;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="进行模糊测试的死循环"><a href="#进行模糊测试的死循环" class="headerlink" title="进行模糊测试的死循环"></a>进行模糊测试的死循环</h3><p>ohhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<br>我们终于正式进入了激动人心的模糊测试的主要流程，执行模糊测试的死循环。让我们看看代码吧：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">while (<span class="number">1</span>) &#123;<span class="operator">/</span><span class="operator">/</span>主循环 变异的相关代码在这里面</span><br><span class="line"></span><br><span class="line">   u8 skipped_fuzz;</span><br><span class="line"></span><br><span class="line">   cull_queue();<span class="operator">/</span><span class="operator">/</span>运行前先根据之前的信息进行种子筛选</span><br><span class="line"></span><br><span class="line">   if (<span class="operator">!</span>queue_cur) &#123;<span class="operator">/</span><span class="operator">/</span>queue_cur为空代表已经变异完了一轮，重新设置各参数进行新一轮的变异</span><br><span class="line"></span><br><span class="line">     queue_cycle<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line">     current_entry     <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">     cur_skipped_paths <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">     queue_cur         <span class="operator">=</span> queue;</span><br><span class="line">    <span class="operator">/</span><span class="operator">/</span>寻找作为入口的测试用例</span><br><span class="line">     while (seek_to) &#123;</span><br><span class="line">       current_entry<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line">       seek_to<span class="comment">--;</span></span><br><span class="line">       queue_cur <span class="operator">=</span> queue_cur<span class="operator">-</span><span class="operator">&gt;</span>next;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     show_stats();</span><br><span class="line"></span><br><span class="line">     if (not_on_tty) &#123;</span><br><span class="line">       ACTF(&quot;Entering queue cycle %llu.&quot;, queue_cycle);</span><br><span class="line">       fflush(stdout);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">/* If we had a full queue cycle with no new finds, try</span></span><br><span class="line"><span class="comment">        recombination strategies next. */</span></span><br><span class="line"></span><br><span class="line">     if (queued_paths <span class="operator">=</span><span class="operator">=</span> prev_queued) &#123;</span><br><span class="line">     <span class="operator">/</span><span class="operator">/</span>因为afl采用循环队列储存测试用例，所以采用了这种方式判断是否执行过全部测试用例</span><br><span class="line"></span><br><span class="line">       if (use_splicing) cycles_wo_finds<span class="operator">+</span><span class="operator">+</span>; <span class="keyword">else</span> use_splicing <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">     &#125; <span class="keyword">else</span> cycles_wo_finds <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">     prev_queued <span class="operator">=</span> queued_paths;</span><br><span class="line"></span><br><span class="line">     if (sync_id <span class="operator">&amp;&amp;</span> queue_cycle <span class="operator">=</span><span class="operator">=</span> <span class="number">1</span> <span class="operator">&amp;&amp;</span> getenv(&quot;AFL_IMPORT_FIRST&quot;))</span><br><span class="line">       sync_fuzzers(use_argv);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   skipped_fuzz <span class="operator">=</span> fuzz_one(use_argv);<span class="operator">/</span><span class="operator">/</span>对该测试用例进行一次模糊测试</span><br><span class="line"></span><br><span class="line">   if (<span class="operator">!</span>stop_soon <span class="operator">&amp;&amp;</span> sync_id <span class="operator">&amp;&amp;</span> <span class="operator">!</span>skipped_fuzz) &#123;</span><br><span class="line">     </span><br><span class="line">     if (<span class="operator">!</span>(sync_interval_cnt<span class="operator">+</span><span class="operator">+</span> <span class="operator">%</span> SYNC_INTERVAL))</span><br><span class="line">       sync_fuzzers(use_argv);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   if (<span class="operator">!</span>stop_soon <span class="operator">&amp;&amp;</span> exit_1) stop_soon <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">   if (stop_soon) break;</span><br><span class="line"></span><br><span class="line">   queue_cur <span class="operator">=</span> queue_cur<span class="operator">-</span><span class="operator">&gt;</span>next;</span><br><span class="line">   current_entry<span class="operator">+</span><span class="operator">+</span>;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>这玩意也不是很长，其主要流程为：</p>
+<blockquote>
+<ol>
+<li>判断 queue_cur 是否为空，如果是，则表示已经完成对队列的遍历，初始化相关参数，重新开始遍历队列</li>
+<li>找到 queue 入口的 testcase，seek_to &#x3D; find_start_position()；直接跳到该 testcase</li>
+<li>如果一整个队列循环都没新发现，尝试重组策略。</li>
+<li>调用关键函数 fuzz_one()对该 testcase 进行 fuzz。fuzz_one()函数参见 3.4。</li>
+<li>上面的变异完成后，AFL 会对文件队列的下一个进行变异处理。当队列中的全部文件都变异测试后，就完成了一个”cycle”，这个就是 AFL 状态栏右上角的”cycles done”。而正如 cycle 的意思所说，整个队列又会从第一个文件开始，再次进行变异，不过与第一次变异不同的是，这一次就不需要再进行 deterministic fuzzing 了。如果用户不停止 AFL，那么 seed 文件将会一遍遍的变异下去。<br>这个函数调用了一个需要解释的函数 fuzz_one()，它对一个测试用例进行了模糊测试。</li>
+</ol>
+</blockquote>
+<h4 id="fuzz-one"><a href="#fuzz-one" class="headerlink" title="fuzz_one()"></a>fuzz_one()</h4><p><code>static u8 fuzz_one_original(char** argv)</code> 从队列中取出当前 testcase 并模糊。这个函数长的离谱，有 1600 行左右。如果 fuzzed 成功，返回 0;如果跳过或退出，返回 1。<br>该函数大致流程如下：</p>
+<blockquote>
+<ol>
+<li>根据是否有 <code>pending_favored</code> 和 <code>queue_cur</code> 的情况，按照概率进行跳过；有 <code>pending_favored</code>, 对于已经 fuzz 过的或者 non-favored 的有 99% 的概率跳过；无 pending_favored，95% 跳过 fuzzed&amp;non-favored，75% 跳过 not fuzzed&amp;non-favored，不跳过 favored；</li>
+<li>假如当前项有校准错误，并且校准错误次数小于 3 次，那么就用 calibrate_case 进行测试；</li>
+<li>如果测试用例没有修剪过，那么调用函数 trim_case 对测试用例进行修剪；</li>
+<li>修剪完毕之后，使用 calculate_score 对每个测试用例进行打分；</li>
+<li>如果该 queue 已经完成 deterministic 阶段，则直接跳到 havoc 阶段；</li>
+<li>deterministic 阶段变异 4 个 stage，变异过程中会多次调用函数 common_fuzz_stuff 函数，保存 interesting 的种子：<ul>
+<li>bitflip，按位翻转，1 变为 0，0 变为 1</li>
+<li>arithmetic，整数加&#x2F;减算术运算</li>
+<li>interest，把一些特殊内容替换到原文件中</li>
+<li>dictionary，把自动生成或用户提供的 token 替换&#x2F;插入到原文件中</li>
+<li>havoc，中文意思是“大破坏”，此阶段会对原文件进行大量变异。</li>
+<li>splice，中文意思是“绞接”，此阶段会将两个文件拼接起来得到一个新的文件。</li>
+</ul>
+</li>
+<li>该轮完成。</li>
+</ol>
+</blockquote>
+<ol>
+<li>完成了 fuzz 中计算资源的分配。</li>
+<li>处理了校验失败的测试用例，每个测试用例有三次机会</li>
+<li>调用了 trim_case，这个是需要详细看看的</li>
+<li>调用了 calculate_score，需要简单了解</li>
+<li>可以根据这个信息了解到 havoc 前的变异操作都是确定性变异</li>
+<li>事实上 afl 会顺序执行各个变异策略<br>下面我们来看看一些比较重要的函数或变异代码</li>
+</ol>
+<h5 id="trim-case"><a href="#trim-case" class="headerlink" title="trim_case()"></a>trim_case()</h5><blockquote>
+<p>文件大小对模糊性能有很大影响，这是因为大文件使目标二进制文件变得更慢，并且因为它们减少了突变将触及重要的格式控制结构而不是冗余数据块的可能性。这在 perf_tips.txt 中有更详细的讨论。<br>用户可能会提供低质量的起始语料库，某些类型的突变可能会产生迭代地增加生成文件的大小的效果，因此应对这一趋势是很重要的。<br>幸运的是，插装反馈提供了一种简单的方法来自动删除输入文件，同时确保对文件的更改不会对执行路径产生影响。<br>在 afl-fuzz 中内置的修边器试图按可变长度和 stepover 顺序删除数据块;任何不影响跟踪映射校验和的删除都被提交到磁盘。修剪器的设计并不是特别彻底;相反，它试图在精度和在进程上花费的 execve（）调用的数量之间取得平衡，选择块大小和 stepover 来匹配。每个文件的平均增益大约在 5% 到 20% 之间。<br>独立的 afl-tmin 工具使用了更详尽的迭代算法，并尝试在修剪过的文件上执行字母标准化。afl-tmin 的操作如下。<br>首先，工具自动选择操作模式。如果初始输入崩溃了目标二进制文件，afl-tmin 将以非插装模式运行，只需保留任何能产生更简单文件但仍然会使目标崩溃的调整。如果目标是非崩溃的，那么这个工具使用一个插装的模式，并且只保留那些产生完全相同的执行路径的微调。<br>所以我们需要对测试用例进行修剪，该函数的主要流程如下：</p>
+<ol>
+<li>首先取 testcase 长度 2 的指数倍</li>
+<li>第一个 while 循环，从文件大小 1&#x2F;16 的步长开始，慢慢到文件大小的 1&#x2F;1024 倍步长。</li>
+<li>第二个 while 循环，嵌套在第一个内，从文件头开始按步长 cut testcase，然后 target_run();如果删除之后对文件执行路径没有影响那么就将这个删除保存至实际文件中。在删除之前会将 trace_bits 保存到起来。删除完成之后重新拷贝。<br>关键代码如下</li>
+</ol>
+</blockquote>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> u8 trim_case(<span class="type">char</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> argv, struct queue_entry<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> q, u8<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> in_buf) &#123;</span><br><span class="line">....</span><br><span class="line"><span class="keyword">static</span> u8 clean_trace[MAP_SIZE];</span><br><span class="line">u8  needs_write <span class="operator">*</span><span class="operator">*</span><span class="operator">=</span><span class="operator">*</span><span class="operator">*</span> <span class="number">0</span></span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="comment">/*** 从文件长度1**/</span><span class="operator">*</span><span class="operator">*</span><span class="number">16</span>开始最到最小<span class="number">1</span><span class="operator">*</span><span class="operator">*</span><span class="comment">/**1024步长，设置移除文件的大小 ***/</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line"><span class="operator">*</span><span class="operator">*</span>while<span class="operator">*</span><span class="operator">*</span> (remove_len <span class="operator">&gt;</span><span class="operator">*</span><span class="operator">*</span><span class="operator">=</span><span class="operator">*</span><span class="operator">*</span> <span class="built_in">MAX</span>(len_p2 <span class="operator">*</span><span class="operator">*</span><span class="comment">/** TRIM_END_STEPS, TRIM_MIN_BYTES)) &#123;</span></span><br><span class="line"><span class="comment">      **/</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>按选定的步长，移除，然后循环该文件<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">    **while** (remove_pos &lt; q**-**&gt;len) &#123;</span></span><br><span class="line"><span class="comment">      **/</span><span class="comment">/**删除</span></span><br><span class="line"><span class="comment">         write_with_gap(in_buf, q**-**&gt;len, remove_pos, trim_avail);</span></span><br><span class="line"><span class="comment">        **/</span><span class="comment">/**执行</span></span><br><span class="line"><span class="comment">         fault **=** run_target(argv, exec_tmout);</span></span><br><span class="line"><span class="comment">     **/</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> 检查trace_bit是否不一样 <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">         cksum **=** hash32(trace_bits, MAP_SIZE, HASH_CONST);</span></span><br><span class="line"><span class="comment">     **/</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> 如果删除对跟踪没有影响，则使其永久。作者表明可能可变路径会对此产生一些影响，不过没有大碍<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">         **if** (cksum **==** q**-**&gt;exec_cksum) &#123;</span></span><br><span class="line"><span class="comment">          memmove(in_buf **+** remove_pos, in_buf **+** remove_pos **+** trim_avail, move_tail);</span></span><br><span class="line"><span class="comment">       **/</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> 保存之前的trace_bits，因为执行如果改变了trace_bits<span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">           **if** (!needs_write) &#123;</span></span><br><span class="line"><span class="comment">         memcpy(clean_trace, trace_bits, MAP_SIZE);&#125;</span></span><br><span class="line"><span class="comment">     &#125; **else** remove_pos **+=** remove_len;</span></span><br><span class="line"><span class="comment">   &#125;</span></span><br><span class="line"><span class="comment">   remove_len &gt;&gt;**=** 1;   **/</span><span class="comment">/**增加步长</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">....</span></span><br><span class="line"><span class="comment">&#125;</span></span><br></pre></td></tr></table></figure></div>
+
+<h5 id="calculate-score"><a href="#calculate-score" class="headerlink" title="calculate_score()"></a>calculate_score()</h5><blockquote>
+<p><code>static u32 calculate_score(struct queue_entry* q)</code> 根据 case 的执行速度&#x2F;bitmap 的大小&#x2F;case 产生时间&#x2F;路径深度等因素给 case 进行打分,返回值为一个分数，用来调整在 havoc 阶段的用时。使得执行时间短，代码覆盖高，新发现的，路径深度深的 case 拥有更多 havoc 变异的机会。此段代码没有较强逻辑，在这里就简单介绍。</p>
+</blockquote>
+<h5 id="变异策略"><a href="#变异策略" class="headerlink" title="变异策略"></a>变异策略</h5><p>这里 afl 会顺序执行各个变异策略，其中有一个函数十分关键</p>
+<h6 id="common-fuzz-stuff"><a href="#common-fuzz-stuff" class="headerlink" title="common_fuzz_stuff"></a><strong>common_fuzz_stuff</strong></h6><p><code>common_fuzz_stuff(char** argv, u8* out_buf, u32 len)</code> 编写修改后的测试用例，运行程序，处理结果。处理错误条件，如果需要退出，返回 1。这是 fuzz_one()的一个辅助函数。该函数贯穿了整个变异过程的始终。<br><strong>步骤：</strong></p>
+<ol>
+<li>write_to_testcase() 将变异写到文件中</li>
+<li>run_target() 前面解释过；</li>
+<li>save_if_interesting() 判断一个文件是否为 interesting 种子，如果是那么就保存输入文件(queue)<br>其中 save_if_interesting()定义如下：<br><strong>save_if_interesting</strong><br><code>static u8 save_if_interesting(char** argv, void* mem, u32 len, u8 fault)</code> 判断是否为感兴趣的输入,判断一个文件是否是感兴趣的输入(has_new_bits)，即是否访问了新的 tuple 或者 tuple 访问次数发生变化，如果是则保存输入文件（放到队列 queue 中）。<br><strong>步骤：</strong></li>
+</ol>
+<h6 id="Bitflip-阶段"><a href="#Bitflip-阶段" class="headerlink" title="Bitflip 阶段"></a>Bitflip 阶段</h6><ol>
+<li>基本原理：bitflip，按位翻转，1 变为 0，0 变为 1。</li>
+</ol>
+<blockquote>
+<p>拿到一个原始文件，打头阵的就是 bitflip，而且还会根据翻转量&#x2F;步长进行多种不同的翻转，按照顺序依次为：<br>bitflip 1&#x2F;1，每次翻转 1 个 bit，按照每 1 个 bit 的步长从头开始<br>bitflip 2&#x2F;1，每次翻转相邻的 2 个 bit，按照每 1 个 bit 的步长从头开始<br>bitflip 4&#x2F;1，每次翻转相邻的 4 个 bit，按照每 1 个 bit 的步长从头开始<br>bitflip 8&#x2F;8，每次翻转相邻的 8 个 bit，按照每 8 个 bit 的步长从头开始，即依次对每个 byte 做翻转<br>bitflip 16&#x2F;8，每次翻转相邻的 16 个 bit，按照每 8 个 bit 的步长从头开始，即依次对每个 word 做翻转<br>bitflip 32&#x2F;8，每次翻转相邻的 32 个 bit，按照每 8 个 bit 的步长从头开始，即依次对每个 dword 做翻转<br>作为精妙构思的 fuzzer，AFL 不会放过每一个获取文件信息的机会。这一点在 bitflip 过程中就体现的淋漓尽致。具体地，在上述过程中，AFL 巧妙地嵌入了一些对文件格式的启发式判断。包括自动检测 token 和生成 effector map。</p>
+</blockquote>
+<ol>
+<li>自动检测 token</li>
+</ol>
+<blockquote>
+<p>在进行 bitflip 1&#x2F;1 变异时，对于每个 byte 的最低位(least significant bit)翻转还进行了额外的处理：如果连续多个 bytes 的最低位被翻转后，程序的执行路径都未变化，而且与原始执行路径不一致(检测程序执行路径的方式可见上篇文章中“分支信息的分析”一节)，那么就把这一段连续的 bytes 判断是一条 token。<br>例如，PNG 文件中用 IHDR 作为起始块的标识，那么就会存在类似于以下的内容<br><code>.......IHDR........</code><br>当翻转到字符 I 的最高位时，因为 IHDR 被破坏，此时程序的执行路径肯定与处理正常文件的路径是不同的；随后，在翻转接下来 3 个字符的最高位时，IHDR 标识同样被破坏，程序应该会采取同样的执行路径。由此，AFL 就判断得到一个可能的 token：IHDR，并将其记录下来为后面的变异提供备选。<br>AFL 采取的这种方式是非常巧妙的：就本质而言，这实际上是对每个 byte 进行修改并检查执行路径；但集成到 bitflip 后，就不需要再浪费额外的执行资源了。此外，为了控制这样自动生成的 token 的大小和数量，AFL 还在 config.h 中通过宏定义了限制.<br>对于一些文件来说，我们已知其格式中出现的 token 长度不会超过 4，那么我们就可以修改 MAX_AUTO_EXTRA 为 4 并重新编译 AFL，以排除一些明显不会是 token 的情况。遗憾的是，这些设置是通过宏定义来实现，所以不能做到运行时指定，每次修改后必须重新编译 AFL</p>
+</blockquote>
+<ol>
+<li>生成 effector map</li>
+</ol>
+<blockquote>
+<p>在进行 bitflip 8&#x2F;8 变异时，AFL 还生成了一个非常重要的信息：effector map。这个 effector map 几乎贯穿了整个 deterministic fuzzing 的始终。</p>
+</blockquote>
+<p>Effector map 定义如下：</p>
+<h6 id><a href="#" class="headerlink" title></a></h6><h6 id="arithmetic-阶段"><a href="#arithmetic-阶段" class="headerlink" title="arithmetic 阶段"></a><strong>arithmetic 阶段</strong></h6><blockquote>
+<p>在 bitflip 变异全部进行完成后，便进入下一个阶段：arithmetic。与 bitflip 类似的是，arithmetic 根据目标大小的不同，也分为了多个子阶段：<br>arith 8&#x2F;8，每次对 8 个 bit 进行加减运算，按照每 8 个 bit 的步长从头开始，即对文件的每个 byte 进行整数加减变异<br>arith 16&#x2F;8，每次对 16 个 bit 进行加减运算，按照每 8 个 bit 的步长从头开始，即对文件的每个 word 进行整数加减变异<br>arith 32&#x2F;8，每次对 32 个 bit 进行加减运算，按照每 8 个 bit 的步长从头开始，即对文件的每个 dword 进行整数加减变异<br>加减变异的上限，在 config.h 中的宏 ARITH_MAX 定义，默认为 35。所以，对目标整数会进行 +1, +2, …, +35, -1, -2, …, -35 的变异。特别地，由于整数存在大端序和小端序两种表示方式，AFL 会贴心地对这两种整数表示方式都进行变异。<br>此外，AFL 还会智能地跳过某些 arithmetic 变异。第一种情况就是前面提到的 effector map：如果一个整数的所有 bytes 都被判断为“无效”，那么就跳过对整数的变异。第二种情况是之前 bitflip 已经生成过的变异：如果加&#x2F;减某个数后，其效果与之前的某种 bitflip 相同，那么这次变异肯定在上一个阶段已经执行过了，此次便不会再执行。</p>
+</blockquote>
+<h6 id="interest-阶段"><a href="#interest-阶段" class="headerlink" title="interest 阶段"></a><strong>interest 阶段</strong></h6><blockquote>
+<p>interest 8&#x2F;8，每次对 8 个 bit 进替换，按照每 8 个 bit 的步长从头开始，即对文件的每个 byte 进行替换<br>interest 16&#x2F;8，每次对 16 个 bit 进替换，按照每 8 个 bit 的步长从头开始，即对文件的每个 word 进行替换<br>interest 32&#x2F;8，每次对 32 个 bit 进替换，按照每 8 个 bit 的步长从头开始，即对文件的每个 dword 进行替换<br>而用于替换的”interesting values”，是 AFL 预设的一些比较特殊的数。这些数的定义在 config.h 文件中，可以看到，用于替换的基本都是可能会造成溢出的数。<br>与之前类似，effector map 仍然会用于判断是否需要变异；此外，如果某个 interesting value，是可以通过 bitflip 或者 arithmetic 变异达到，那么这样的重复性变异也是会跳过的。</p>
+</blockquote>
+<h6 id="dictionary-阶段"><a href="#dictionary-阶段" class="headerlink" title="dictionary 阶段"></a><strong>dictionary 阶段</strong></h6><blockquote>
+<p>进入到这个阶段，就接近 deterministic fuzzing 的尾声了。具体有以下子阶段：<br>user extras (over)，从头开始，将用户提供的 tokens 依次替换到原文件中<br>user extras (insert)，从头开始，将用户提供的 tokens 依次插入到原文件中<br>auto extras (over)，从头开始，将自动检测的 tokens 依次替换到原文件中<br>其中，用户提供的 tokens，是在词典文件中设置并通过-x 选项指定的，如果没有则跳过相应的子阶段</p>
+</blockquote>
+<ol>
+<li>user extras (over)</li>
+</ol>
+<blockquote>
+<p>对于用户提供的 tokens，AFL 先按照长度从小到大进行排序。这样做的好处是，只要按照顺序使用排序后的 tokens，那么后面的 token 不会比之前的短，从而每次覆盖替换后不需要再恢复到原状。<br>随后，AFL 会检查 tokens 的数量，如果数量大于预设的 MAX_DET_EXTRAS（默认值为 200），那么对每个 token 会根据概率来决定是否进行替换：</p>
+<div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">```</span><br><span class="line"></span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="keyword">for</span><span class="operator">*</span><span class="operator">*</span> (j <span class="operator">*</span><span class="operator">*</span><span class="operator">=</span><span class="operator">*</span><span class="operator">*</span> <span class="number">0</span>; j <span class="operator">&lt;</span> extras_cnt; j<span class="operator">*</span><span class="operator">*</span><span class="operator">+</span><span class="operator">+</span><span class="operator">*</span><span class="operator">*</span>) &#123;</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span>if<span class="operator">*</span><span class="operator">*</span> ((extras_cnt <span class="operator">&gt;</span> MAX_DET_EXTRAS <span class="operator">&amp;&amp;</span> UR(extras_cnt) <span class="operator">&gt;</span><span class="operator">*</span><span class="operator">*</span><span class="operator">=</span><span class="operator">*</span><span class="operator">*</span> MAX_DET_EXTRAS) <span class="operator">||</span></span><br><span class="line">extras[j].len <span class="operator">&gt;</span> len <span class="operator">*</span><span class="operator">*</span><span class="operator">-</span><span class="operator">*</span><span class="operator">*</span> i <span class="operator">||</span></span><br><span class="line"><span class="operator">!</span>memcmp(extras[j].data, out_buf <span class="operator">*</span><span class="operator">*</span><span class="operator">+</span><span class="operator">*</span><span class="operator">*</span> i, extras[j].len) <span class="operator">||</span></span><br><span class="line"><span class="operator">!</span>memchr(eff_map <span class="operator">*</span><span class="operator">*</span><span class="operator">+</span><span class="operator">*</span><span class="operator">*</span> EFF_APOS(i), <span class="number">1</span>, EFF_SPAN_ALEN(i, extras[j].len))) &#123;</span><br><span class="line">stage_max<span class="operator">*</span><span class="operator">*</span><span class="comment">--**;</span></span><br><span class="line"><span class="operator">*</span><span class="operator">*</span>continue<span class="operator">*</span><span class="operator">*</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+<p>这里的UR(extras_cnt)是运行时生成的一个0到extras_cnt之间的随机数。所以，如果用户词典中一共有400个tokens，那么每个token就有200&#x2F;400&#x3D;50%的概率执行替换变异。我们可以修改MAX_DET_EXTRAS的大小来调整这一概率。<br>由上述代码也可以看到，effector map在这里同样被使用了：如果要替换的目标bytes全部是“无效”的，那么就跳过这一段，对下一段目标执行替换。</p>
+</blockquote>
+<ol>
+<li>user extras (insert)<blockquote>
+<p>这一子阶段是对用户提供的tokens执行插入变异。不过与上一个子阶段不同的是，此时并没有对tokens数量的限制，所以全部tokens都会从原文件的第1个byte开始，依次向后插入；此外，由于原文件并未发生替换，所以effector map不会被使用。<br>这一子阶段最特别的地方，就是变异不能简单地恢复。之前每次变异完，在变异位置处简单取逆即可，例如bitflip后，再进行一次同样的bitflip就恢复为原文件。正因为如此，之前的变异总体运算量并不大。<br>但是，对于插入这种变异方式，恢复起来则复杂的多，所以AFL采取的方式是：将原文件分割为插入前和插入后的部分，再加上插入的内容，将这3部分依次复制到目标缓冲区中（当然这里还有一些小的优化，具体可阅读代码）。而对每个token的每处插入，都需要进行上述过程。所以，如果用户提供了大量tokens，或者原文件很大，那么这一阶段的运算量就会非常的多。直观表现上，就是AFL的执行状态栏中，”user extras (insert)”的总执行量很大，执行时间很长。如果出现了这种情况，那么就可以考虑适当删减一些tokens</p>
+</blockquote>
+</li>
+<li>auto extras (over)<blockquote>
+<p>这一项与”user extras (over)”很类似，区别在于，这里的tokens是最开始bitflip阶段自动生成的。另外，自动生成的tokens总量会由USE_AUTO_EXTRAS限制（默认为10）。</p>
+</blockquote>
+</li>
+</ol>
+<h6 id="havoc-大破坏阶段"><a href="#havoc-大破坏阶段" class="headerlink" title="havoc 大破坏阶段"></a><strong>havoc 大破坏阶段</strong></h6><blockquote>
+<p>对于非dumb mode的主fuzzer来说，完成了上述deterministic fuzzing后，便进入了充满随机性的这一阶段；对于dumb mode或者从fuzzer来说，则是直接从这一阶段开始。<br>havoc，顾名思义，是充满了各种随机生成的变异，是对原文件的“大破坏”。具体来说，havoc包含了对原文件的多轮变异，每一轮都是将多种方式组合（stacked）而成：<br>随机选取某个bit进行翻转<br>随机选取某个byte，将其设置为随机的interesting value<br>随机选取某个word，并随机选取大、小端序，将其设置为随机的interesting value<br>随机选取某个dword，并随机选取大、小端序，将其设置为随机的interesting value<br>随机选取某个byte，对其减去一个随机数<br>随机选取某个byte，对其加上一个随机数<br>随机选取某个word，并随机选取大、小端序，对其减去一个随机数<br>随机选取某个word，并随机选取大、小端序，对其加上一个随机数<br>随机选取某个dword，并随机选取大、小端序，对其减去一个随机数<br>随机选取某个dword，并随机选取大、小端序，对其加上一个随机数<br>随机选取某个byte，将其设置为随机数<br>随机删除一段bytes<br>随机选取一个位置，插入一段随机长度的内容，其中75%的概率是插入原文中随机位置的内容，25%的概率是插入一段随机选取的数<br>随机选取一个位置，替换为一段随机长度的内容，其中75%的概率是替换成原文中随机位置的内容，25%的概率是替换成一段随机选取的数<br>随机选取一个位置，用随机选取的token（用户提供的或自动生成的）替换<br>随机选取一个位置，用随机选取的token（用户提供的或自动生成的）插入<br>怎么样，看完上面这么多的“随机”，有没有觉得晕？还没完，AFL会生成一个随机数，作为变异组合的数量，并根据这个数量，每次从上面那些方式中随机选取一个（可以参考高中数学的有放回摸球），依次作用到文件上。如此这般丧心病狂的变异，原文件就大概率面目全非了，而这么多的随机性，也就成了fuzzing过程中的不可控因素，即所谓的“看天吃饭”了</p>
+</blockquote>
+<h6 id="splice阶段"><a href="#splice阶段" class="headerlink" title="splice阶段"></a><strong>splice阶段</strong></h6><blockquote>
+<p>历经了如此多的考验，文件的变异也进入到了最后的阶段：splice。如其意思所说，splice是将两个seed文件拼接得到新的文件，并对这个新文件继续执行havoc变异。<br>具体地，AFL在seed文件队列中随机选取一个，与当前的seed文件做对比。如果两者差别不大，就再重新随机选一个；如果两者相差比较明显，那么就随机选取一个位置，将两者都分割为头部和尾部。最后，将当前文件的头部与随机文件的尾部拼接起来，就得到了新的文件。在这里，AFL还会过滤掉拼接文件未发生变化的情况。</p>
+</blockquote>
+<h3 id="收尾工作"><a href="#收尾工作" class="headerlink" title="收尾工作"></a>收尾工作</h3><div class="highlight-container" data-rel="Sql"><figure class="iseeu highlight sql"><table><tr><td class="code"><pre><span class="line">if (queue_cur) show_stats();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* If we stopped programmatically, we kill the forkserver and the current runner. </span></span><br><span class="line"><span class="comment">     If we stopped manually, this is done by the signal handler. */</span></span><br><span class="line">  if (stop_soon <span class="operator">=</span><span class="operator">=</span> <span class="number">2</span>) &#123;</span><br><span class="line">      if (child_pid <span class="operator">&gt;</span> <span class="number">0</span>) kill(child_pid, SIGKILL);</span><br><span class="line">      if (forksrv_pid <span class="operator">&gt;</span> <span class="number">0</span>) kill(forksrv_pid, SIGKILL);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/* Now that we&#x27;ve killed the forkserver, we wait for it to be able to get rusage stats. */</span></span><br><span class="line">  if (waitpid(forksrv_pid, <span class="keyword">NULL</span>, <span class="number">0</span>) <span class="operator">&lt;=</span> <span class="number">0</span>) &#123;</span><br><span class="line">    WARNF(&quot;error waitpid\n&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  write_bitmap();</span><br><span class="line">  write_stats_file(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  save_auto();</span><br><span class="line"></span><br><span class="line">stop_fuzzing:</span><br><span class="line"></span><br><span class="line">  SAYF(CURSOR_SHOW cLRD &quot;\n\n+++ Testing aborted %s +++\n&quot; cRST,</span><br><span class="line">       stop_soon <span class="operator">=</span><span class="operator">=</span> <span class="number">2</span> ? &quot;programmatically&quot; : &quot;by user&quot;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Running for more than 30 minutes but still doing first cycle? */</span></span><br><span class="line"></span><br><span class="line">  if (queue_cycle <span class="operator">=</span><span class="operator">=</span> <span class="number">1</span> <span class="operator">&amp;&amp;</span> get_cur_time() <span class="operator">-</span> start_time <span class="operator">&gt;</span> <span class="number">30</span> <span class="operator">*</span> <span class="number">60</span> <span class="operator">*</span> <span class="number">1000</span>) &#123;</span><br><span class="line"></span><br><span class="line">    SAYF(&quot;\n&quot; cYEL &quot;[!] &quot; cRST</span><br><span class="line">           &quot;Stopped during the first cycle, results may be incomplete.\n&quot;</span><br><span class="line">           &quot;    (For info on resuming, see %s/README.)\n&quot;, doc_path);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  fclose(plot_file);</span><br><span class="line">  destroy_queue();</span><br><span class="line">  destroy_extras();</span><br><span class="line">  ck_free(target_path);</span><br><span class="line">  ck_free(sync_id);</span><br><span class="line"></span><br><span class="line">  alloc_report();</span><br><span class="line"></span><br><span class="line">  OKF(&quot;We&#x27;re done here. Have a nice day!\n&quot;);</span><br><span class="line"></span><br><span class="line">  exit(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><strong>afl_fuzz.c：</strong></p>
+<p><a class="link" href="https://bbs.kanxue.com/thread-254705-1.htm#msg_header_h2_1">AFL afl_fuzz.c 详细分析 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 里面有很多相关文章</p>
+<p><a class="link" href="https://www.freebuf.com/articles/others-articles/290197.html">AFL 二三事 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 非常详细函数解析</p>
+<p><strong>afl_as afl_gcc：</strong></p>
+<p><a class="link" href="https://www.ruanx.net/afl-source-1/">AFL 源码阅读 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> 大佬写的 afl 源码阅读文章，有对插桩汇编代码的详细解析，文风十分平易近人</p>
+<p><strong>afl 原理：</strong></p>
+<p><a class="link" href="https://xidoo.top/2022/01/afl-white-book/">AFL 白皮书翻译与读书笔记 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a> afl 的技术细节文档的翻译</p>
+<h1 id="-1"><a href="#-1" class="headerlink" title></a></h1>]]></content>
+  </entry>
+  <entry>
+    <title>《亲密关系》读书笔记</title>
+    <url>/2024/03/16/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="1-人际关系的构成"><a href="#1-人际关系的构成" class="headerlink" title="1 人际关系的构成"></a>1 人际关系的构成</h2><ol>
+<li><p>   表1.1　巴塞洛缪提出的四种依恋类型</p>
+</li>
+<li><p>   不再简单地把人们分为安全、痴迷、恐惧或疏离四种类型，而是给出人们在忧虑和回避两个维度中的相对位置。 图1.5　依恋的双维度图</p>
+</li>
+<li><p>   表1.3　伴侣怎么看我</p>
+</li>
+<li><p>   亲密关系和泛泛之交至少在六个方面存在程度差异：了解（knowledge）、关心（care）、相互依赖性（interdependence）、相互一致性（mutuality）、信任（trust）以及承诺（commitment）。</p>
+</li>
+<li><p>   首先，亲密的伴侣彼此间有着广泛而私密的了解。他们熟知彼此的经历、爱好、情感和心愿，而且一般不会把这些信息透露给其他人。亲密的伴侣关心对方，彼此能从对方身上感受到更多的关爱。如果人们认为自己的伴侣了解、理解并欣赏自己，其亲密程度就会增加</p>
+</li>
+<li><p>   亲密伴侣的生活也是交织在一起的：一方的行为会影响另一方的行为目标和行动能力</p>
+</li>
+<li><p>   亲密伴侣的相互依赖性是指他们彼此需要的程度和影响对方的程度，这种相互依赖是频繁的（经常影响彼此）、强烈的（彼此都有显著的影响）、多样的（以多种不同的方式影响彼此）和持久的（彼此影响的时间很长）</p>
+</li>
+<li><p>   使得亲密关系易于保持的另一个特点是信任，期望对方会善待和尊重自己</p>
+</li>
+<li><p>   最后，亲密伴侣通常会承诺他们的亲密关系，希望他们的关系能持续到地老天荒，并为此不惜投入大量的时间、人力和物力</p>
+</li>
+<li><p>   一般而言，最令人满意和最有意义的亲密关系应当包括亲密关系的所有六个特征（Fletcher et al.，2000a）。但亲密关系如果只有部分特征，亲密程度就会减弱</p>
+</li>
+<li><p>   我们需要记住人际关系最简单、最基本的特点是：种类多样，规格不齐。这种多样性使人际关系非常复杂，也使人际关系魅力无穷。</p>
+</li>
+<li><p>   个体需要的亲密关系无需太多，几个便可。归属需要得到满足后，我们建立人际关系的内驱力就会降低（因而人际关系的质量比数量更重要）</p>
+</li>
+<li><p>   归属需要也和我们伴侣是谁并无太大的关系，只要他们能给予我们持续的关爱和包容，我们的归属需要就能得到满足。因而，即使一段重要的亲密关系终结，我们也往往能找到替代伴侣（尽管新人和旧人有很大的差别），而且能满足我们的归属需要</p>
+</li>
+<li><p>   如果我们的生命缺乏亲密感情，我们就很容易迷失人生方向，患上身心疾病</p>
+</li>
+<li><p>   文化标准是人们建立人际关系的基石（Acitelli et al.，2011），它影响着人们对人际关系的期望，限定了正常的人际关系模式</p>
+</li>
+<li><p>   首先，同居情侣彼此的承诺一般不如已婚夫妻，毕竟同居情侣还有选择的机会（Wiik et al.，2009）。所以同居情侣比已婚夫妻经常面临更多的问题和不确定性（Hsueh et al.，2009）。他们往往会遭遇更多的冲突（Stanley et al.，2010）、嫉妒（Gatzeva &amp; Paik，2011）、出轨（Thornton et al.，2007）和身体攻击（Rhoades et al.，2009a），所以同居与婚姻相比，往往充满变数，前景难料。故而，人们同居的时间越长，对婚姻的热情越低，越容易离婚</p>
+</li>
+<li><p>   情侣如果已经订婚，准备结婚，这些有害的同居效应相对轻微，但即使伴侣已经订婚，未婚同居也有一定的危害性（Jose et al.，2003）。故而，尽管同居很流行，人们普遍把同居当成“试婚”，但这是越来越少的人结婚，越来越少的婚姻能持续（与1960年代相比）的原因之一</p>
+</li>
+<li><p>   社会工业化程度越高、越富足，就越能接纳单身、包容离婚和支持晚婚（South et al.，2001），而全世界的社会经济发展水平都提高了。教育和财政资源的充裕，足以让人们变得更为独立，与过去相比，女性尤其更可能不结婚（Dooley，2010）。而最近全球经济的衰退也有明显的影响。随着更多的情侣为节省金钱生活在一起，同居人数明显增加（Yen，2010c），但结婚率在赤贫人群中却在下降，没有稳定的收入人们并不愿意结婚（Yen，2010b）。</p>
+</li>
+<li><p>   近年来，西方文化的主要特征——个人主义（支持自我表现，重视个人成就）也变得愈发突出（Twenge &amp; Campbell，2010）。（比如，美国人现在更可能给自己的孩子取不常见的名字以引人注目[Twenge et al.，2010]。）可以想见，这种对自我实现的重视会让我们期望从亲密关系中获取比上一辈更多的东西——更多的快乐和享受，更少的麻烦和付出</p>
+</li>
+<li><p>   东方文化更倡导集体主义的自我感，人们与家庭和社会团体的联系更为紧密。集体文化国家（如日本）的离婚率比美国低得多（Cherlin，2009）。</p>
+</li>
+<li><p>   安全型的人在与他人亲密接触的过程中非常安心，不会担心别人会苛刻对待自己；因而能积极快乐地寻求亲密、相互依赖的人际关系。相形之下，其他三种类型的人充满焦虑和不安，在亲密关系中如坐针毡。痴迷型的人渴望亲密接触但害怕被拒绝。疏离型的人并不担心被拒绝，但却不喜欢亲密接触。至于恐惧型的人则两者兼而有之，在亲密关系中坐立不安又担心亲密关系不能长久（见图1.5）</p>
+</li>
+<li><p>   依恋类型看似是人们对人际关系的适应行为，这种适应大部分是从与他人交往的经验中习得的。我们带入新的人际关系的癖好和观点，部分来自于与以前伴侣的交往经历，这是人际关系适应行为最好的例证。</p>
+</li>
+<li><p>   依恋类型受到个体与生俱来的特质影响，基因塑造了我们的依恋类型（Picardi et al.，2011）。</p>
+</li>
+<li><p>   然而，我们的经验在塑造之后的依恋关系上甚至起着更大的作用</p>
+</li>
+<li><p>   然而，我们并不会被动地受童年经验的束缚，因为依恋类型不断地受到我们成人后经历的影响（Zhang，2009）。依恋类型既然是习得的，就可能发生变化。随着时间的推移，依恋类型的确会发生新的改变</p>
+</li>
+<li><p>   在两年之内，足有三分之一的依恋类型可以发生实质性变化</p>
+</li>
+<li><p>   尽管依恋能改变，但它们一旦确立后，既稳定又持久，并影响人们新建立的人际关系，加强已有的行为倾向</p>
+</li>
+<li><p>   如果没有大起大落的新经历，人们的依恋类型可以持续数十年</p>
+</li>
+<li><p>   所以，我们对紧密关系性质和价值的总看法，看来是由我们体验到的亲密关系的经验所决定的。我们幼时对人际交往价值和他人是否可信的观念，起源于我们与照料者的交往，由于运气的好坏，我们就此走向了信任或恐惧的亲密关系之路。这段历程永远不会停止，同行者随后给予的阻碍或帮助会改变我们亲密关系的方向和进程。视乎人际交往经验的不同，我们习得的依恋类型既可随时间发生变化，也可永久保持稳定</p>
+</li>
+<li><p>   要阐明个体差异如何影响亲密伴侣的行为。我们将重点考察四种不同类型个体差异：性别差异、性认同差异、人格差异和自尊差异</p>
+</li>
+<li><p>   由于两性之间的共性如此之多，所以在人际关系科学研究的许多维度和方面，其相似性远大于差异性</p>
+</li>
+<li><p>   亲密关系中的性别差异并不像一般人认为的那般重要和有影响</p>
+</li>
+<li><p>   个体差异才是影响人际交往的更重要的力量。无论男女，人们在很多方面彼此各异（例如依恋类型），这些差异一般都比性别差异更能影响人际关系。</p>
+</li>
+<li><p>   在双性化、跨类型和未分化各类型内的男女比例大体相当，所以就性别差异而言，把两性视为具有不同特质的完全不同的两类人，既简单化又不准确（Bem，1993）。</p>
+</li>
+<li><p>   剽悍大丈夫和温柔小女人因为在处事风格和才干能力上差别很大，他们往往并不如那些不太传统、不太符合性别刻板印象的夫妇幸福快乐</p>
+</li>
+<li><p>   表达性低的人（不怎么热情、温柔、敏感）不太容易表现出热情和温柔；也不怎么充满深情</p>
+</li>
+<li><p>   因此，屈从于传统的性别角色对男人是一种伤害，剥夺了他们本可成为更好丈夫的技能。</p>
+</li>
+<li><p>   低工具性的人（缺乏自信和个人魄力的人）往往不如那些高工具性的人（任务导向的技能高的人）自尊程度高和适应能力强</p>
+</li>
+<li><p>   人格影响人际关系的程度远大于人际关系影响人格的程度（Asendorpf &amp; Wilpers，1998）。例如，人们是否会结婚，似乎有部分是由基因决定的</p>
+</li>
+<li><p>   人际关系对我们即将考察的最后一个个体差异的影响可能更大，这就是：人际交往中的自我评价</p>
+</li>
+<li><p>   对自我的评价构成了自尊（selfesteem）。如果对自己的能力和特质持正面评价，自尊水平就高；如果怀疑自己，自尊水平就低</p>
+</li>
+<li><p>   如果他人喜欢我们，我们就喜欢自己；如果他人积极地对待我们并看重与我们的关系，自尊水平就高。然而，如果我们不能吸引别人的关注——如果别人似乎并不在意我们是否会介入他们的生活——自尊水平就低。根据社会测量理论，自尊就是以这种方式运作的，因为自尊是满足我们归属需要演化而来的机制</p>
+</li>
+<li><p>   自尊就成为心理测量器，提醒个体警惕他人拒绝接纳自己，他人的厌恶和冷漠会逐渐使个体讨厌自己</p>
+</li>
+<li><p>   我们从他人那里感受到的尊重明显地影响到随后的自我评价</p>
+</li>
+<li><p>   进一步的证据是，我们人类是高度社会化的动物：如果他人不喜欢我们，我们要喜欢自己非常困难（的确，这样做很不现实）。大多数情况下，如果不能从他人那里获得足够的接纳和欣赏，长期处在低自尊的人就会形成负面的自我评价</p>
+</li>
+<li><p>   一系列令人信服的研究发现，低自尊的人有时低估伴侣对他们的爱，以致损害亲密关系</p>
+</li>
+<li><p>   低自尊者“即使处在亲密关系之中也往往（毫无根据地）认为伴侣对自己的感情非常不可靠”</p>
+</li>
+<li><p>   当亲密关系出现挫折时，自我评价高的人却能拉近和伴侣的距离，努力修复亲密关系，低自尊的人则防御性地把自己隔离起来，生闷气，乱搞一通（Murray，Bellavia et al.，2003），还觉得自己更加糟糕</p>
+</li>
+<li><p>   高自尊的人因为对伴侣给自己的爱恋和关心充满信心，即使亲密关系出现困难也能和伴侣拉近距离。相反，低自尊的人则持续地怀疑伴侣对自己的关心和信赖，所以一旦关系变糟就从伴侣身边离去，以保护自己免受伤害</p>
+</li>
+<li><p>   我们都需要在与他人的联系和自我保护间保持平衡，但低自尊的人总把他们脆弱的自尊心置于亲密关系之上。</p>
+</li>
+<li><p>   可以这样说，我们对自己的认识来自于与他人的人际关系，并影响着人际关系的后续发展</p>
+</li>
+<li><p>   人际关系常常大于它各部分相加的总和。人际关系由每一个参与者的经历和才能组合而成（Robins et al.，2000），这些总和也许比构成它们的个体简单相加要大得多</p>
+</li>
+<li><p>   互动的结果或许令人沮丧，或许令人满意。但这种可能的互动结果总是让人着迷，这就是人际关系的构成。</p>
+</li>
+</ol>
+<h2 id="2-吸引力"><a href="#2-吸引力" class="headerlink" title="2 吸引力"></a>2 吸引力</h2><ol start="54">
+<li><p>   根据伯纳德·默斯坦（Bernard Murstein）的刺激—价值观—角色（stimulus-value-role）理论（Murstein，1987），我们会从伴侣那里获得三种不同的信息，它们会影响亲密关系的发展。当伴侣第一次相遇，彼此的吸引力主要建立在“刺激”信息基础上，包括年龄、性别、长相等明显的外部特征。随后就进入“价值观”阶段，吸引力取决于彼此态度和信念的相像程度，人们开始了解彼此是否喜欢同样的比萨、电影和度假方式（见图3.8）。再往后，“角色”的相容性才变得更重要，此时伴侣们最终发现他们在养育方式、事业、居家等基本的生活要务上是否一致。问题是伴侣们对彼此的政治观点、娱乐格调可以十分满意，但可能根本意识不到对于定居在什么地方、是否生养子女、生养几个存在根本的分歧。有时候重大的差异只有在婚后才凸现出来；尽管存在这些差异，夫妻仍可能生活在一起，但这并不是因为相异而相吸。</p>
+</li>
+<li><p>   如果可以选择，大多数人都期望伴侣有以下的特点： ● 热情和忠诚，值得信赖、亲切友善、给予支持、善解人意； ● 吸引力和活力，长相俊美、性感、外向； ● 社会地位和资源，经济宽裕、生活安心。</p>
+</li>
+<li><p>   但吸引力还受到很多不易觉察的因素影响，这些因素只与人们外在的友善、俊美的长相或怡人的个性有间接的关联</p>
+</li>
+<li><p>   正如我们所看到的，人们常常被那些能为将来的后代提供生存优势的人所吸引，即使他们根本还没想过养育孩子的问题</p>
+</li>
+<li><p>   当人们面对面地交往时（在身体上，而且在心理上都更接近），这样的人际关系奖赏价值更高</p>
+</li>
+<li><p>   多数情况下，友谊和爱情都源自与身边人的交往。</p>
+</li>
+<li><p>   空间上的临近和人际吸引之间有着显而易见的联系，一米左右的距离就会造成很大的差别</p>
+</li>
+<li><p>   住处较近的人比房间相隔较远的人更有可能成为朋友</p>
+</li>
+<li><p>   显然，即使很小的距离对我们的人际关系也有着重大的影响，对此我们常常认识不足。一旦我们确定了居住、工作或上学的准确地点，我们大体上也就决定了哪些人将会成为我们生命中最重要的人</p>
+</li>
+<li><p>   在文字或声音中表达出的爱意远不如脸颊上真实的一吻那样打动人。因而，分居两地的亲密关系一般不如朝夕相伴的亲密关系令人满意</p>
+</li>
+<li><p>   重复地接触他人（甚至只要看到他人照片）通常能增加我们对他们的喜欢程度，而不会导致厌烦，此即曝光效应（mere exposure effect） [1] （Zajonc，2001）。即使我们从来没有与陌生人说过话，我们仍倾向于喜欢见过很多次的面孔，而非不熟悉的面孔</p>
+</li>
+<li><p>   熟识能增加吸引力，但过度接触则未必</p>
+</li>
+<li><p>   当然，俊美之人给陌生人的总体印象毫无疑问好过长相一般的人，这一点在世界各国应该都是一样的</p>
+</li>
+<li><p>   在职场中，貌美之人比一般长相的人工资更高、晋升更快。平均而言，与中等相貌之人相比，貌美的雇员多赚5%，而丑陋的家伙少挣9%</p>
+</li>
+<li><p>   不过，并不见得总是情人眼里出西施，世界各地的人对于美丑的判断标准还是有相当的一致性</p>
+</li>
+<li><p>   外貌吸引力或许是影响男女之间最初喜欢彼此的最重要因素</p>
+</li>
+<li><p>   长相平庸的男人与英俊潇洒的男人相比，与女性任何形式的交往都更少。准此而论，长相吸引力对男人社交活动的影响要甚于女人</p>
+</li>
+<li><p>   长相的吸引力甚至还能解释影响人们一生适应能力和幸福生活变量的10%</p>
+</li>
+<li><p>   在可以选择的恋爱对象很多时，长相吸引力可能更为重要。由于有选择余地，人们理所当然会更偏爱有吸引力的对象。然而，在挑选机会不多的地方，长相则不太重要</p>
+</li>
+<li><p>   人们或许都想找到俊美的伴侣，但最终结果通常是与自己容貌相当的人配成对（Hitsch et al.，2010）。已确定爱情关系的伴侣，他们的长相吸引力往往是类似的；即他们的容貌是相匹配的。这种现象称为匹配</p>
+</li>
+<li><p>   这表明，即使每个人都希望自己的伴侣长相俊美，但只有那些容貌也俊美的人才能得偿所愿。长相确实俊美的人并不愿意和容貌平庸的家伙成为伴侣，同样我们普通人也不会愿意和长相“差于我们”的伴侣长相厮守</p>
+</li>
+<li><p>   礼尚往来：喜欢那些喜欢我们的人</p>
+</li>
+<li><p>   对未来伴侣的期望值=伴侣的外表吸引力×伴侣接纳自己的可能性</p>
+</li>
+<li><p>   最吸引人的伴侣是长相还过得去，也很有可能接纳我们的人（之所以愿意接纳我们或许是因为他们也不太俊美）</p>
+</li>
+<li><p>   高适配价值的人，有很多热烈的追求者，因此他们能够坚持自己对伴侣的高要求。他们的确能实现</p>
+</li>
+<li><p>   于是她们可能重新调整自己的适配价值，并对他人接纳自己的可能性重新做出估计</p>
+</li>
+<li><p>   急于要与遇见到的每个人都约会的人较之那些更有分辨力、更挑剔的人，配对成功的次数也更少；对每个人都说“yes”的人，人们回馈的“yes”却没几个</p>
+</li>
+<li><p>   一味故作清高没有什么作用。真正有用的是选择性地故作清高——也就是说，除了你想吸引的人之外，任何人想要得到你都是可望而不可即的</p>
+</li>
+<li><p>   不过，当其他条件相同时，不喜欢那些欣赏我们的人也难</p>
+</li>
+<li><p>   相似性：喜欢与我们相像的人</p>
+</li>
+<li><p>   遇上喜欢我们的人具有奖赏意义。如果能遇上和我们恰好相像的人，与我们有同样的背景、兴趣和品位，也令人感到愉悦快乐</p>
+</li>
+<li><p>   伴侣间态度相同的程度和彼此的吸引力有着简单直接的关联：共同点越多，彼此越喜欢</p>
+</li>
+<li><p>   注意曲线的走势，即使相像达到一定程度之后，吸引力并不会下降，所以“共同点太多”并没有什么危险</p>
+</li>
+<li><p>   因为这样的伴侣实际上在更广泛的意义上进行了匹配，用长相换金钱，反之亦然。他们或许有着不同的优势，但在人际市场上都在寻找与自己身价整体相当的伴侣。人们往往和有着类似适配价值的人结合（Brase &amp; Guy，2004），虽然他们彼此能给予对方的特定奖赏或许存在很大的差异。</p>
+</li>
+<li><p>   也许看上去不太浪漫，但名望、财富、健康、才能和长相等等都像商品一样，能用来吸引心仪的伴侣。如果我们把匹配视为广泛的过程，不仅涉及长相吸引力，而且包括各种其他长处和特质，那么很显然，人们总是会与旗鼓相当的人配成一对，同性相吸（相类似的人彼此吸引对方）就发生了</p>
+</li>
+<li><p>   而且，女性对伴侣年龄的偏爱不会随着年龄增加而发生变化；女人终其一生都喜欢嫁给比自己略大几岁的男人</p>
+</li>
+<li><p>   如果“相异”看起来相互吸引，也许人们是在用一种优势交换伴侣的另一种优势，以便得到伴侣类似的社会地位，所以正是他们类似的适配价值，而非任何外在的“相异”，使得他们彼此相吸</p>
+</li>
+<li><p>   然而随着时间的推移，学生之间实际的相像在友谊发展的过程中起着越来越大的作用。当他们有了充分了解后，参与者显然喜欢那些真正与他们相像的人，尽管在一开始并不是这样</p>
+</li>
+<li><p>   令人厌烦的特征并非隐而不显的秘密，只不过人们领悟不到自己的判断会随着时间发生改变</p>
+</li>
+<li><p>   这种把伴侣构造成美满形象的倾向有利于维持亲密关系</p>
+</li>
+<li><p>   知觉到的相像的确能把人们聚在一起，至少能维持一段时间，即使他们之间的差异在旁观者眼里非常明显</p>
+</li>
+<li><p>   相像起作用的另一微妙之处在于，那些我们渴望成为的人对我们有吸引力</p>
+</li>
+<li><p>   最有吸引力的伴侣仍然是那些在很多方面和我们相像，但又拥有我们通过努力就能实现的理想特征的人（Figueredo et al.，2006）。这样的人根本不是与我们相左的“异性”。但是只要差距不是过大，或许我们更喜欢自己想要成为的那种理想式的人物，而不是与我们目前非常相像的人</p>
+</li>
+<li><p>   差异可能随着时间而减少</p>
+</li>
+<li><p>   而且，亲密关系还能使人发生改变（Ruvolo &amp; Ruvolo，2000）。随着时间的推移，夫妻双方在面临各种事件时体验到的态度和情绪反应会越来越相似</p>
+</li>
+<li><p>   夫妻如果因其他原因待在一起，某些差异会逐渐消退。并且久而久之，新发现的相像有助于伴侣们聚在一起，即使他们最初共同点并不多</p>
+</li>
+<li><p>   如果伴侣在一些重要的议题上能和我们保持一致，将特别具有奖赏价值</p>
+</li>
+<li><p>   因而，相异并不相吸，而且如果伴侣双方都不太看重这种差异的话，相异或许一点影响都没有</p>
+</li>
+<li><p>   即互补性（complementarity），它能弥补我们的不足，因此具有吸引力。大多数互补行为其实是相似的：比如热情随和的人在得到热情幽默的回报时最为快乐。不过，互补性更确切的形式涉及伴侣双方的不同行为：支配与顺从（Markey et al.，2010）</p>
+</li>
+<li><p>   感到最多爱意和最少冲突的伴侣是那些在热情上相似而支配欲上不同的伴侣（Markey &amp; Markey，2007）。如果伴侣一方要在亲密关系起带头作用，当另一方愿意顺从时才最快乐</p>
+</li>
+<li><p>   我们不应过分强调这种互补性</p>
+</li>
+<li><p>   人们会更加喜欢性格相似的人，而非性格不同的人，即使支配欲很强的人也更喜欢有主见的家伙，而非长期服从的懦夫</p>
+</li>
+<li><p>   但事实上我们的确是物以类聚、人以群分的。相像具有奖赏意义，而相异则没有。</p>
+</li>
+<li><p>   所有这些特点都是值得拥有的，但它们并非同等重要，其优先性取决于我们追求的是较随便、短期的露水恋情还是忠诚持久的浪漫爱情。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Literature</category>
+      </categories>
+      <tags>
+        <tag>读书笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -363,235 +1077,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《亲密关系》读书笔记</title>
-    <url>/2024/03/16/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="1-人际关系的构成"><a href="#1-人际关系的构成" class="headerlink" title="1 人际关系的构成"></a>1 人际关系的构成</h2><ol>
-<li><p>   表1.1　巴塞洛缪提出的四种依恋类型</p>
-</li>
-<li><p>   不再简单地把人们分为安全、痴迷、恐惧或疏离四种类型，而是给出人们在忧虑和回避两个维度中的相对位置。 图1.5　依恋的双维度图</p>
-</li>
-<li><p>   表1.3　伴侣怎么看我</p>
-</li>
-<li><p>   亲密关系和泛泛之交至少在六个方面存在程度差异：了解（knowledge）、关心（care）、相互依赖性（interdependence）、相互一致性（mutuality）、信任（trust）以及承诺（commitment）。</p>
-</li>
-<li><p>   首先，亲密的伴侣彼此间有着广泛而私密的了解。他们熟知彼此的经历、爱好、情感和心愿，而且一般不会把这些信息透露给其他人。亲密的伴侣关心对方，彼此能从对方身上感受到更多的关爱。如果人们认为自己的伴侣了解、理解并欣赏自己，其亲密程度就会增加</p>
-</li>
-<li><p>   亲密伴侣的生活也是交织在一起的：一方的行为会影响另一方的行为目标和行动能力</p>
-</li>
-<li><p>   亲密伴侣的相互依赖性是指他们彼此需要的程度和影响对方的程度，这种相互依赖是频繁的（经常影响彼此）、强烈的（彼此都有显著的影响）、多样的（以多种不同的方式影响彼此）和持久的（彼此影响的时间很长）</p>
-</li>
-<li><p>   使得亲密关系易于保持的另一个特点是信任，期望对方会善待和尊重自己</p>
-</li>
-<li><p>   最后，亲密伴侣通常会承诺他们的亲密关系，希望他们的关系能持续到地老天荒，并为此不惜投入大量的时间、人力和物力</p>
-</li>
-<li><p>   一般而言，最令人满意和最有意义的亲密关系应当包括亲密关系的所有六个特征（Fletcher et al.，2000a）。但亲密关系如果只有部分特征，亲密程度就会减弱</p>
-</li>
-<li><p>   我们需要记住人际关系最简单、最基本的特点是：种类多样，规格不齐。这种多样性使人际关系非常复杂，也使人际关系魅力无穷。</p>
-</li>
-<li><p>   个体需要的亲密关系无需太多，几个便可。归属需要得到满足后，我们建立人际关系的内驱力就会降低（因而人际关系的质量比数量更重要）</p>
-</li>
-<li><p>   归属需要也和我们伴侣是谁并无太大的关系，只要他们能给予我们持续的关爱和包容，我们的归属需要就能得到满足。因而，即使一段重要的亲密关系终结，我们也往往能找到替代伴侣（尽管新人和旧人有很大的差别），而且能满足我们的归属需要</p>
-</li>
-<li><p>   如果我们的生命缺乏亲密感情，我们就很容易迷失人生方向，患上身心疾病</p>
-</li>
-<li><p>   文化标准是人们建立人际关系的基石（Acitelli et al.，2011），它影响着人们对人际关系的期望，限定了正常的人际关系模式</p>
-</li>
-<li><p>   首先，同居情侣彼此的承诺一般不如已婚夫妻，毕竟同居情侣还有选择的机会（Wiik et al.，2009）。所以同居情侣比已婚夫妻经常面临更多的问题和不确定性（Hsueh et al.，2009）。他们往往会遭遇更多的冲突（Stanley et al.，2010）、嫉妒（Gatzeva &amp; Paik，2011）、出轨（Thornton et al.，2007）和身体攻击（Rhoades et al.，2009a），所以同居与婚姻相比，往往充满变数，前景难料。故而，人们同居的时间越长，对婚姻的热情越低，越容易离婚</p>
-</li>
-<li><p>   情侣如果已经订婚，准备结婚，这些有害的同居效应相对轻微，但即使伴侣已经订婚，未婚同居也有一定的危害性（Jose et al.，2003）。故而，尽管同居很流行，人们普遍把同居当成“试婚”，但这是越来越少的人结婚，越来越少的婚姻能持续（与1960年代相比）的原因之一</p>
-</li>
-<li><p>   社会工业化程度越高、越富足，就越能接纳单身、包容离婚和支持晚婚（South et al.，2001），而全世界的社会经济发展水平都提高了。教育和财政资源的充裕，足以让人们变得更为独立，与过去相比，女性尤其更可能不结婚（Dooley，2010）。而最近全球经济的衰退也有明显的影响。随着更多的情侣为节省金钱生活在一起，同居人数明显增加（Yen，2010c），但结婚率在赤贫人群中却在下降，没有稳定的收入人们并不愿意结婚（Yen，2010b）。</p>
-</li>
-<li><p>   近年来，西方文化的主要特征——个人主义（支持自我表现，重视个人成就）也变得愈发突出（Twenge &amp; Campbell，2010）。（比如，美国人现在更可能给自己的孩子取不常见的名字以引人注目[Twenge et al.，2010]。）可以想见，这种对自我实现的重视会让我们期望从亲密关系中获取比上一辈更多的东西——更多的快乐和享受，更少的麻烦和付出</p>
-</li>
-<li><p>   东方文化更倡导集体主义的自我感，人们与家庭和社会团体的联系更为紧密。集体文化国家（如日本）的离婚率比美国低得多（Cherlin，2009）。</p>
-</li>
-<li><p>   安全型的人在与他人亲密接触的过程中非常安心，不会担心别人会苛刻对待自己；因而能积极快乐地寻求亲密、相互依赖的人际关系。相形之下，其他三种类型的人充满焦虑和不安，在亲密关系中如坐针毡。痴迷型的人渴望亲密接触但害怕被拒绝。疏离型的人并不担心被拒绝，但却不喜欢亲密接触。至于恐惧型的人则两者兼而有之，在亲密关系中坐立不安又担心亲密关系不能长久（见图1.5）</p>
-</li>
-<li><p>   依恋类型看似是人们对人际关系的适应行为，这种适应大部分是从与他人交往的经验中习得的。我们带入新的人际关系的癖好和观点，部分来自于与以前伴侣的交往经历，这是人际关系适应行为最好的例证。</p>
-</li>
-<li><p>   依恋类型受到个体与生俱来的特质影响，基因塑造了我们的依恋类型（Picardi et al.，2011）。</p>
-</li>
-<li><p>   然而，我们的经验在塑造之后的依恋关系上甚至起着更大的作用</p>
-</li>
-<li><p>   然而，我们并不会被动地受童年经验的束缚，因为依恋类型不断地受到我们成人后经历的影响（Zhang，2009）。依恋类型既然是习得的，就可能发生变化。随着时间的推移，依恋类型的确会发生新的改变</p>
-</li>
-<li><p>   在两年之内，足有三分之一的依恋类型可以发生实质性变化</p>
-</li>
-<li><p>   尽管依恋能改变，但它们一旦确立后，既稳定又持久，并影响人们新建立的人际关系，加强已有的行为倾向</p>
-</li>
-<li><p>   如果没有大起大落的新经历，人们的依恋类型可以持续数十年</p>
-</li>
-<li><p>   所以，我们对紧密关系性质和价值的总看法，看来是由我们体验到的亲密关系的经验所决定的。我们幼时对人际交往价值和他人是否可信的观念，起源于我们与照料者的交往，由于运气的好坏，我们就此走向了信任或恐惧的亲密关系之路。这段历程永远不会停止，同行者随后给予的阻碍或帮助会改变我们亲密关系的方向和进程。视乎人际交往经验的不同，我们习得的依恋类型既可随时间发生变化，也可永久保持稳定</p>
-</li>
-<li><p>   要阐明个体差异如何影响亲密伴侣的行为。我们将重点考察四种不同类型个体差异：性别差异、性认同差异、人格差异和自尊差异</p>
-</li>
-<li><p>   由于两性之间的共性如此之多，所以在人际关系科学研究的许多维度和方面，其相似性远大于差异性</p>
-</li>
-<li><p>   亲密关系中的性别差异并不像一般人认为的那般重要和有影响</p>
-</li>
-<li><p>   个体差异才是影响人际交往的更重要的力量。无论男女，人们在很多方面彼此各异（例如依恋类型），这些差异一般都比性别差异更能影响人际关系。</p>
-</li>
-<li><p>   在双性化、跨类型和未分化各类型内的男女比例大体相当，所以就性别差异而言，把两性视为具有不同特质的完全不同的两类人，既简单化又不准确（Bem，1993）。</p>
-</li>
-<li><p>   剽悍大丈夫和温柔小女人因为在处事风格和才干能力上差别很大，他们往往并不如那些不太传统、不太符合性别刻板印象的夫妇幸福快乐</p>
-</li>
-<li><p>   表达性低的人（不怎么热情、温柔、敏感）不太容易表现出热情和温柔；也不怎么充满深情</p>
-</li>
-<li><p>   因此，屈从于传统的性别角色对男人是一种伤害，剥夺了他们本可成为更好丈夫的技能。</p>
-</li>
-<li><p>   低工具性的人（缺乏自信和个人魄力的人）往往不如那些高工具性的人（任务导向的技能高的人）自尊程度高和适应能力强</p>
-</li>
-<li><p>   人格影响人际关系的程度远大于人际关系影响人格的程度（Asendorpf &amp; Wilpers，1998）。例如，人们是否会结婚，似乎有部分是由基因决定的</p>
-</li>
-<li><p>   人际关系对我们即将考察的最后一个个体差异的影响可能更大，这就是：人际交往中的自我评价</p>
-</li>
-<li><p>   对自我的评价构成了自尊（selfesteem）。如果对自己的能力和特质持正面评价，自尊水平就高；如果怀疑自己，自尊水平就低</p>
-</li>
-<li><p>   如果他人喜欢我们，我们就喜欢自己；如果他人积极地对待我们并看重与我们的关系，自尊水平就高。然而，如果我们不能吸引别人的关注——如果别人似乎并不在意我们是否会介入他们的生活——自尊水平就低。根据社会测量理论，自尊就是以这种方式运作的，因为自尊是满足我们归属需要演化而来的机制</p>
-</li>
-<li><p>   自尊就成为心理测量器，提醒个体警惕他人拒绝接纳自己，他人的厌恶和冷漠会逐渐使个体讨厌自己</p>
-</li>
-<li><p>   我们从他人那里感受到的尊重明显地影响到随后的自我评价</p>
-</li>
-<li><p>   进一步的证据是，我们人类是高度社会化的动物：如果他人不喜欢我们，我们要喜欢自己非常困难（的确，这样做很不现实）。大多数情况下，如果不能从他人那里获得足够的接纳和欣赏，长期处在低自尊的人就会形成负面的自我评价</p>
-</li>
-<li><p>   一系列令人信服的研究发现，低自尊的人有时低估伴侣对他们的爱，以致损害亲密关系</p>
-</li>
-<li><p>   低自尊者“即使处在亲密关系之中也往往（毫无根据地）认为伴侣对自己的感情非常不可靠”</p>
-</li>
-<li><p>   当亲密关系出现挫折时，自我评价高的人却能拉近和伴侣的距离，努力修复亲密关系，低自尊的人则防御性地把自己隔离起来，生闷气，乱搞一通（Murray，Bellavia et al.，2003），还觉得自己更加糟糕</p>
-</li>
-<li><p>   高自尊的人因为对伴侣给自己的爱恋和关心充满信心，即使亲密关系出现困难也能和伴侣拉近距离。相反，低自尊的人则持续地怀疑伴侣对自己的关心和信赖，所以一旦关系变糟就从伴侣身边离去，以保护自己免受伤害</p>
-</li>
-<li><p>   我们都需要在与他人的联系和自我保护间保持平衡，但低自尊的人总把他们脆弱的自尊心置于亲密关系之上。</p>
-</li>
-<li><p>   可以这样说，我们对自己的认识来自于与他人的人际关系，并影响着人际关系的后续发展</p>
-</li>
-<li><p>   人际关系常常大于它各部分相加的总和。人际关系由每一个参与者的经历和才能组合而成（Robins et al.，2000），这些总和也许比构成它们的个体简单相加要大得多</p>
-</li>
-<li><p>   互动的结果或许令人沮丧，或许令人满意。但这种可能的互动结果总是让人着迷，这就是人际关系的构成。</p>
-</li>
-</ol>
-<h2 id="2-吸引力"><a href="#2-吸引力" class="headerlink" title="2 吸引力"></a>2 吸引力</h2><ol start="54">
-<li><p>   根据伯纳德·默斯坦（Bernard Murstein）的刺激—价值观—角色（stimulus-value-role）理论（Murstein，1987），我们会从伴侣那里获得三种不同的信息，它们会影响亲密关系的发展。当伴侣第一次相遇，彼此的吸引力主要建立在“刺激”信息基础上，包括年龄、性别、长相等明显的外部特征。随后就进入“价值观”阶段，吸引力取决于彼此态度和信念的相像程度，人们开始了解彼此是否喜欢同样的比萨、电影和度假方式（见图3.8）。再往后，“角色”的相容性才变得更重要，此时伴侣们最终发现他们在养育方式、事业、居家等基本的生活要务上是否一致。问题是伴侣们对彼此的政治观点、娱乐格调可以十分满意，但可能根本意识不到对于定居在什么地方、是否生养子女、生养几个存在根本的分歧。有时候重大的差异只有在婚后才凸现出来；尽管存在这些差异，夫妻仍可能生活在一起，但这并不是因为相异而相吸。</p>
-</li>
-<li><p>   如果可以选择，大多数人都期望伴侣有以下的特点： ● 热情和忠诚，值得信赖、亲切友善、给予支持、善解人意； ● 吸引力和活力，长相俊美、性感、外向； ● 社会地位和资源，经济宽裕、生活安心。</p>
-</li>
-<li><p>   但吸引力还受到很多不易觉察的因素影响，这些因素只与人们外在的友善、俊美的长相或怡人的个性有间接的关联</p>
-</li>
-<li><p>   正如我们所看到的，人们常常被那些能为将来的后代提供生存优势的人所吸引，即使他们根本还没想过养育孩子的问题</p>
-</li>
-<li><p>   当人们面对面地交往时（在身体上，而且在心理上都更接近），这样的人际关系奖赏价值更高</p>
-</li>
-<li><p>   多数情况下，友谊和爱情都源自与身边人的交往。</p>
-</li>
-<li><p>   空间上的临近和人际吸引之间有着显而易见的联系，一米左右的距离就会造成很大的差别</p>
-</li>
-<li><p>   住处较近的人比房间相隔较远的人更有可能成为朋友</p>
-</li>
-<li><p>   显然，即使很小的距离对我们的人际关系也有着重大的影响，对此我们常常认识不足。一旦我们确定了居住、工作或上学的准确地点，我们大体上也就决定了哪些人将会成为我们生命中最重要的人</p>
-</li>
-<li><p>   在文字或声音中表达出的爱意远不如脸颊上真实的一吻那样打动人。因而，分居两地的亲密关系一般不如朝夕相伴的亲密关系令人满意</p>
-</li>
-<li><p>   重复地接触他人（甚至只要看到他人照片）通常能增加我们对他们的喜欢程度，而不会导致厌烦，此即曝光效应（mere exposure effect） [1] （Zajonc，2001）。即使我们从来没有与陌生人说过话，我们仍倾向于喜欢见过很多次的面孔，而非不熟悉的面孔</p>
-</li>
-<li><p>   熟识能增加吸引力，但过度接触则未必</p>
-</li>
-<li><p>   当然，俊美之人给陌生人的总体印象毫无疑问好过长相一般的人，这一点在世界各国应该都是一样的</p>
-</li>
-<li><p>   在职场中，貌美之人比一般长相的人工资更高、晋升更快。平均而言，与中等相貌之人相比，貌美的雇员多赚5%，而丑陋的家伙少挣9%</p>
-</li>
-<li><p>   不过，并不见得总是情人眼里出西施，世界各地的人对于美丑的判断标准还是有相当的一致性</p>
-</li>
-<li><p>   外貌吸引力或许是影响男女之间最初喜欢彼此的最重要因素</p>
-</li>
-<li><p>   长相平庸的男人与英俊潇洒的男人相比，与女性任何形式的交往都更少。准此而论，长相吸引力对男人社交活动的影响要甚于女人</p>
-</li>
-<li><p>   长相的吸引力甚至还能解释影响人们一生适应能力和幸福生活变量的10%</p>
-</li>
-<li><p>   在可以选择的恋爱对象很多时，长相吸引力可能更为重要。由于有选择余地，人们理所当然会更偏爱有吸引力的对象。然而，在挑选机会不多的地方，长相则不太重要</p>
-</li>
-<li><p>   人们或许都想找到俊美的伴侣，但最终结果通常是与自己容貌相当的人配成对（Hitsch et al.，2010）。已确定爱情关系的伴侣，他们的长相吸引力往往是类似的；即他们的容貌是相匹配的。这种现象称为匹配</p>
-</li>
-<li><p>   这表明，即使每个人都希望自己的伴侣长相俊美，但只有那些容貌也俊美的人才能得偿所愿。长相确实俊美的人并不愿意和容貌平庸的家伙成为伴侣，同样我们普通人也不会愿意和长相“差于我们”的伴侣长相厮守</p>
-</li>
-<li><p>   礼尚往来：喜欢那些喜欢我们的人</p>
-</li>
-<li><p>   对未来伴侣的期望值=伴侣的外表吸引力×伴侣接纳自己的可能性</p>
-</li>
-<li><p>   最吸引人的伴侣是长相还过得去，也很有可能接纳我们的人（之所以愿意接纳我们或许是因为他们也不太俊美）</p>
-</li>
-<li><p>   高适配价值的人，有很多热烈的追求者，因此他们能够坚持自己对伴侣的高要求。他们的确能实现</p>
-</li>
-<li><p>   于是她们可能重新调整自己的适配价值，并对他人接纳自己的可能性重新做出估计</p>
-</li>
-<li><p>   急于要与遇见到的每个人都约会的人较之那些更有分辨力、更挑剔的人，配对成功的次数也更少；对每个人都说“yes”的人，人们回馈的“yes”却没几个</p>
-</li>
-<li><p>   一味故作清高没有什么作用。真正有用的是选择性地故作清高——也就是说，除了你想吸引的人之外，任何人想要得到你都是可望而不可即的</p>
-</li>
-<li><p>   不过，当其他条件相同时，不喜欢那些欣赏我们的人也难</p>
-</li>
-<li><p>   相似性：喜欢与我们相像的人</p>
-</li>
-<li><p>   遇上喜欢我们的人具有奖赏意义。如果能遇上和我们恰好相像的人，与我们有同样的背景、兴趣和品位，也令人感到愉悦快乐</p>
-</li>
-<li><p>   伴侣间态度相同的程度和彼此的吸引力有着简单直接的关联：共同点越多，彼此越喜欢</p>
-</li>
-<li><p>   注意曲线的走势，即使相像达到一定程度之后，吸引力并不会下降，所以“共同点太多”并没有什么危险</p>
-</li>
-<li><p>   因为这样的伴侣实际上在更广泛的意义上进行了匹配，用长相换金钱，反之亦然。他们或许有着不同的优势，但在人际市场上都在寻找与自己身价整体相当的伴侣。人们往往和有着类似适配价值的人结合（Brase &amp; Guy，2004），虽然他们彼此能给予对方的特定奖赏或许存在很大的差异。</p>
-</li>
-<li><p>   也许看上去不太浪漫，但名望、财富、健康、才能和长相等等都像商品一样，能用来吸引心仪的伴侣。如果我们把匹配视为广泛的过程，不仅涉及长相吸引力，而且包括各种其他长处和特质，那么很显然，人们总是会与旗鼓相当的人配成一对，同性相吸（相类似的人彼此吸引对方）就发生了</p>
-</li>
-<li><p>   而且，女性对伴侣年龄的偏爱不会随着年龄增加而发生变化；女人终其一生都喜欢嫁给比自己略大几岁的男人</p>
-</li>
-<li><p>   如果“相异”看起来相互吸引，也许人们是在用一种优势交换伴侣的另一种优势，以便得到伴侣类似的社会地位，所以正是他们类似的适配价值，而非任何外在的“相异”，使得他们彼此相吸</p>
-</li>
-<li><p>   然而随着时间的推移，学生之间实际的相像在友谊发展的过程中起着越来越大的作用。当他们有了充分了解后，参与者显然喜欢那些真正与他们相像的人，尽管在一开始并不是这样</p>
-</li>
-<li><p>   令人厌烦的特征并非隐而不显的秘密，只不过人们领悟不到自己的判断会随着时间发生改变</p>
-</li>
-<li><p>   这种把伴侣构造成美满形象的倾向有利于维持亲密关系</p>
-</li>
-<li><p>   知觉到的相像的确能把人们聚在一起，至少能维持一段时间，即使他们之间的差异在旁观者眼里非常明显</p>
-</li>
-<li><p>   相像起作用的另一微妙之处在于，那些我们渴望成为的人对我们有吸引力</p>
-</li>
-<li><p>   最有吸引力的伴侣仍然是那些在很多方面和我们相像，但又拥有我们通过努力就能实现的理想特征的人（Figueredo et al.，2006）。这样的人根本不是与我们相左的“异性”。但是只要差距不是过大，或许我们更喜欢自己想要成为的那种理想式的人物，而不是与我们目前非常相像的人</p>
-</li>
-<li><p>   差异可能随着时间而减少</p>
-</li>
-<li><p>   而且，亲密关系还能使人发生改变（Ruvolo &amp; Ruvolo，2000）。随着时间的推移，夫妻双方在面临各种事件时体验到的态度和情绪反应会越来越相似</p>
-</li>
-<li><p>   夫妻如果因其他原因待在一起，某些差异会逐渐消退。并且久而久之，新发现的相像有助于伴侣们聚在一起，即使他们最初共同点并不多</p>
-</li>
-<li><p>   如果伴侣在一些重要的议题上能和我们保持一致，将特别具有奖赏价值</p>
-</li>
-<li><p>   因而，相异并不相吸，而且如果伴侣双方都不太看重这种差异的话，相异或许一点影响都没有</p>
-</li>
-<li><p>   即互补性（complementarity），它能弥补我们的不足，因此具有吸引力。大多数互补行为其实是相似的：比如热情随和的人在得到热情幽默的回报时最为快乐。不过，互补性更确切的形式涉及伴侣双方的不同行为：支配与顺从（Markey et al.，2010）</p>
-</li>
-<li><p>   感到最多爱意和最少冲突的伴侣是那些在热情上相似而支配欲上不同的伴侣（Markey &amp; Markey，2007）。如果伴侣一方要在亲密关系起带头作用，当另一方愿意顺从时才最快乐</p>
-</li>
-<li><p>   我们不应过分强调这种互补性</p>
-</li>
-<li><p>   人们会更加喜欢性格相似的人，而非性格不同的人，即使支配欲很强的人也更喜欢有主见的家伙，而非长期服从的懦夫</p>
-</li>
-<li><p>   但事实上我们的确是物以类聚、人以群分的。相像具有奖赏意义，而相异则没有。</p>
-</li>
-<li><p>   所有这些特点都是值得拥有的，但它们并非同等重要，其优先性取决于我们追求的是较随便、短期的露水恋情还是忠诚持久的浪漫爱情。</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Literature</category>
-      </categories>
-      <tags>
-        <tag>读书笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>加密算法逆向实践</title>
     <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
@@ -736,47 +1221,6 @@
       </tags>
   </entry>
   <entry>
-    <title>加密算法逆向总结</title>
-    <url>/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
-<li><strong>简单加密算法逆向分析</strong><br>异或加密<br>仿射加密</li>
-<li><strong>对称加密算法逆向分析</strong><br>RC4流加密<br>DES对称加密</li>
-<li><strong>单向散列算法逆向分析</strong><br>MD5哈希函数<br>SHA哈希函数</li>
-</ol>
-<p><strong>首先要对这些算法的加密原理十分了解</strong>——参考现代密码学笔记</p>
-<h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="可以直接复用源程序进行动态调试获得flag的"><a href="#可以直接复用源程序进行动态调试获得flag的" class="headerlink" title="可以直接复用源程序进行动态调试获得flag的"></a>可以直接复用源程序进行动态调试获得flag的</h3><p>加解密算法完全相同的是可以复用的</p>
-<p>包括：<strong>异或加密 仿射加密 RC4流加密</strong></p>
-<h3 id="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"><a href="#其余的算法加解密不相同则只能使用静态调试写脚本解出flag" class="headerlink" title="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"></a>其余的算法加解密不相同则只能使用静态调试写脚本解出flag</h3><p>包括 <strong>DES AES MD5 SHA256</strong></p>
-<h2 id="基本逆向思路——静态调试"><a href="#基本逆向思路——静态调试" class="headerlink" title="基本逆向思路——静态调试"></a>基本逆向思路——静态调试</h2><p>首先先打开程序，查看程序提示的字符串，以及输入随意值之后的程序提示</p>
-<p>根据程序的字符串提示，在IDA Pro中用shift+F12找到字符串，再通过X查看到交叉引用，再在这个字符串的上文定位到比较函数</p>
-<p>先看main函数，分析main函数的执行过程，然后找到加密函数，根据加密函数分析出对应的加密算法<br>（F5查看反汇编或者直接看汇编）</p>
-<p>然后再在函数中找到找到所需要的关键信息如<strong>密钥 密文等</strong></p>
-<p>最后再根据加密算法的原理写出<strong>加密算法的解密脚本</strong>或者是利用动态调试修改输入的字符串直接获得flag</p>
-<h4 id="PS：使用动态调试直接复用加密函数解密"><a href="#PS：使用动态调试直接复用加密函数解密" class="headerlink" title="PS：使用动态调试直接复用加密函数解密"></a>PS：使用动态调试直接复用加密函数解密</h4><p><strong>首先得确保加密算法的加解密过程是一致的才可以使用！！！</strong></p>
-<p>首先先用静态调试找到密文和加密函数的地址</p>
-<p>在x32dbg中定位到加密函数，找到输入的字符串地址，使用二进制编辑修改输入的字符串为密文，即可得到flag</p>
-]]></content>
-      <categories>
-        <category>Note</category>
-      </categories>
-      <tags>
-        <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>博客优化和更新</title>
-    <url>/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/</url>
-    <content><![CDATA[<p>最近正好在不断优化和更新自己的博客，我就想着可不可以试试给自己的博客多选几个主题，之后可以随时更换（看心情），然后就挑了下面几个主题：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/image-20230718111427675.png" class title="image-20230718111427675">
-
-<p>结果发现我还是最爱我的Redefine主题，甚至有两个主题还用不了…</p>
-<p>不过其它主题我也挺喜欢的。有简洁的主题，也有很诗意的主题，感觉还是挺全面的，之后可以没事多刷刷我的博客，说不定就换主题了呢哈哈哈哈</p>
-]]></content>
-      <tags>
-        <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>奥本海默</title>
     <url>/2023/08/30/%E5%A5%A5%E6%9C%AC%E6%B5%B7%E9%BB%98/</url>
     <content><![CDATA[<p><strong>“当人们折磨够你之后，就会颁奖给你，好像在原谅你的样子，但其实这些举动都只是为了他们自己。”</strong></p>
@@ -820,6 +1264,19 @@ import {initHBE} from "/js/plugins/hbe.js";
       </categories>
       <tags>
         <tag>社会现状思考</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客优化和更新</title>
+    <url>/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/</url>
+    <content><![CDATA[<p>最近正好在不断优化和更新自己的博客，我就想着可不可以试试给自己的博客多选几个主题，之后可以随时更换（看心情），然后就挑了下面几个主题：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/image-20230718111427675.png" class title="image-20230718111427675">
+
+<p>结果发现我还是最爱我的Redefine主题，甚至有两个主题还用不了…</p>
+<p>不过其它主题我也挺喜欢的。有简洁的主题，也有很诗意的主题，感觉还是挺全面的，之后可以没事多刷刷我的博客，说不定就换主题了呢哈哈哈哈</p>
+]]></content>
+      <tags>
+        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -974,6 +1431,34 @@ import {initHBE} from "/js/plugins/hbe.js";
       </categories>
       <tags>
         <tag>homework</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>加密算法逆向总结</title>
+    <url>/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
+<li><strong>简单加密算法逆向分析</strong><br>异或加密<br>仿射加密</li>
+<li><strong>对称加密算法逆向分析</strong><br>RC4流加密<br>DES对称加密</li>
+<li><strong>单向散列算法逆向分析</strong><br>MD5哈希函数<br>SHA哈希函数</li>
+</ol>
+<p><strong>首先要对这些算法的加密原理十分了解</strong>——参考现代密码学笔记</p>
+<h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="可以直接复用源程序进行动态调试获得flag的"><a href="#可以直接复用源程序进行动态调试获得flag的" class="headerlink" title="可以直接复用源程序进行动态调试获得flag的"></a>可以直接复用源程序进行动态调试获得flag的</h3><p>加解密算法完全相同的是可以复用的</p>
+<p>包括：<strong>异或加密 仿射加密 RC4流加密</strong></p>
+<h3 id="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"><a href="#其余的算法加解密不相同则只能使用静态调试写脚本解出flag" class="headerlink" title="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"></a>其余的算法加解密不相同则只能使用静态调试写脚本解出flag</h3><p>包括 <strong>DES AES MD5 SHA256</strong></p>
+<h2 id="基本逆向思路——静态调试"><a href="#基本逆向思路——静态调试" class="headerlink" title="基本逆向思路——静态调试"></a>基本逆向思路——静态调试</h2><p>首先先打开程序，查看程序提示的字符串，以及输入随意值之后的程序提示</p>
+<p>根据程序的字符串提示，在IDA Pro中用shift+F12找到字符串，再通过X查看到交叉引用，再在这个字符串的上文定位到比较函数</p>
+<p>先看main函数，分析main函数的执行过程，然后找到加密函数，根据加密函数分析出对应的加密算法<br>（F5查看反汇编或者直接看汇编）</p>
+<p>然后再在函数中找到找到所需要的关键信息如<strong>密钥 密文等</strong></p>
+<p>最后再根据加密算法的原理写出<strong>加密算法的解密脚本</strong>或者是利用动态调试修改输入的字符串直接获得flag</p>
+<h4 id="PS：使用动态调试直接复用加密函数解密"><a href="#PS：使用动态调试直接复用加密函数解密" class="headerlink" title="PS：使用动态调试直接复用加密函数解密"></a>PS：使用动态调试直接复用加密函数解密</h4><p><strong>首先得确保加密算法的加解密过程是一致的才可以使用！！！</strong></p>
+<p>首先先用静态调试找到密文和加密函数的地址</p>
+<p>在x32dbg中定位到加密函数，找到输入的字符串地址，使用二进制编辑修改输入的字符串为密文，即可得到flag</p>
+]]></content>
+      <categories>
+        <category>Note</category>
+      </categories>
+      <tags>
+        <tag>汇编逆向</tag>
       </tags>
   </entry>
   <entry>
@@ -1516,6 +2001,98 @@ import {initHBE} from "/js/plugins/hbe.js";
       </tags>
   </entry>
   <entry>
+    <title>林同学喜欢的诗句</title>
+    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>我一路向北，离开有你的季节</p>
+</blockquote>
+<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
+<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
+<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
+<p>今宵绝胜无人共，卧看星河尽意明。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
+<p>出自【宋】陈与义《雨晴》</p>
+<p>这句诗感觉就是我想要的生活状态啊！</p>
+<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
+<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
+
+  <div class="note-large blue">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>雨晴</p>
+
+    </div>
+    <div class="notel-content">
+      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
+
+    </div>
+  </div>
+
+<p>2023.09.21</p>
+<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
+<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
+<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
+<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
+<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
+<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
+<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
+<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
+
+  <div class="note-large green">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>人月圆·小桃枝上春风早</p>
+
+    </div>
+    <div class="notel-content">
+      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+
+    </div>
+  </div>
+
+<p>2023.09.25</p>
+<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
+<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
+<p>出自【宋】陆游 《晚春感事》</p>
+<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
+<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
+<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
+
+  <div class="note-large yellow">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>晚春感事</p>
+
+    </div>
+    <div class="notel-content">
+      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
+<p>已为读书悲眼力，还因揽带叹腰围。 </p>
+<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
+
+    </div>
+  </div>
+
+<p>2024.6.15</p>
+<h2 id="04"><a href="#04" class="headerlink" title="04"></a>04</h2><blockquote>
+<p>那时我发现自己已经二十岁了，这个突然的发现让我有点不知所措。在那之前，我一直以为十八岁之后是十九岁，十九岁之后是十八岁，如此反复。</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/640.png" class width="640">
+
+<p>出自村上春树《挪威的森林》</p>
+<p>可是社会它不让21岁的我停下脚步看看世界，他压着我向前，它什么都喜欢提前，什么都想要结果，它不给我有用的东西，却想要我变成他们期望的样子，这个世界对我们越来越不友好，经济形势下行，成为了所有人挂在嘴边的词，我们也只能越来越失去自我。我想，如何在迷失中找到属于自己的那团精魄，找到自己想要的生活节奏，这才是真正重要的，才不会盲目向前，才不会什么都想要，到最后迷失自我。</p>
+<p>2024.9.15</p>
+]]></content>
+      <categories>
+        <category>Literature</category>
+      </categories>
+      <tags>
+        <tag>GrowUp</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数据库技术与应用</title>
     <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
     <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
@@ -1717,98 +2294,6 @@ import {initHBE} from "/js/plugins/hbe.js";
       </tags>
   </entry>
   <entry>
-    <title>林同学喜欢的诗句</title>
-    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
-    <content><![CDATA[<blockquote>
-<p>我一路向北，离开有你的季节</p>
-</blockquote>
-<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
-<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
-<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
-<p>今宵绝胜无人共，卧看星河尽意明。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
-<p>出自【宋】陈与义《雨晴》</p>
-<p>这句诗感觉就是我想要的生活状态啊！</p>
-<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
-<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
-
-  <div class="note-large blue">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>雨晴</p>
-
-    </div>
-    <div class="notel-content">
-      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
-
-    </div>
-  </div>
-
-<p>2023.09.21</p>
-<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
-<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
-<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
-<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
-<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
-<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
-<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
-<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
-
-  <div class="note-large green">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>人月圆·小桃枝上春风早</p>
-
-    </div>
-    <div class="notel-content">
-      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-
-    </div>
-  </div>
-
-<p>2023.09.25</p>
-<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
-<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
-<p>出自【宋】陆游 《晚春感事》</p>
-<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
-<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
-<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
-
-  <div class="note-large yellow">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>晚春感事</p>
-
-    </div>
-    <div class="notel-content">
-      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
-<p>已为读书悲眼力，还因揽带叹腰围。 </p>
-<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
-
-    </div>
-  </div>
-
-<p>2024.6.15</p>
-<h2 id="04"><a href="#04" class="headerlink" title="04"></a>04</h2><blockquote>
-<p>那时我发现自己已经二十岁了，这个突然的发现让我有点不知所措。在那之前，我一直以为十八岁之后是十九岁，十九岁之后是十八岁，如此反复。</p>
-</blockquote>
-<img lazyload src="/images/loading.svg" data-src="/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/640.png" class width="640">
-
-<p>出自村上春树《挪威的森林》</p>
-<p>可是社会它不让21岁的我停下脚步看看世界，他压着我向前，它什么都喜欢提前，什么都想要结果，它不给我有用的东西，却想要我变成他们期望的样子，这个世界对我们越来越不友好，经济形势下行，成为了所有人挂在嘴边的词，我们也只能越来越失去自我。我想，如何在迷失中找到属于自己的那团精魄，找到自己想要的生活节奏，这才是真正重要的，才不会盲目向前，才不会什么都想要，到最后迷失自我。</p>
-<p>2024.9.15</p>
-]]></content>
-      <categories>
-        <category>Literature</category>
-      </categories>
-      <tags>
-        <tag>GrowUp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>模糊测试论文</title>
     <url>/2024/09/04/%E6%A8%A1%E7%B3%8A%E6%B5%8B%E8%AF%95%E8%AE%BA%E6%96%87/</url>
     <content><![CDATA[<h2 id="Directed-Greybox-Fuzzing"><a href="#Directed-Greybox-Fuzzing" class="headerlink" title="Directed Greybox Fuzzing"></a>Directed Greybox Fuzzing</h2><img lazyload src="/images/loading.svg" data-src="/2024/09/04/%E6%A8%A1%E7%B3%8A%E6%B5%8B%E8%AF%95%E8%AE%BA%E6%96%87/90f2d2c3b78fe591b4d5cf16fe4d93d5.png" class title="90f2d2c3b78fe591b4d5cf16fe4d93d5">
@@ -1829,6 +2314,78 @@ import {initHBE} from "/js/plugins/hbe.js";
       </categories>
       <tags>
         <tag>论文阅读笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深夜杂记1</title>
+    <url>/2023/07/14/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B01/</url>
+    <content><![CDATA[<p>最近教务排名更新了，看看自己的成绩单，还算比较满意吧，毕竟跟自己之前比已经进步很大了，咱也不跟别人比</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/14/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B01/image-20230714002943563.png" class title="image-20230714002943563">
+
+<p>现在是20.54%，保研估计是稳了，或许大三可以稍微摆一点？但是一看大三，课好多…还是希望能尽量做的好一点吧，毕竟多拿2000块奖学金也是挺爽的😂</p>
+<p>（挺搞笑的，自己的成绩还真是等差数列式变化，大一结束的时候是30%，大二上结束是25%，现在是20%</p>
+<p>虽然上个学期很累，糟心事也不少，但是其实也有不少收获，而且从最后成绩来看结果也是不错的</p>
+<p>不过我作为一名大心脏选手，上学期的一些事情其实看起来也不算太糟，感觉其实也…没关系</p>
+<p>虽然上学期没有深交的新朋友，但是还是新认识了不少有趣的同学的，而且感觉和身边的同学关系也更好了一些，和老朋友的联系也更多了，这样看来其实也很不错呢😊</p>
+<p>心理老师给我下的任务还没完成（doge，希望我大三可以完成，哈哈哈哈</p>
+<p>不过上学期让我认识到<strong>做自己</strong>才是最重要的，要成为自己的光，带领自己前进，保持独立思考，不要太过在意他人的想法。同时要永远保持爱的动力，It’s LOVE that makes every day fascinating.</p>
+<p>这学期点播最多的歌是 <strong>轨迹</strong>（鬼姬）(现在是左下角播放器的第一首)，希望自己下学期可以不要点这首歌哈哈哈</p>
+<p>希望我的大三可以收获更多的惊喜~</p>
+<p>timeline 2023,green</p>
+<!-- timeline 02-16 -->
+<p>去学校</p>
+<!-- timeline 02-26 -->
+
+<p>成功搭建博客</p>
+<!-- timeline 04-29 -->
+
+<p>去天津</p>
+<!-- timeline 02-16 -->
+
+<p>第一个北京市级奖项</p>
+<!-- timeline 06-21 -->
+
+<p>期末周结束</p>
+<!-- timeline 07-01 -->
+
+<p>学期结束！回家！</p>
+<!-- endtimeline -->
+<p> endtimeline </p>
+]]></content>
+      <categories>
+        <category>Writing</category>
+      </categories>
+      <tags>
+        <tag>杂记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用了好久博客了突然碰到一个坑</title>
+    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
+    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
+
+<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
+
+<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
+<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
+<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我重启电脑，问题解决了….</p>
+<p>大无语……😅</p>
+<p>2023.9.13</p>
+<p>又遇到了这个问题，一周后的今天解决了</p>
+<p>这次重启没用了，不是线程占用的问题</p>
+<p>重新设置SSH Key好像也不行</p>
+<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后就…行了？！而且网站同步速度快了很多！</p>
+<p>神奇！</p>
+<p>2024.9.4</p>
+<p>今天又碰到了</p>
+<p>原来有的时候就是网络问题，换个网或者等一会就行了……</p>
+]]></content>
+      <tags>
+        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -1910,78 +2467,6 @@ import {initHBE} from "/js/plugins/hbe.js";
       </categories>
       <tags>
         <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用了好久博客了突然碰到一个坑</title>
-    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
-    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
-
-<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
-
-<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
-<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
-<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我重启电脑，问题解决了….</p>
-<p>大无语……😅</p>
-<p>2023.9.13</p>
-<p>又遇到了这个问题，一周后的今天解决了</p>
-<p>这次重启没用了，不是线程占用的问题</p>
-<p>重新设置SSH Key好像也不行</p>
-<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后就…行了？！而且网站同步速度快了很多！</p>
-<p>神奇！</p>
-<p>2024.9.4</p>
-<p>今天又碰到了</p>
-<p>原来有的时候就是网络问题，换个网或者等一会就行了……</p>
-]]></content>
-      <tags>
-        <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>深夜杂记1</title>
-    <url>/2023/07/14/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B01/</url>
-    <content><![CDATA[<p>最近教务排名更新了，看看自己的成绩单，还算比较满意吧，毕竟跟自己之前比已经进步很大了，咱也不跟别人比</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/14/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B01/image-20230714002943563.png" class title="image-20230714002943563">
-
-<p>现在是20.54%，保研估计是稳了，或许大三可以稍微摆一点？但是一看大三，课好多…还是希望能尽量做的好一点吧，毕竟多拿2000块奖学金也是挺爽的😂</p>
-<p>（挺搞笑的，自己的成绩还真是等差数列式变化，大一结束的时候是30%，大二上结束是25%，现在是20%</p>
-<p>虽然上个学期很累，糟心事也不少，但是其实也有不少收获，而且从最后成绩来看结果也是不错的</p>
-<p>不过我作为一名大心脏选手，上学期的一些事情其实看起来也不算太糟，感觉其实也…没关系</p>
-<p>虽然上学期没有深交的新朋友，但是还是新认识了不少有趣的同学的，而且感觉和身边的同学关系也更好了一些，和老朋友的联系也更多了，这样看来其实也很不错呢😊</p>
-<p>心理老师给我下的任务还没完成（doge，希望我大三可以完成，哈哈哈哈</p>
-<p>不过上学期让我认识到<strong>做自己</strong>才是最重要的，要成为自己的光，带领自己前进，保持独立思考，不要太过在意他人的想法。同时要永远保持爱的动力，It’s LOVE that makes every day fascinating.</p>
-<p>这学期点播最多的歌是 <strong>轨迹</strong>（鬼姬）(现在是左下角播放器的第一首)，希望自己下学期可以不要点这首歌哈哈哈</p>
-<p>希望我的大三可以收获更多的惊喜~</p>
-<p>timeline 2023,green</p>
-<!-- timeline 02-16 -->
-<p>去学校</p>
-<!-- timeline 02-26 -->
-
-<p>成功搭建博客</p>
-<!-- timeline 04-29 -->
-
-<p>去天津</p>
-<!-- timeline 02-16 -->
-
-<p>第一个北京市级奖项</p>
-<!-- timeline 06-21 -->
-
-<p>期末周结束</p>
-<!-- timeline 07-01 -->
-
-<p>学期结束！回家！</p>
-<!-- endtimeline -->
-<p> endtimeline </p>
-]]></content>
-      <categories>
-        <category>Writing</category>
-      </categories>
-      <tags>
-        <tag>杂记</tag>
       </tags>
   </entry>
   <entry>
