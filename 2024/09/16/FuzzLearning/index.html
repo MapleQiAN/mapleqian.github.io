@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/2024/09/16/fuzzlearning/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="AFLGo基本原理AFLGo的流程架构  1.首先，编译源码，得到待 fuzz 程序的控制流图 (Control Flow Graph, CFG) 和函数调用图 (Call Graph, CG) 。 2.其次，通过 CFG 和 CG，以及给定的 target，计算所有的基本块 (Basic Block, BB) 到 target 所在的基本块的距离。这一步由 python 脚本完成。 3.然后，再">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fuzz Learning">
+<meta property="og:url" content="http://example.com/2024/09/16/FuzzLearning/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="AFLGo基本原理AFLGo的流程架构  1.首先，编译源码，得到待 fuzz 程序的控制流图 (Control Flow Graph, CFG) 和函数调用图 (Call Graph, CG) 。 2.其次，通过 CFG 和 CG，以及给定的 target，计算所有的基本块 (Basic Block, BB) 到 target 所在的基本块的距离。这一步由 python 脚本完成。 3.然后，再">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image002.gif">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image004.gif">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image006.gif">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image008.gif">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image002.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image004.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image006.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image008.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image010.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image012.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image014.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image016.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image018.jpg">
+<meta property="og:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image020.jpg">
+<meta property="article:published_time" content="2024-09-16T12:30:41.000Z">
+<meta property="article:modified_time" content="2024-09-16T12:36:23.250Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="Fuzz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/16/FuzzLearning/clip_image002.gif">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/400.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/400.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/400.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            Fuzz Learning -
+        
+        SerendyLin Empire
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"en","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":true,"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"Aurora Island","subtitle":{"text":["做不了李白 就活成明月","欲买桂花同载酒 终不似 少年游"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.7.1","navbar":{"auto_hide":false,"color":{"left":"#bd7ba7","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+<!--        <span class="swup-progress-icon">-->
+<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+<!--        </span>-->
+    
+</div>
+
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container px-6 md:px-12">
+
+    <div class="navbar-content ">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="/images/400.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    HOME
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    ARCHIVES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    CATEGORIES
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    FRIENDS
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-screen w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                HOME
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                ARCHIVES
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                CATEGORIES
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                FRIENDS
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">16</div>
+        <div class="label text-third-text-color text-sm">Tags</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">7</div>
+        <div class="label text-third-text-color text-sm">Categories</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">26</div>
+        <div class="label text-third-text-color text-sm">Posts</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container flex relative justify-between box-border w-full h-full">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                <div class="w-full flex items-center pt-6 justify-center">
+                    <h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">Fuzz Learning</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="/images/po5.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-09-16 20:30:41</span>
+        <span class="mobile">2024-09-16 20:30:41</span>
+        <span class="hover-info">Created</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-09-16 20:36:23</span>
+            <span class="mobile">2024-09-16 20:36:23</span>
+            <span class="hover-info">Updated</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Note/">Note</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Fuzz/">Fuzz</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>5k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>19 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h1 id="AFLGo基本原理"><a href="#AFLGo基本原理" class="headerlink" title="AFLGo基本原理"></a>AFLGo基本原理</h1><h2 id="AFLGo的流程架构"><a href="#AFLGo的流程架构" class="headerlink" title="AFLGo的流程架构"></a>AFLGo的流程架构</h2><img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image002.gif" class title="AFLGo overview">
+
+<p>1.首先，编译源码，得到待 fuzz 程序的控制流图 (Control Flow Graph, CFG) 和函数调用图 (Call Graph, CG) 。</p>
+<p>2.其次，通过 CFG 和 CG，以及给定的 target，计算所有的基本块 (Basic Block, BB) 到 target 所在的基本块的距离。这一步由 python 脚本完成。</p>
+<p>3.然后，再编译一次源码，对程序进行插桩，除了AFL原有的插桩逻辑外，添加向指定地址增加每个基本块距离的指令，即指定一个共享内存地址为记录 distance 的变量，在基本块中插桩，插入如下指令：distance +&#x3D; current_BB_distance，向 distance 变量增加当前基本块的距离。</p>
+<p>4.最后是 fuzzing 部分的逻辑，根据插桩反馈的信息，我们可以在每一个 seed 作为输入给程序执行的时候得到这个 seed 对应的 distance，也就是 seed 执行路径距离目标点的距离，然后根据距离对 seed 进行打分，这个打分的算法就是模拟退火算法，距离越近，打分越高，seed 得到变异的机会越多。</p>
+<p>至此，整个 AFLGo 的流程结束。</p>
+<h2 id="Aflgo距离计算模块"><a href="#Aflgo距离计算模块" class="headerlink" title="Aflgo距离计算模块"></a>Aflgo距离计算模块</h2><p>AFLGO 首先根据 函数调用图CG 计算<strong>函数层面的距离</strong>，然后基于 CFG 计算<strong>基本块层面的距离</strong>，最后将基本块的距离作为插桩时使用的距离。</p>
+<p>因为 AFLGo 支持标记多个目标，所以在距离计算时需要将每个基本块到多个目标的距离做一个加和，这里采用的是对到每个目标的距离和<strong>取调和平均数</strong>。</p>
+<p>为什么不取算术平均数？因为在多目标的情况下，算术平均数无法区分『一个基本块离一个目标近一个目标远』和『一个基本块离两个目标点距离相等』的情况。</p>
+<p>如下图，当目标为Y1和Y2时，三个白色基本块都可以到达这两个灰色的目标点。当用算术平均数计算时，左右分别到两个目标点的距离是1和3，平均下来就是(1+3) &#x2F; 2&#x3D; 2。而最上面的点到两个目标的距离都是2，平均下来也是2，这样三个点距离都是2，区分不出到哪个点距离近。如果取调和平均数，左右两个点距离都是是3&#x2F;4，最上面的点距离是1，这样就能区分出远近了。</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image004.gif" class title="difference between arithmetic mean and harmonic mean">
+
+<h2 id="函数层面距离计算"><a href="#函数层面距离计算" class="headerlink" title="函数层面距离计算"></a>函数层面距离计算</h2><p>目标基本块所在的函数就是目标函数。</p>
+<p>公式看起来比较复杂，其实就是两句话：<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image006.gif" class title="function level distance"></p>
+<p>1.当该函数不能到达任意一个目标函数(即：CG上该函数没有路径能到达目标函数)时，不定义距离</p>
+<p>2.否则，将该函数能够到达的目标函数之间的最短距离取调和平均数</p>
+<h2 id="基本块层面距离计算"><a href="#基本块层面距离计算" class="headerlink" title="基本块层面距离计算"></a>基本块层面距离计算</h2><p>有了函数层面的距离，再计算更加细的基本块距离，规则如下：</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image008.gif" class title="basicblock level distance">
+
+<p>1.当基本块就是目标基本块时，该基本块的距离为0</p>
+<p>2.当当前基本块存在函数调用链可以到达目标函数时，距离为该基本块调用的函数集和中，『距离目标函数最近的路径距离』乘上一个系数</p>
+<p>3.否则，距离为『有能到达目标基本块的后继基本块时，取当前基本块到后继基本块距离』 + 『该后继基本块到目标基本块的距离』，取到所有目标的调和平均数</p>
+<h2 id="模拟退火算法"><a href="#模拟退火算法" class="headerlink" title="模拟退火算法"></a>模拟退火算法</h2><p>模拟退火算法是为了解决探索-利用 (exploration-exploitation)的问题。</p>
+<p>在fuzzing的前期，因为探索到的路径有限，此时离目标点的距离可能还很远，此时重点在探索，即尽可能扩大覆盖率，当覆盖率到一定程度时，再利用距离较近的seed来变异，此时到达目标点的可能性更大。</p>
+<p>如果在距离还很远的时候，就只针对当前距离最近的seed进行变异，虽然当前seed距离是相对最近的，但是在绝对距离上可能还很远，无论怎么fuzzing，到达目标点的可能性就很小，这样就可能会陷入局部最优的困境中。</p>
+<p>模拟退火算法就是为了避免fuzzing陷入局部最优的困境中的方法。</p>
+<p>AFL中有一个环节叫 power scheduling，即对 seed 进行打分，综合各项指标计算分数，这个分数直接影响到对每个 seed 进行 fuzzing 的时间长度。</p>
+<p>而 AFLGo 在 power scheduling 部分加上模拟退火算法，同时以时间和距离来计算分数。当时间越长，距离越近的 seed 得分越高，能够得到 fuzzing 的时间越长。</p>
+<h1 id="多脆弱点挖掘技术"><a href="#多脆弱点挖掘技术" class="headerlink" title="多脆弱点挖掘技术"></a>多脆弱点挖掘技术</h1><h2 id="技术1："><a href="#技术1：" class="headerlink" title="技术1："></a>技术1：</h2><p>参考论文：</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.usenix.org/conference/usenixsecurity21/presentation/lee-gwangmu?ref=https://githubhelp.com">Constraint-guided Directed Greybox Fuzzing | USENIX <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>约束导向的定向灰盒模糊测试</p>
+<p>该项目代码不开源</p>
+<p>约束引导定向灰盒模糊(CDGF)旨在按顺序满足一系列约束，而传统的DGF仅旨在达到一组独立的目标位点。每个约束都有自己需要达到的目标站点，以及需要在其目标站点上满足的数据条件。</p>
+<p>为了实现这一目标，CDFG对更有可能满足所有约束的种子进行模糊处理。换句话说，对于以下两种情况，它给出了更短的种子距离:1)如果它满足更多的约束，2)如果它比另一个更接近于满足第一个未满足的约束</p>
+<p>CDGF通过组合每个约束的距离来定义约束序列的距离或总距离。当前面的约束不满足时，CDGF认为单个约束的距离达到最大值，当剩下更多的约束不满足时，CDGF得到的总距离更长。</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image002.jpg" class title="img">
+
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image004.jpg" class title="img">
+
+<p>约束指示程序首先到达T1，在那里内存对象被释放，然后到达T2，在那里释放的内存对象被使用。给定图2中的种子和图4中的约束条件，CDGF计算种子的距离如下:</p>
+<p>• Seed A.因为它在距离T1两个块的b处最接近T1，所以第一个约束的距离是2。同时，由于未能到达T1，第一个约束%free的目标位点，所以无论是否到达T2，第二个约束%use的距离都是最大的。将两个距离结合起来，种子距离计算为2+max。</p>
+<p>• Seed B.因为它接近T1的距离更近，因为它接触到距离T1一个块c，所以T1的距离是1。同时%use距离仍然是最大的，因为它在到达T2之前仍然没有到达T1。结合两者，种子距离计算为1+max。</p>
+<p>• Seed C.因为它在T2之前到达T1，所以%free的距离为0。同时，由于它在e处使T2偏转了一个基本块，所以%use的距离为1。两者结合，种子距离为1。</p>
+ <br>
+
+<p>通过对距离较短的种子进行优先排序，CDGF可以在更理想的种子基础上变异种子，并快速触发崩溃。</p>
+<h2 id="技术2："><a href="#技术2：" class="headerlink" title="技术2："></a>技术2：</h2><p>参考论文：<a class="link" target="_blank" rel="noopener" href="https://www.computer.org/csdl/proceedings-article/sp/2024/313000a059/1RjEaxqvmQ8">Titan: Efficient Multi-target Directed Greybox Fuzzing (computer.org) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>开源链接：<a class="link" target="_blank" rel="noopener" href="https://github.com/5hadowblad3/Titan">5hadowblad3&#x2F;Titan: Research artifact for Oakland (S&amp;P) 2024, “Titan: Efficient Multi-target Directed Greybox Fuzzing” (github.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>现有的模糊测试不知道目标靶点之间的相关性，因此，随着目标靶点数量的增加，可能会退化为无向模糊。最终，模糊器不能有效地选择种子并有效地生成多个目标的输入，称之为协同无知问题。</p>
+<p>针对此问题</p>
+<ol>
+<li>设计了一个精确的静态分析来推断达到多个测试目标的协同作用，使我们能够通过区分目标之间的相关性来减轻协同忽略问题。</li>
+<li>协同感知调度策略，该策略通过种子的细粒度排序来发现种子可能到达的目标最多。</li>
+<li>以多目标为导向的突变，生成接近多个目标的输入，所需的执行次数更少。</li>
+</ol>
+ <br>
+
+<p><strong>静态分析：</strong>给定一组目标程序点，设计了两步静态分析:推断达到每个目标的先决条件、计算区分多个目标的相关性。</p>
+<p><strong>先决条件分析：</strong> </p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image006.jpg" class title="img">
+
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image008.jpg" class title="img">
+
+<p><strong>计算多个目标相关性：</strong></p>
+<p>不同目标的推断变量范围可能具有许多相关性。例如，考虑上面示例中的多目标可达性摘要。达到目标1和目标2都要求变量a的范围相同，但它们对变量b的范围有排他性要求。</p>
+<p>计算公式</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image010.jpg" class title="img">
+
+<p><strong>协同感知种子调度：</strong></p>
+<p><strong>确定种子可到达的靶点：</strong></p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image012.jpg" class title="img">
+
+<p>种子应该关注条件较满足的目标，而不是同时解决所有目标的条件。因此，不是所有的目标都应该被种子考虑。由于冲突相关性表示两个目标的矛盾，因此在调度过程中，我们认为其中一个目标与当前种子无关。</p>
+<p><strong>确定种子到达靶点的潜力：</strong></p>
+<p>使用在执行中满足的先决条件的比例来度量一个种子( 记为potential（t）)</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image014.jpg" class title="img">
+
+<p>有了到达每个靶点的潜力，我们将它们累积为一个种子s来衡量达到这些靶点的可能性</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image016.jpg" class title="img">
+
+<p><strong>以多目标为导向的突变：</strong></p>
+<p>为了有效地生成多个目标的输入，我们提出同时对不同目标的多个字节进行变异。具体来说，我们首先推断影响不同目标的字节，以确定哪些可以同时突变。然后我们优先改变那些可以到达更多目标的字节</p>
+<p><strong>1）****推断seed中受影响的bytes</strong></p>
+<p>独立相关性中的变量可以同时改变以接近不同的目标。因此，如果这些变量的值依赖于不同的字节，模糊器可以同时改变它们以生成多个目标的输入</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image018.jpg" class title="img">
+
+<p>改变独立字节以提高输入生成效率的直觉。如果字节1和字节3同时发生突变，则fuzzers可以同时满足三个目标的两个条件，并且执行的次数更少。</p>
+<p><strong>2）****针对多个targets，变异这些bytes</strong></p>
+<p>根据它可以影响的靶点数量来确定字节的优先级。这是通过自适应方法实现的，其中我们首先推断每个靶点的字节，然后改变其重点输入字节</p>
+<p>以概率p选择字节</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/09/16/FuzzLearning/clip_image020.jpg" class title="img">
+
+<h1 id="多元动态能量感知的种子分级技术"><a href="#多元动态能量感知的种子分级技术" class="headerlink" title="多元动态能量感知的种子分级技术"></a>多元动态能量感知的种子分级技术</h1><p>传统的模糊测试软件在对种子进行评分的过程中，基本只采取单一的种子评价标准。譬如AFL基于代码覆盖率进行种子评价，AFLGo基于基本块距离的种子评价。</p>
+<p>现有种子分级方案考虑因素单一性带来了漏洞发现能力的局限，使得传统模糊测试工具无法满足特定场景下实现靶向挖掘的需求。</p>
+<p>面对现有的技术难点，首先在传统的种子评价方法之上（比如：<strong>基本块距离、代码覆盖率、崩溃率等</strong>），基于效果驱动提出更多种子评价方法，包括<strong>种子的执行时间</strong>、<strong>位图大小</strong>（即该种子的覆盖率）、<strong>障碍</strong>（即该种子在队列中的落后周期数）、<strong>深度</strong>（即该种子是由多少次变异产生的，深度越高，表示该种子越复杂）、<strong>距离</strong>（即该种子距离目标函数的距离，距离越小，表示该种子越接近目标函数）、<strong>相似度</strong>（度衡量种子和目标之间执行轨迹相似程的指标，相似度越高，说明种子越有可能触发目标函数或者导致目标状态变化），形成全新的多元种子评价标准集合，并将之命名为多元融合模块。</p>
+<p>多元融合模块指标计算部分的修改代码在afl-fuzz.c文件的5111-5267行:</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输入参数struct queue_entry* q: 指向待计算分数的测试用例结构体的指针，</span></span><br><span class="line"><span class="comment">//该结构体包含与测试用例相关的各种属性，如执行时间、位图大小、障碍值、深度等。</span></span><br><span class="line"><span class="type">static</span> u32 <span class="title function_">calculate_score</span><span class="params">(<span class="keyword">struct</span> queue_entry* q)</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//计算测试用例的平均执行时间和平均位图大小</span></span><br><span class="line"><span class="comment">//total_cal_us 和 total_cal_cycles: 分别记录所有测试用例的累计执行时间和执行次数，用于计算平均执行时间。</span></span><br><span class="line"><span class="comment">//total_bitmap_size 和 total_bitmap_entries: 记录所有测试用例的总位图大小和参与统计的测试用例数量，用于计算平均位图大小。</span></span><br><span class="line">  u32 avg_exec_us = total_cal_us / total_cal_cycles;</span><br><span class="line">  u32 avg_bitmap_size = total_bitmap_size / total_bitmap_entries;</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化性能得分为100</span></span><br><span class="line">  u32 perf_score = <span class="number">100</span>;</span><br><span class="line">  <span class="comment">/* Adjust score based on execution speed of this path, compared to the</span></span><br><span class="line"><span class="comment">     global average. Multiplier ranges from 0.1x to 3x. Fast inputs are</span></span><br><span class="line"><span class="comment">  less expensive to fuzz, so we&#x27;re giving them more air time. */</span></span><br><span class="line"><span class="comment">//根据 q-&gt;exec_us（当前测试用例的执行时间）与 avg_exec_us 的关系，按一定规则调整 perf_score得分</span></span><br><span class="line"><span class="comment">//这种设计逻辑是认为执行速度快的测试用例在相同时间内可以尝试更多变异，因此给予更高的分值以增加其变异机会。</span></span><br><span class="line">  <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">0.1</span> &gt; avg_exec_us) perf_score = <span class="number">10</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">0.25</span> &gt; avg_exec_us) perf_score = <span class="number">25</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">0.5</span> &gt; avg_exec_us) perf_score = <span class="number">50</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">0.75</span> &gt; avg_exec_us) perf_score = <span class="number">75</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">4</span> &lt; avg_exec_us) perf_score = <span class="number">300</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">3</span> &lt; avg_exec_us) perf_score = <span class="number">200</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;exec_us * <span class="number">2</span> &lt; avg_exec_us) perf_score = <span class="number">150</span>;</span><br><span class="line">  <span class="comment">/* Adjust score based on bitmap size. The working theory is that better</span></span><br><span class="line"><span class="comment">     coverage translates to better targets. Multiplier from 0.25x to 3x. */</span></span><br><span class="line"><span class="comment">//根据 q-&gt;bitmap_size（当前测试用例的位图大小）与 avg_bitmap_size 的关系，按一定规则调整 perf_score得分</span></span><br><span class="line"><span class="comment">//假设位图大小与覆盖质量正相关，具有更大位图的测试用例更可能发现新的路径和漏洞，因此给予更高的分值。</span></span><br><span class="line">  <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">0.3</span> &gt; avg_bitmap_size) perf_score *= <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">0.5</span> &gt; avg_bitmap_size) perf_score *= <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">0.75</span> &gt; avg_bitmap_size) perf_score *= <span class="number">1.5</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">3</span> &lt; avg_bitmap_size) perf_score *= <span class="number">0.25</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">2</span> &lt; avg_bitmap_size) perf_score *= <span class="number">0.5</span>;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;bitmap_size * <span class="number">1.5</span> &lt; avg_bitmap_size) perf_score *= <span class="number">0.75</span>;</span><br><span class="line">  <span class="comment">/* Adjust score based on handicap. Handicap is proportional to how late</span></span><br><span class="line"><span class="comment">     in the game we learned about this path. Latecomers are allowed to run</span></span><br><span class="line"><span class="comment">     for a bit longer until they catch up with the rest. */</span></span><br><span class="line"> <span class="comment">//q-&gt;handicap 表示当前测试用例相对于其他已知测试用例的“落后”程度，即其在何时被发现并加入队列。晚到的测试用例可能因为未充分探索而具有潜在的高价值。</span></span><br><span class="line"> <span class="keyword">if</span> (q-&gt;handicap &gt;= <span class="number">4</span>) &#123;</span><br><span class="line">    perf_score *= <span class="number">4</span>;</span><br><span class="line">    q-&gt;handicap -= <span class="number">4</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (q-&gt;handicap) &#123;</span><br><span class="line">    perf_score *= <span class="number">2</span>;</span><br><span class="line">    q-&gt;handicap--;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// /* Final adjustment based on input depth, under the assumption that fuzzing</span></span><br><span class="line">  <span class="comment">// deeper test cases is more likely to reveal stuff that can&#x27;t be</span></span><br><span class="line">  <span class="comment">//   discovered with traditional fuzzers.</span></span><br><span class="line">  <span class="comment">//   * /</span></span><br><span class="line"><span class="comment">//q-&gt;depth 表示当前测试用例的深度（即该种子是由多少次变异产生的）</span></span><br><span class="line"><span class="comment">//深度较大的测试用例可能触发更深层次的代码逻辑或异常情况，赋予更高的分数</span></span><br><span class="line">  <span class="keyword">switch</span> (q-&gt;depth) &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">0</span> ... <span class="number">3</span>:   <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">4</span> ... <span class="number">7</span>:   perf_score *= <span class="number">2</span>; <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">8</span> ... <span class="number">13</span>:  perf_score *= <span class="number">3</span>; <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">14</span> ... <span class="number">25</span>: perf_score *= <span class="number">4</span>; <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">default</span>:        perf_score *= <span class="number">5</span>;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//调用 get_cur_time() 函数获取当前的系统时间</span></span><br><span class="line"><span class="comment">//t 现在代表模糊测试自启动以来已经运行的秒数。</span></span><br><span class="line">  u64 cur_ms = get_cur_time();</span><br><span class="line">  u64 t = (cur_ms - start_time) / <span class="number">1000</span>;</span><br><span class="line"><span class="comment">//将执行的总时间除以预期时间，一个介于 0.0 和 1.0 之间的浮点数，表示当前进度占目标时间的比例。</span></span><br><span class="line">  <span class="type">double</span> progress_to_tx = ((<span class="type">double</span>)t) / ((<span class="type">double</span>)t_x * <span class="number">60.0</span>);</span><br><span class="line"><span class="comment">//根据上一步得到的执行的进度，确定冷却计划，计算当前的温度，即 T</span></span><br><span class="line"><span class="comment">//温度是一个介于 0 和 1 之间的数，表示执行的热度，温度越高，表示执行越热，越容易接受较差的种子。温度的计算方式根据冷却计划的不同而不同</span></span><br><span class="line">  <span class="type">double</span> T;</span><br><span class="line">  <span class="comment">//TODO Substitute functions of exp and log with faster bitwise operations on integers</span></span><br><span class="line">  <span class="keyword">switch</span> (cooling_schedule) &#123;</span><br><span class="line">  <span class="keyword">case</span> SAN_EXP:</span><br><span class="line">    T = <span class="number">1.0</span> / <span class="built_in">pow</span>(<span class="number">20.0</span>, progress_to_tx);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> SAN_LOG:</span><br><span class="line">    <span class="comment">// alpha = 2 and exp(19/2) - 1 = 13358.7268297</span></span><br><span class="line">    T = <span class="number">1.0</span> / (<span class="number">1.0</span> + <span class="number">2.0</span> * <span class="built_in">log</span>(<span class="number">1.0</span> + progress_to_tx * <span class="number">13358.7268297</span>));</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> SAN_LIN:</span><br><span class="line">    T = <span class="number">1.0</span> / (<span class="number">1.0</span> + <span class="number">19.0</span> * progress_to_tx);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">case</span> SAN_QUAD:</span><br><span class="line">    T = <span class="number">1.0</span> / (<span class="number">1.0</span> + <span class="number">19.0</span> * <span class="built_in">pow</span>(progress_to_tx, <span class="number">2</span>));</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">    PFATAL(<span class="string">&quot;Unkown Power Schedule for Directed Fuzzing&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//定义两个双精度浮点数变量 power_factor 和 power_factor_sim，初始化为 1.0，</span></span><br><span class="line">它们分别用于表示距离和相似度对性能得分的影响因子。</span><br><span class="line"><span class="comment">//定义一个双精度浮点数变量 normalized_d，初始化为 0，用于存储归一化后的距离值。</span></span><br><span class="line">  <span class="type">double</span> power_factor = <span class="number">1.0</span>, power_factor_sim = <span class="number">1.0</span>;</span><br><span class="line">  <span class="type">double</span> normalized_d = <span class="number">0</span>;</span><br><span class="line"><span class="comment">//	归一化的方式是将距离或相似度减去最小值，再除以最大值和最小值的差。如果最大值和最小值相等，那么归一化的值为 0，表示该条目的距离或相似度与其他条目没有差异。</span></span><br><span class="line">  <span class="keyword">if</span> (q-&gt;distance &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// when &quot;max_distance == min_distance&quot;, we set the normalized_d to 0 so that we can sufficiently explore those testcases whose distance &gt;= 0.</span></span><br><span class="line">    <span class="keyword">if</span> (max_distance != min_distance)</span><br><span class="line">      normalized_d = (q-&gt;distance - min_distance) / (max_distance - min_distance);</span><br><span class="line"><span class="comment">//如果 normalized_d 大于等于 0，则进一步计算一个基于 T（温度）和归一化距离的中间变量 p，并使用该 p 值以及一个预定义的最大因子 MAX_FACTOR 计算 power_factor。这里采用了对数和指数运算来构建一个非线性的映射关系，使得 power_factor 随 distance 和 T 的变化而变化。</span></span><br><span class="line"><span class="comment">//当距离越小，即越接近目标函数时，分数越高；当温度越高，即执行越热时，概率越低，以避免过早收敛到局部最优解。</span></span><br><span class="line">    <span class="keyword">if</span> (normalized_d &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="type">double</span> p = (<span class="number">1.0</span> - normalized_d) * (<span class="number">1.0</span> - T) + <span class="number">0.5</span> * T;</span><br><span class="line">      power_factor = <span class="built_in">pow</span>(<span class="number">2.0</span>, <span class="number">2.0</span> * (<span class="type">double</span>)log2(MAX_FACTOR) * (p - <span class="number">0.5</span>));</span><br><span class="line">    &#125;<span class="comment">// else WARNF (&quot;Normalized distance negative: %f&quot;, normalized_d);</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//定义另一个双精度浮点数变量 normalized_d_sim，初始化为 0，用于存储归一化后的相似度值。</span></span><br><span class="line">  <span class="type">double</span> normalized_d_sim = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (q-&gt;sim &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// when &quot;max_sim == min_sim&quot;, we set the normalized_d to 0 so that we can sufficiently explore those testcases whose distance &gt;= 0.</span></span><br><span class="line"><span class="comment">//如果最大相似度 max_sim 与最小相似度 min_sim 不相等，则计算测试用例相似度与相似度范围（max_sim - min_sim）的比值，得到归一化相似度 normalized_d_sim；否则，直接令 normalized_d_sim 等于 1。</span></span><br><span class="line">    <span class="keyword">if</span> (max_sim != min_sim)</span><br><span class="line">      normalized_d_sim = (q-&gt;sim - min_sim) / (max_sim - min_sim);</span><br><span class="line">    <span class="keyword">else</span> normalized_d_sim = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (normalized_d_sim &gt;= <span class="number">0</span>) &#123;</span><br><span class="line"><span class="comment">//如果 normalized_d_sim 大于等于 0，则将其转换为双精度浮点数 p_sim，并使用该 p_sim 值以及一个预定义的最大因子 MAX_FACTOR_SIM 计算 power_factor_sim。同样采用对数和指数运算构建非线性映射，使 power_factor_sim 随 sim 变化。</span></span><br><span class="line"><span class="comment">//当相似度越大，赋予的分数越高</span></span><br><span class="line">      <span class="type">double</span> p_sim = (<span class="type">double</span>)normalized_d_sim;</span><br><span class="line">      power_factor_sim = <span class="built_in">pow</span>(<span class="number">2.0</span>, <span class="number">2.0</span> * (<span class="type">double</span>)log2(MAX_FACTOR_SIM) * (p_sim - <span class="number">0.5</span>));</span><br><span class="line">    &#125;<span class="comment">// else WARNF (&quot;Normalized distance negative: %f&quot;, normalized_d);</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//将原来的 perf_score 与计算得到的 power_factor 和 power_factor_sim 相乘，得到新的性能得分，该得分综合考虑了测试用例的距离和相似度信息。</span></span><br><span class="line">  perf_score *= power_factor * power_factor_sim;</span><br><span class="line">  <span class="comment">/* Make sure that we don&#x27;t go over limit. */</span></span><br><span class="line"><span class="comment">//对更新后的 perf_score 进行检查，如果超过了一个预定义的最大值 HAVOC_MAX_MULT * 100，则将其设置为这个最大值，防止得分过高导致后续处理失衡。</span></span><br><span class="line">  <span class="keyword">if</span> (perf_score &gt; HAVOC_MAX_MULT * <span class="number">100</span>) perf_score = HAVOC_MAX_MULT * <span class="number">100</span>;</span><br><span class="line">  <span class="comment">/* AFLGO-DEBUGGING */</span></span><br><span class="line">  <span class="comment">// fprintf(stderr, &quot;[Time %llu] q-&gt;distance: %4lf, max_distance: %4lf min_distance: %4lf, T: %4.3lf, power_factor: %4.3lf, adjusted perf_score: %4d\n&quot;, t, q-&gt;distance, max_distance, min_distance, T, power_factor, perf_score);</span></span><br><span class="line"><span class="comment">//记录并保存模糊测试过程中测试用例的关键属性（如相似度、距离、执行时间、影响因子、性能得分、时间戳和温度）到一个 CSV 文件中。</span></span><br><span class="line">  FILE* file = fopen(<span class="string">&quot;./queue.csv&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (file) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(file, <span class="string">&quot;%f,%lf,%llu,%lf,%lf,%u,%llu,%lf\n&quot;</span>,</span><br><span class="line">      q-&gt;sim,</span><br><span class="line">      q-&gt;distance,</span><br><span class="line">      q-&gt;exec_us,</span><br><span class="line">      power_factor_sim,</span><br><span class="line">      power_factor,</span><br><span class="line">      perf_score,</span><br><span class="line">      t,</span><br><span class="line">      T); </span><br><span class="line">    fclose(file);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> perf_score;</span><br></pre></td></tr></table></figure></div>
+
+
+        </div>
+
+        
+            <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>Title:</strong> Fuzz Learning</li>
+        <li><strong>Author:</strong> Serendy</li>
+        <li><strong>Created at
+                :</strong> 2024-09-16 20:30:41</li>
+        
+            <li>
+                <strong>Updated at
+                    :</strong> 2024-09-16 20:36:23
+            </li>
+        
+        <li>
+            <strong>Link:</strong> https://mapleqian.github.io/2024/09/16/FuzzLearning/
+        </li>
+        <li>
+            <strong>
+                License:
+            </strong>
+            
+
+            
+                This work is licensed under <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a>.
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+                
+                    <li class="tag-item mx-0.5">
+                        <a href="/tags/Fuzz/">#Fuzz</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/2024/09/16/LibAFL/"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">LibAFL：A Framework to Build Modular and Reusable Fuzzers</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        Comments
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">On this page</div>
+        <div class="page-title">Fuzz Learning</div>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AFLGo%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">AFLGo基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AFLGo%E7%9A%84%E6%B5%81%E7%A8%8B%E6%9E%B6%E6%9E%84"><span class="nav-text">AFLGo的流程架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Aflgo%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="nav-text">Aflgo距离计算模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%B1%82%E9%9D%A2%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="nav-text">函数层面距离计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%9D%97%E5%B1%82%E9%9D%A2%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="nav-text">基本块层面距离计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E7%AE%97%E6%B3%95"><span class="nav-text">模拟退火算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E8%84%86%E5%BC%B1%E7%82%B9%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF"><span class="nav-text">多脆弱点挖掘技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF1%EF%BC%9A"><span class="nav-text">技术1：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF2%EF%BC%9A"><span class="nav-text">技术2：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%85%83%E5%8A%A8%E6%80%81%E8%83%BD%E9%87%8F%E6%84%9F%E7%9F%A5%E7%9A%84%E7%A7%8D%E5%AD%90%E5%88%86%E7%BA%A7%E6%8A%80%E6%9C%AF"><span class="nav-text">多元动态能量感知的种子分级技术</span></a></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2024&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        26 posts in total
+                    </span>
+                    
+                        <span>
+                            117.4k words in total
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">VISITOR COUNT</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">TOTAL PAGE VIEWS</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">POWERED BY <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a></span>
+            <span class="text-sm lg:block">THEME&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.7.1</a></span>
+        </div>
+        
+        
+            <div>
+                Blog up for <span class="odometer" id="runtime_days" ></span> days <span class="odometer" id="runtime_hours"></span> hrs <span class="odometer" id="runtime_minutes"></span> Min <span class="odometer" id="runtime_seconds"></span> Sec
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+                
+        
+                
+        
+                
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+            <li class="right-bottom-tools rss flex justify-center items-center">
+                <a class="flex justify-center items-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                <i class="fa-regular fa-rss"></i>
+                </a>
+            </li>
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fa-solid fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa-solid fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+    
+<script src="/js/libs/anime.min.js"></script>
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+    <div id="aplayer"></div>
+
+<script src="/js/libs/APlayer.min.js"></script>
+
+
+<script src="/js/plugins/aplayer.js"></script>
+
+
+</body>
+</html>
