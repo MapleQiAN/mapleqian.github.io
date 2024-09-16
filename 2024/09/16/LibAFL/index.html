@@ -25,16 +25,14 @@
 <meta property="og:site_name" content="SerendyLin&#39;s Empire">
 <meta property="og:description" content="1. 简介AFL是软件安全测试领域的一个重要里程碑，使得fuzzing成为了一个主要的研究领域，并带动了大量的研究去提高fuzzing流水线上的各个方面。  许多研究是通过fork AFL的代码来进行实现的。虽然一开始看起来挺合适的，但是要把多种fork合并到一个fuzzer，需要大量的工程开销，阻碍了不同技术客观和公正的评估。严重碎片化的fuzzing的生态阻止了研究者组合多种技术来实现新的原型">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/258322c6b4765dc6381bda2e91474eee.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/9550925236c4acee772a2d4a0c00df6f.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/19cdb9aca24398bd92bd9b8b963dd9b4.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/1607312e56cc9b3ae4bd699659f4ac0e.png">
 <meta property="article:published_time" content="2024-09-16T09:16:41.000Z">
-<meta property="article:modified_time" content="2024-09-16T09:19:21.937Z">
+<meta property="article:modified_time" content="2024-09-16T12:28:34.878Z">
 <meta property="article:author" content="Serendy">
 <meta property="article:tag" content="论文阅读">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/258322c6b4765dc6381bda2e91474eee.png">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/19cdb9aca24398bd92bd9b8b963dd9b4.png">
     
     
         <!-- Google tag (gtag.js) -->
@@ -444,8 +442,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2024-09-16 17:19:21</span>
-            <span class="mobile">2024-09-16 17:19:21</span>
+            <span class="desktop">2024-09-16 20:28:34</span>
+            <span class="mobile">2024-09-16 20:28:34</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -543,8 +541,8 @@
 <ul><li> <p>LibAFl Core是主要的库，包含fuzzing的组件和他们相应的组件。这个库的大部分都依赖于Rust core+alloc，因此，可以在没有标准库的情况下运行。</p> </li><li> <p>LibAFL Targets包含了在目标程序里的代码。比如用来追踪覆盖率的运行时的库。</p> </li><li> <p>LibAFL CC提供了函数来写编译器的wrapper，方便用户来进行插桩。</p> </li></ul> 
 <p>除了这三个核心库，也包含插桩后端提供API来让libafl可以应用到不同的执行引擎，比如QEMU和Frida。</p> 
 <h3><a name="t4"></a><a id="32__68"></a>3.2 核心库</h3> 
-<p>libafl的核心架构如下图所示：</p> 
-<p><img lazyload src="/images/loading.svg" data-src="https://img-blog.csdnimg.cn/img_convert/258322c6b4765dc6381bda2e91474eee.png" alt></p> 
+<p>libafl的核心架构如下图所示：</p>
+![](https://img-blog.csdnimg.cn/img_convert/258322c6b4765dc6381bda2e91474eee.png)
 <p>大部分的组件都是和前面的实体是一对一映射的关系。有三个多出来的组件是：State、Fuzzer和Events Manager。</p> 
 <p>每个组件都映射为一个Rust的泛型特征，运行它和其他不同的组件进行组合。另一种架构已经在 LibAFL 中实现，它由一个没有任何执行器的管道组成，其中没有传统的模糊器循环，但模糊器是一种可以从中请求输入的服务。这样，LibAFL 就可以嵌入仿真循环中，以用于 Panda [20] 等仿真器的钩子中。</p> 
 
@@ -572,7 +570,7 @@
 <p>实验部分主要针对四个问题进行评估：</p> 
 <ul><li> <p>roadblocks bypassing</p> </li><li> <p>structure-aware fuzzing</p> </li><li> <p>corpus scheduling</p> </li><li> <p>energy assignment</p> </li></ul> 
 <p>主要是看libafl在这四个问题上的表现效果。下面的表格列举了目前libafl支持的一些特性。</p> 
-<p><img lazyload src="/images/loading.svg" data-src="https://img-blog.csdnimg.cn/img_convert/9550925236c4acee772a2d4a0c00df6f.png" alt></p> 
+![](https://img-blog.csdnimg.cn/img_convert/9550925236c4acee772a2d4a0c00df6f.png) 
 <h3><a name="t7"></a><a id="41_Bypassing_Roadblocks_136"></a>4.1 Bypassing Roadblocks</h3> 
 <p>bypassing roadblocks指的是通过绕过很难求解的约束来增加代码覆盖率。比如，多字节比较对于通过随机的遗传变异是很难绕过的。因为解空间很大，盲目地猜测是不切实际的。Libafl提供了几种现有的技术来绕过这些roadblocks。</p> 
 <ul><li> <p>value-profile（libfuzzer）：通过最大化两个指令的操作数的匹配的位来求解比较指令</p> </li><li> <p>cmplog（AFL++）：通过找到并替换input-to-state values。对比较指令和将两个指针作为参数的函数进行插桩。并且在运行时记录相关的值到映射表。然后变异器匹配输入的模式，并用比较指令另一个操作数的值替代输入。</p> </li><li> <p>autotokens（AFL++）：从比较指令中提取tokens，从函数中提取立即数，编码到二进制的段里。然后把这些token放在状态的元数据字典里，然后在变异器使用这些tokens。由于这种方法不引入开销，所以将这种方法作为baseline。</p> </li></ul> 
@@ -582,7 +580,8 @@
 <ul><li> <p>NAUTILUS：一种基于语法的覆盖率导向的fuzzer。他的核心思想是在语法树上进行变异。</p> </li><li> <p>GRAMATRON：利用一种grammar-to-automata的转换方法来实现高效的变异器。</p> </li><li> <p>GRIMOIRE：使用那些会增加覆盖率的部分输入作为tokens来构建树形的输入，并且做grammar-like的变异。他原本是对JavaScript语言进行fuzz的，但是libafl的实现是通用的，并且可以用到任何语言。</p> </li></ul> 
 <p>评估这些方法的指标为未覆盖的bug的数目。因为这类fuzzer的有效性并不依赖于代码覆盖率。(因为会探索到许多错误输入导致的路径)</p> 
 <p>实验结果如下，grimoire的表现效果最好。</p> 
-<p><img lazyload src="/images/loading.svg" data-src="https://img-blog.csdnimg.cn/img_convert/19cdb9aca24398bd92bd9b8b963dd9b4.png" alt></p> 
+
+<p><img lazyload src="/images/loading.svg" data-src="https://img-blog.csdnimg.cn/img_convert/19cdb9aca24398bd92bd9b8b963dd9b4.png"></p>
 <p>除此之外，作者还将前面实验表现不好的nautius与一个不相关的技术MOPT结合，来看二者结合的效果，实验如下图所示。总体来说，MOPT的效果与目标程序有很大的关系。</p> 
 <p><img lazyload src="/images/loading.svg" data-src="https://img-blog.csdnimg.cn/img_convert/1607312e56cc9b3ae4bd699659f4ac0e.png" alt></p> 
 <h3><a name="t9"></a><a id="43_Corpus_Scheduling_168"></a>4.3 Corpus Scheduling</h3> 
@@ -629,7 +628,7 @@
         
             <li>
                 <strong>Updated at
-                    :</strong> 2024-09-16 17:19:21
+                    :</strong> 2024-09-16 20:28:34
             </li>
         
         <li>
