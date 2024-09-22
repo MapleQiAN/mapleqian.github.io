@@ -13,22 +13,22 @@
     
     <!--- Seo Part-->
     
-    <link rel="canonical" href="http://example.com/2023/05/10/加密算法逆向总结/"/>
+    <link rel="canonical" href="http://example.com/2024/09/22/深夜杂记2/"/>
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
     
-        <meta name="description" content="对加密算法逆向的基本思路进行总结">
+        <meta name="description" content="Here&#39;s something encrypted, password is required to continue reading.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="加密算法逆向总结">
-<meta property="og:url" content="http://example.com/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:title" content="深夜杂记 2">
+<meta property="og:url" content="http://example.com/2024/09/22/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B02/index.html">
 <meta property="og:site_name" content="SerendyLin&#39;s Empire">
-<meta property="og:description" content="对加密算法逆向的基本思路进行总结">
+<meta property="og:description" content="Here&#39;s something encrypted, password is required to continue reading.">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2023-05-10T01:56:01.000Z">
-<meta property="article:modified_time" content="2023-05-10T01:57:26.367Z">
+<meta property="article:published_time" content="2024-09-22T11:42:34.000Z">
+<meta property="article:modified_time" content="2024-09-22T11:45:35.436Z">
 <meta property="article:author" content="Serendy">
-<meta property="article:tag" content="汇编逆向">
+<meta property="article:tag" content="杂记">
 <meta name="twitter:card" content="summary">
     
     
@@ -51,7 +51,7 @@
     
     <title>
         
-            加密算法逆向总结 -
+            深夜杂记 2 -
         
         SerendyLin Empire
     </title>
@@ -411,7 +411,7 @@
         <div class="article-title relative w-full">
             
                 <div class="w-full flex items-center pt-6 justify-center">
-                    <h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">加密算法逆向总结</h1>
+                    <h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">深夜杂记 2</h1>
                 </div>
             
             </div>
@@ -432,15 +432,15 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-05-10 09:56:01</span>
-        <span class="mobile">2023-05-10 09:56:01</span>
+        <span class="desktop">2024-09-22 19:42:34</span>
+        <span class="mobile">2024-09-22 19:42:34</span>
         <span class="hover-info">Created</span>
     </span>
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-05-10 09:57:26</span>
-            <span class="mobile">2023-05-10 09:57:26</span>
+            <span class="desktop">2024-09-22 19:45:35</span>
+            <span class="mobile">2024-09-22 19:45:35</span>
             <span class="hover-info">Updated</span>
         </span>
     
@@ -454,7 +454,7 @@
                     
                         
                         <li>
-                            <a href="/categories/Note/">Note</a>&nbsp;
+                            <a href="/categories/Writing/">Writing</a>&nbsp;
                         </li>
                     
                     
@@ -468,7 +468,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">汇编逆向</a>&nbsp;
+                        <a href="/tags/%E6%9D%82%E8%AE%B0/">杂记</a>&nbsp;
                     </li>
                 
             </ul>
@@ -478,7 +478,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>491 Words</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>20 Words</span>
         </span>
     
     
@@ -502,23 +502,24 @@
 
 
         <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-            <h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
-<li><strong>简单加密算法逆向分析</strong><br>异或加密<br>仿射加密</li>
-<li><strong>对称加密算法逆向分析</strong><br>RC4流加密<br>DES对称加密</li>
-<li><strong>单向散列算法逆向分析</strong><br>MD5哈希函数<br>SHA哈希函数</li>
-</ol>
-<p><strong>首先要对这些算法的加密原理十分了解</strong>——参考现代密码学笔记</p>
-<h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="可以直接复用源程序进行动态调试获得flag的"><a href="#可以直接复用源程序进行动态调试获得flag的" class="headerlink" title="可以直接复用源程序进行动态调试获得flag的"></a>可以直接复用源程序进行动态调试获得flag的</h3><p>加解密算法完全相同的是可以复用的</p>
-<p>包括：<strong>异或加密 仿射加密 RC4流加密</strong></p>
-<h3 id="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"><a href="#其余的算法加解密不相同则只能使用静态调试写脚本解出flag" class="headerlink" title="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"></a>其余的算法加解密不相同则只能使用静态调试写脚本解出flag</h3><p>包括 <strong>DES AES MD5 SHA256</strong></p>
-<h2 id="基本逆向思路——静态调试"><a href="#基本逆向思路——静态调试" class="headerlink" title="基本逆向思路——静态调试"></a>基本逆向思路——静态调试</h2><p>首先先打开程序，查看程序提示的字符串，以及输入随意值之后的程序提示</p>
-<p>根据程序的字符串提示，在IDA Pro中用shift+F12找到字符串，再通过X查看到交叉引用，再在这个字符串的上文定位到比较函数</p>
-<p>先看main函数，分析main函数的执行过程，然后找到加密函数，根据加密函数分析出对应的加密算法<br>（F5查看反汇编或者直接看汇编）</p>
-<p>然后再在函数中找到找到所需要的关键信息如<strong>密钥 密文等</strong></p>
-<p>最后再根据加密算法的原理写出<strong>加密算法的解密脚本</strong>或者是利用动态调试修改输入的字符串直接获得flag</p>
-<h4 id="PS：使用动态调试直接复用加密函数解密"><a href="#PS：使用动态调试直接复用加密函数解密" class="headerlink" title="PS：使用动态调试直接复用加密函数解密"></a>PS：使用动态调试直接复用加密函数解密</h4><p><strong>首先得确保加密算法的加解密过程是一致的才可以使用！！！</strong></p>
-<p>首先先用静态调试找到密文和加密函数的地址</p>
-<p>在x32dbg中定位到加密函数，找到输入的字符串地址，使用二进制编辑修改输入的字符串为密文，即可得到flag</p>
+            
+<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="5d34083522c884576652a7f6464c0d7251420e765dc0e19363bf750cb6cc9682">16dd6098857f39de6a339bd7faf44a261962ddabfe0b3b10e3e35631190afc10</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<link href="/css/hbe.style.css" rel="stylesheet" type="text/css"><script data-swup-reload-script type="module" src="/js/plugins/hbe.js"></script>
+<script data-swup-reload-script type="module">
+import {initHBE} from "/js/plugins/hbe.js";
+  console.log("hexo-blog-encrypt: loaded.");
+    initHBE();
+</script>
 
         </div>
 
@@ -526,18 +527,18 @@
             <div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
                 <div class="article-copyright-info-container">
     <ul>
-        <li><strong>Title:</strong> 加密算法逆向总结</li>
+        <li><strong>Title:</strong> 深夜杂记 2</li>
         <li><strong>Author:</strong> Serendy</li>
         <li><strong>Created at
-                :</strong> 2023-05-10 09:56:01</li>
+                :</strong> 2024-09-22 19:42:34</li>
         
             <li>
                 <strong>Updated at
-                    :</strong> 2023-05-10 09:57:26
+                    :</strong> 2024-09-22 19:45:35
             </li>
         
         <li>
-            <strong>Link:</strong> https://mapleqian.github.io/2023/05/10/加密算法逆向总结/
+            <strong>Link:</strong> https://mapleqian.github.io/2024/09/22/深夜杂记2/
         </li>
         <li>
             <strong>
@@ -559,7 +560,7 @@
             <ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
                 
                     <li class="tag-item mx-0.5">
-                        <a href="/tags/%E6%B1%87%E7%BC%96%E9%80%86%E5%90%91/">#汇编逆向</a>&nbsp;
+                        <a href="/tags/%E6%9D%82%E8%AE%B0/">#杂记</a>&nbsp;
                     </li>
                 
             </ul>
@@ -570,29 +571,14 @@
         
             <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
                 
-                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="prev"
-                        rel="prev"
-                        href="/2023/05/17/%E5%B8%B8%E8%A7%81%E7%9A%84%E5%A4%A7%E7%B4%A0%E6%95%B0%E5%88%A4%E6%96%AD%E7%AE%97%E6%B3%95%E5%92%8CMiller-Rabin%E7%B4%A0%E5%88%A4%E6%96%AD%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0/"
-                        >
-                            <span class="left arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">常见的大素数判断算法和Miller-Rabin素判断算法的原理实现</span>
-                                <span class="post-nav-item">Prev posts</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
                         <a class="next"
                         rel="next"
-                        href="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/"
+                        href="/2024/09/16/FuzzLearning/"
                         >
                             <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">加密算法逆向实践</span>
+                                <span class="post-nav-title-item">Fuzz Learning</span>
                                 <span class="post-nav-item">Next posts</span>
                             </span>
                             <span class="right arrow-icon flex justify-center items-center">
@@ -655,8 +641,8 @@
             <div class="post-toc-wrap">
     <div class="post-toc">
         <div class="toc-title">On this page</div>
-        <div class="page-title">加密算法逆向总结</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E9%80%86%E5%90%91%E7%9A%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-text">用于逆向的加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%86%E5%90%91%E6%96%B9%E6%B3%95"><span class="nav-text">逆向方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%A4%8D%E7%94%A8%E6%BA%90%E7%A8%8B%E5%BA%8F%E8%BF%9B%E8%A1%8C%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E8%8E%B7%E5%BE%97flag%E7%9A%84"><span class="nav-text">可以直接复用源程序进行动态调试获得flag的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BD%99%E7%9A%84%E7%AE%97%E6%B3%95%E5%8A%A0%E8%A7%A3%E5%AF%86%E4%B8%8D%E7%9B%B8%E5%90%8C%E5%88%99%E5%8F%AA%E8%83%BD%E4%BD%BF%E7%94%A8%E9%9D%99%E6%80%81%E8%B0%83%E8%AF%95%E5%86%99%E8%84%9A%E6%9C%AC%E8%A7%A3%E5%87%BAflag"><span class="nav-text">其余的算法加解密不相同则只能使用静态调试写脚本解出flag</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%80%86%E5%90%91%E6%80%9D%E8%B7%AF%E2%80%94%E2%80%94%E9%9D%99%E6%80%81%E8%B0%83%E8%AF%95"><span class="nav-text">基本逆向思路——静态调试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PS%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E7%9B%B4%E6%8E%A5%E5%A4%8D%E7%94%A8%E5%8A%A0%E5%AF%86%E5%87%BD%E6%95%B0%E8%A7%A3%E5%AF%86"><span class="nav-text">PS：使用动态调试直接复用加密函数解密</span></a></li></ol></li></ol></li></ol>
+        <div class="page-title">深夜杂记 2</div>
+        
 
     </div>
 </div>
