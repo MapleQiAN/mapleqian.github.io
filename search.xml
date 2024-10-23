@@ -863,12 +863,12 @@ import {initHBE} from "/js/plugins/hbe.js";
 <tbody><tr>
 <td align="center">CPU</td>
 <td align="center">AMD 9700x(散片)</td>
-<td align="center">1892</td>
+<td align="center">1900</td>
 </tr>
 <tr>
 <td align="center">主板</td>
 <td align="center">技嘉B650M冰雕小板(M-ATX)</td>
-<td align="center">1219</td>
+<td align="center">1119</td>
 </tr>
 <tr>
 <td align="center">显卡</td>
@@ -877,8 +877,8 @@ import {initHBE} from "/js/plugins/hbe.js";
 </tr>
 <tr>
 <td align="center">内存</td>
-<td align="center">宏碁掠夺者 Vesta II 炫光星舰 6000C32 32G*2</td>
-<td align="center">1399</td>
+<td align="center">光威神武16G*2</td>
+<td align="center">669</td>
 </tr>
 <tr>
 <td align="center">硬盘</td>
@@ -888,7 +888,7 @@ import {initHBE} from "/js/plugins/hbe.js";
 <tr>
 <td align="center">电源</td>
 <td align="center">金河田 白金A+ 850W</td>
-<td align="center">519</td>
+<td align="center">499</td>
 </tr>
 <tr>
 <td align="center">散热</td>
@@ -898,17 +898,17 @@ import {initHBE} from "/js/plugins/hbe.js";
 <tr>
 <td align="center">机箱</td>
 <td align="center">闪鳞 G300 16L M-ATX</td>
-<td align="center">329</td>
+<td align="center">309</td>
 </tr>
 <tr>
 <td align="center">风扇</td>
-<td align="center"></td>
+<td align="center">机箱配的12025风扇</td>
 <td align="center">50</td>
 </tr>
 <tr>
 <td align="center">总价</td>
 <td align="center"></td>
-<td align="center">5607（无显卡）</td>
+<td align="center">4765（无显卡）</td>
 </tr>
 </tbody></table>
 ]]></content>
