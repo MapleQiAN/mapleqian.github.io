@@ -1749,6 +1749,7 @@ pre .deletion {
   line-height: 1;
   color: var(--first-text-color);
   transform: translateY(1px);
+  font-family: 'Lemon';
 }
 .navbar-container .navbar-content .logo-title h1 {
   margin: 0;
@@ -4959,6 +4960,7 @@ html.is-animating .transition-fade-down {
   color: var(--second-text-color);
   font-family: 'Chillax-Variable', sans-serif;
   text-align: center;
+  font-family: 'Lemon';
 }
 .home-sidebar-container .sidebar-links .site-info .announcement {
   font-size: 0.9rem;
