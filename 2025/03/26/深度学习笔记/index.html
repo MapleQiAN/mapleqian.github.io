@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://www.negroni.top/2025/03/26/深度学习笔记/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="A Journey To MilkyWay.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习笔记">
+<meta property="og:url" content="http://www.negroni.top/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="A Journey To MilkyWay.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.negroni.top/images/redefine-og.webp">
+<meta property="article:published_time" content="2025-03-26T14:27:45.000Z">
+<meta property="article:modified_time" content="2025-03-26T14:27:56.564Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="Deep Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.negroni.top/images/redefine-og.webp">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/400.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/400.png">
+    <meta name="theme-color" content="#2783B2">
+    <link rel="shortcut icon" href="/images/400.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            深度学习笔记 | SerendyLin Empire
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"www.negroni.top","root":"/","language":"zh-CN","path":"search.xml"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#2783B2","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"A Journey To MilkyWay."},"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"Aurora Island","subtitle":{"text":["做不了李白 就活成明月","欲买桂花同载酒 终不似 少年游"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://www.joy127.com/url/109808.mp3","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://www.joy127.com/url/110074.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.8.2","navbar":{"auto_hide":false,"color":{"left":"#f1f4a4","right":"#699aea","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"书签":{"icon":"fa-solid fa-bookmark","path":"/bookmarks/"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"照片墙":{"icon":"fa-solid fa-image","path":"/masonry/"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/images/400.png" class="w-full h-full rounded-sm">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/bookmarks/"
+                                        >
+                                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                                    书签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/masonry/"
+                                        >
+                                    <i class="fa-solid fa-image fa-fw"></i>
+                                    照片墙
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    友情链接
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/bookmarks/"
+                        >
+                            <span>
+                                书签
+                            </span>
+                            
+                                <i class="fa-solid fa-bookmark fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/masonry/"
+                        >
+                            <span>
+                                照片墙
+                            </span>
+                            
+                                <i class="fa-solid fa-image fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                友情链接
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">18</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-center">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">深度学习笔记</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/po6.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2025-03-26 22:27:45</span>
+        <span class="mobile">2025-03-26 22:27:45</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2025-03-26 22:27:56</span>
+            <span class="mobile">2025-03-26 22:27:56</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/Notes/">Notes</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Deep-Learning/">Deep Learning</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>2.3k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>10 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="深度学习笔记"><a href="#深度学习笔记" class="headerlink" title="深度学习笔记"></a>深度学习笔记</h1><h2 id="神经网络"><a href="#神经网络" class="headerlink" title="神经网络"></a>神经网络</h2><img lazyload src="/images/loading.svg" data-src="/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20250325145417293.png" class title="SNN">
+
+<p>这就是一个简单的神经网络，其中的每一个箭头就代表一个ReLU函数</p>
+<h2 id="监督学习"><a href="#监督学习" class="headerlink" title="监督学习"></a>监督学习</h2><h3 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h3><p>结构化数据：表格</p>
+<p>非结构化数据：文本、图像、音频</p>
+<h2 id="深度学习兴起"><a href="#深度学习兴起" class="headerlink" title="深度学习兴起"></a>深度学习兴起</h2><p>神经网络越大、数据集越大，神经网络性能越好。</p>
+<p>数据集不够大的时候，自己提取出来的特征和算法实现细节决定了算法的性能和表现。</p>
+<img lazyload src="/images/loading.svg" data-src="/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20250325150358921.png" class title="image-20250325150358921">
+
+<h2 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h2><h3 id="二分分类"><a href="#二分分类" class="headerlink" title="二分分类"></a>二分分类</h3><h4 id="一些符号"><a href="#一些符号" class="headerlink" title="一些符号"></a>一些符号</h4><p>一个单独的样本：$(x,y)$， x是$n_x$维矩阵的特征向量，$y \in {0,1}$</p>
+<p>$m &#x3D; m_{train}$表示一个训练集， $m_{test}$表示一个测试集的样本数</p>
+<p>$X &#x3D; \begin{bmatrix}<br>. &amp; . &amp; \cdots &amp; . \<br>. &amp; . &amp; \cdots &amp; . \<br>x^{(1)} &amp; x^{(2)} &amp; \cdots &amp; x^{(m)} \<br>. &amp; . &amp; \cdots &amp; . \<br>. &amp; . &amp; \cdots &amp; .<br>\end{bmatrix}$，是一个$m \times n_x $的矩阵，表示一个训练集。在Python中：X.shape 用于输出矩阵的维度</p>
+<p>$Y &#x3D; \left[ y^{(1)} ; y^{(2)} ; \cdots ; y^{(m)} \right]$，表示输出</p>
+<h3 id="Logistic回归"><a href="#Logistic回归" class="headerlink" title="Logistic回归"></a>Logistic回归</h3><p><strong>给定信息</strong></p>
+<ul>
+<li><strong>给定</strong>: $x $，我们希望 $\hat{y} &#x3D; P(y&#x3D;1|x) $</li>
+<li>$x \in \mathbb{R}^{n_x} $</li>
+<li>$0 \leq y \leq 1 $</li>
+</ul>
+<p><strong>参数</strong></p>
+<ul>
+<li>$\omega \in \mathbb{R}^{n_x} $，$b \in \mathbb{R} $拦截器，把b和w视为独立的参数会更好</li>
+</ul>
+<p><strong>输出</strong></p>
+<ul>
+<li>$\hat{y} &#x3D; \sigma(\omega^T x + b) $</li>
+</ul>
+<h4 id="Sigmoid函数"><a href="#Sigmoid函数" class="headerlink" title="Sigmoid函数"></a>Sigmoid函数</h4><ul>
+<li>Sigmoid函数 $\sigma(z) $ 定义为：<br>$<br>\sigma(z) &#x3D; \frac{1}{1 + e^{-z}}<br>$</li>
+<li>当 $z $ 很大时，$\sigma(z) \approx 1 $</li>
+<li>当 $z $ 为大负数时，$\sigma(z) \approx 0 $</li>
+</ul>
+<h5 id="Sigmoid函数的图像"><a href="#Sigmoid函数的图像" class="headerlink" title="Sigmoid函数的图像"></a>Sigmoid函数的图像</h5><ul>
+<li>Sigmoid函数具有S形曲线，将任何输入映射到0和1之间的值。</li>
+<li><img lazyload src="/images/loading.svg" data-src="/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20250325160216236.png" class title="image-20250325160216236">
+<ul>
+<li>当 $z $ 很大时，$\sigma(z) \approx 1 $</li>
+<li>当 $z $ 为大负数时，$\sigma(z) \approx 0 $</li>
+</ul>
+</li>
+</ul>
+<h5 id="重要说明"><a href="#重要说明" class="headerlink" title="重要说明"></a>重要说明</h5><ul>
+<li>对于大的 $z $，$\sigma(z) \approx \frac{1}{1+0} &#x3D; 1 $</li>
+<li>对于大的负数 $z $，$\sigma(z) \approx \frac{1}{1 + \text{大数字}} \approx 0 $</li>
+</ul>
+<h3 id="Logistic成本函数"><a href="#Logistic成本函数" class="headerlink" title="Logistic成本函数"></a>Logistic成本函数</h3><h4 id="逻辑回归成本函数"><a href="#逻辑回归成本函数" class="headerlink" title="逻辑回归成本函数"></a>逻辑回归成本函数</h4><ul>
+<li>预测值：<br>$<br>\hat{y}^{(i)} &#x3D; \sigma(w^T x^{(i)} + b), \quad \text{其中} \quad \sigma(z) &#x3D; \frac{1}{1 + e^{-z}}<br>$</li>
+<li>给定数据集 $ {(x^{(1)}, y^{(1)}), \dots, (x^{(m)}, y^{(m)})} $，我们希望：$<br>\hat{y}^{(i)} \approx y^{(i)}<br>$</li>
+</ul>
+<h4 id="损失（误差）函数（单个样本）"><a href="#损失（误差）函数（单个样本）" class="headerlink" title="损失（误差）函数（单个样本）"></a>损失（误差）函数（单个样本）</h4><ul>
+<li><p>Logistic回归的损失函数：<br>$<br>L(\hat{y}, y) &#x3D; \frac{1}{2} (\hat{y} - y)^2<br>$</p>
+<ul>
+<li>或者，使用对数损失（交叉熵）：<br>$<br>L(\hat{y}, y) &#x3D; - \left[ y \log \hat{y} + (1 - y) \log(1 - \hat{y}) \right]<br>$</li>
+</ul>
+</li>
+<li><p>当 $ y &#x3D; 1 $ 时：<br>$<br>L(\hat{y}, y) &#x3D; - \log \hat{y} \quad \text{（我们希望 $ \hat{y} $ 较大）}<br>$</p>
+</li>
+<li><p>当 $ y &#x3D; 0 $ 时：<br>$<br>L(\hat{y}, y) &#x3D; - \log(1 - \hat{y}) \quad \text{（我们希望 $ \hat{y} $ 较小）}<br>$</p>
+</li>
+</ul>
+<h4 id="成本函数（所有样本）"><a href="#成本函数（所有样本）" class="headerlink" title="成本函数（所有样本）"></a>成本函数（所有样本）</h4><ul>
+<li>成本函数是所有样本的损失平均值：<br>$<br>J(w, b) &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^m L(\hat{y}^{(i)}, y^{(i)}) &#x3D; - \frac{1}{m} \sum_{i&#x3D;1}^m \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log (1 - \hat{y}^{(i)}) \right]<br>$</li>
+</ul>
+<p>Logistic回归可以被看做是一个非常小的神经网络</p>
+<h3 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h3><p>假设函数为：</p>
+<p>$$<br>\hat{y} &#x3D; \sigma(w^T x + b), \quad \sigma(z) &#x3D; \frac{1}{1 + e^{-z}}<br>$$</p>
+<p>成本函数为：</p>
+<p>$$<br>J(w, b) &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^{m} L(\hat{y}^{(i)}, y^{(i)})<br>$$</p>
+<p>其中，逻辑损失函数定义为：</p>
+<p>$$<br>L(\hat{y}^{(i)}, y^{(i)}) &#x3D; -y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)})<br>$$</p>
+<p>目标：</p>
+<p>我们希望找到能够最小化成本函数 $J(w, b)$ 的 $w$ 和 $b$。</p>
+<p>图示：</p>
+<p>优化目标是最小化 $J(w, b)$ 在三维空间中的值，如下图所示：</p>
+<img lazyload src="/images/loading.svg" data-src="/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20250325162122960.png" class title="image-20250325162122960">
+
+<ul>
+<li>$w$ 轴</li>
+<li>$b$ 轴</li>
+<li>$J(w, b)$ 轴，红点为全局最小值。</li>
+</ul>
+<p>如果每次都选定从0开始不断下降直至找到全局最优解，则就叫梯度下降</p>
+<h4 id="梯度下降过程"><a href="#梯度下降过程" class="headerlink" title="梯度下降过程"></a>梯度下降过程</h4><p>在梯度下降过程中，随着每一步的更新，权重 $w$ 沿着负梯度方向更新，直到达到最小值。更新公式如下：</p>
+<p>$$<br>w :&#x3D; w - \alpha \frac{\partial J(w,b)}{\partial w}<br>$$</p>
+<p>其中 $\alpha$ 是学习率，决定了每次更新的步长。损失函数 $J(w,b)$ 关于 $w$ 的梯度用于计算更新量。</p>
+<p>同样，对于偏置 $b$，更新公式为：</p>
+<p>$$<br>b :&#x3D; b - \alpha \frac{\partial J(w,b)}{\partial b}<br>$$</p>
+<p>图示：</p>
+<img lazyload src="/images/loading.svg" data-src="/2025/03/26/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20250325162744963.png" class title="image-20250325162744963">
+
+<p>在图示中，展示了梯度下降的路径，沿着曲线的方向进行更新，每次迭代向着函数值更小的方向移动，直到达到最小值。</p>
+<ul>
+<li>箭头指向梯度下降的方向。</li>
+<li>目标是通过不断更新 $w$ 和 $b$，使得损失函数 $J(w,b)$ 最小化。</li>
+</ul>
+<p>在程序中dvar变量表示对最终值的导数</p>
+<h3 id="Logistic-Regression-导数推导"><a href="#Logistic-Regression-导数推导" class="headerlink" title="Logistic Regression 导数推导"></a>Logistic Regression 导数推导</h3><h4 id="前向传播"><a href="#前向传播" class="headerlink" title="前向传播"></a>前向传播</h4><p>输入特征 $x_1, x_2$ 的线性组合：<br>$$ z &#x3D; w_1 x_1 + w_2 x_2 + b $$</p>
+<p>Sigmoid激活函数：<br>$$ a &#x3D; \sigma(z) &#x3D; \frac{1}{1+e^{-z}} $$</p>
+<p>损失函数（二元交叉熵）：<br>$$ L(a, y) &#x3D; -[y \log(a) + (1-y)\log(1-a)] $$</p>
+<h4 id="计算图表示"><a href="#计算图表示" class="headerlink" title="计算图表示"></a>计算图表示</h4><p>   x₁       x₂<br>   |        |<br>   w₁       w₂<br>    \      &#x2F;<br>     [z &#x3D; w₁x₁ + w₂x₂ + b]<br>        |<br>      a &#x3D; σ(z)<br>        |<br>     L(a,y)</p>
+<h4 id="反向传播导数"><a href="#反向传播导数" class="headerlink" title="反向传播导数"></a>反向传播导数</h4><p><strong>关键梯度计算</strong></p>
+<ol>
+<li><p>损失对输出的导数：<br>$$ \frac{dL}{da} &#x3D; -\frac{y}{a} + \frac{1-y}{1-a} $$</p>
+</li>
+<li><p>Sigmoid函数的导数：<br>$$ \frac{da}{dz} &#x3D; \sigma(z)(1-\sigma(z)) &#x3D; a(1-a) $$</p>
+</li>
+<li><p>链式法则求 $dz$：<br>$$ dz &#x3D; \frac{dL}{dz} &#x3D; \frac{dL}{da} \cdot \frac{da}{dz} &#x3D; (-\frac{y}{a} + \frac{1-y}{1-a}) \cdot a(1-a) &#x3D; a - y $$</p>
+</li>
+</ol>
+<h4 id="参数梯度"><a href="#参数梯度" class="headerlink" title="参数梯度"></a>参数梯度</h4><ul>
+<li><p>权重梯度：<br>$$ \frac{dL}{dw_1} &#x3D; dz \cdot x_1 &#x3D; (a-y)x_1 $$<br>$$ \frac{dL}{dw_2} &#x3D; dz \cdot x_2 &#x3D; (a-y)x_2 $$</p>
+</li>
+<li><p>偏置梯度：<br>$$ \frac{dL}{db} &#x3D; dz &#x3D; a-y $$</p>
+</li>
+</ul>
+<h4 id="参数更新规则"><a href="#参数更新规则" class="headerlink" title="参数更新规则"></a>参数更新规则</h4><p>梯度下降更新（学习率 $\alpha$）：<br>$$<br>\begin{aligned}<br>w_1 &amp;&#x3D; w_1 - \alpha \cdot dw_1 \<br>w_2 &amp;&#x3D; w_2 - \alpha \cdot dw_2 \<br>b &amp;&#x3D; b - \alpha \cdot db<br>\end{aligned}<br>$$</p>
+<h4 id="实例演示"><a href="#实例演示" class="headerlink" title="实例演示"></a>实例演示</h4><p><strong>示例数据</strong></p>
+<p>假设输入样本和参数：<br>$$ x &#x3D; \begin{bmatrix} 2 \ -1 \end{bmatrix},\quad w &#x3D; \begin{bmatrix} 0.5 \ -0.3 \end{bmatrix},\quad b &#x3D; 0.1,\quad y&#x3D;1 $$</p>
+<p><strong>逐步计算</strong></p>
+<ol>
+<li><p><strong>前向传播</strong>：<br>$$ z &#x3D; 0.5×2 + (-0.3)×(-1) + 0.1 &#x3D; 1.4 $$<br>$$ a &#x3D; \sigma(1.4) \approx 0.802 $$</p>
+</li>
+<li><p><strong>损失计算</strong>：<br>$$ \mathcal{L} &#x3D; -[1×\log(0.802) + 0] \approx 0.220 $$</p>
+</li>
+<li><p><strong>反向传播</strong>：<br>$$ dz &#x3D; 0.802 - 1 &#x3D; -0.198 $$<br>$$ \begin{cases}<br>dw_1 &#x3D; (-0.198)×2 &#x3D; -0.396 \<br>dw_2 &#x3D; (-0.198)×(-1) &#x3D; 0.198 \<br>db &#x3D; -0.198<br>\end{cases} $$</p>
+</li>
+<li><p><strong>参数更新</strong>（学习率 $\alpha&#x3D;0.1$）：<br>$$ \begin{cases}<br>w_1 :&#x3D; 0.5 - 0.1×(-0.396) \approx 0.540 \<br>w_2 :&#x3D; -0.3 - 0.1×0.198 \approx -0.320 \<br>b :&#x3D; 0.1 - 0.1×(-0.198) \approx 0.120<br>\end{cases} $$</p>
+</li>
+</ol>
+<h4 id="关键理解"><a href="#关键理解" class="headerlink" title="关键理解"></a>关键理解</h4><ol>
+<li><strong>导数简化</strong>：最终梯度形式 $dz &#x3D; a-y$ 是Logistic回归的优美性质</li>
+<li><strong>向量化实现</strong>：实际代码中应使用：<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">   dw = np.dot(X, (A-Y).T)/m</span><br><span class="line">   db = np.<span class="built_in">sum</span>(A-Y)/m</span><br><span class="line"></span><br><span class="line">当然可以，以下是根据你提供的两张吴恩达老师板书图片，结合逻辑回归（Logistic Regression）相关理论知识整理的笔记，已按照你要求的 Markdown 格式、三级至五级标题结构、LaTeX 数学公式呈现，包含理论推导与公式，适当补充了梯度下降实现的推导细节。</span><br><span class="line"></span><br><span class="line"><span class="comment">### Logistic Regression on $m$ Examples</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#### 1. 成本函数（Cost Function）</span></span><br><span class="line"></span><br><span class="line">逻辑回归的目标是最小化所有训练样本上的损失函数平均值，其成本函数定义为：</span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">J(w, b) = \frac&#123;<span class="number">1</span>&#125;&#123;m&#125; \sum_&#123;i=<span class="number">1</span>&#125;^m \mathcal&#123;L&#125;(a^&#123;(i)&#125;, y^&#123;(i)&#125;)</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line">其中：</span><br><span class="line">- $a^&#123;(i)&#125; = \hat&#123;y&#125;^&#123;(i)&#125; = \sigma(z^&#123;(i)&#125;)$</span><br><span class="line">- $z^&#123;(i)&#125; = w^T x^&#123;(i)&#125; + b$</span><br><span class="line">- $\sigma(z) = \frac&#123;<span class="number">1</span>&#125;&#123;<span class="number">1</span> + e^&#123;-z&#125;&#125;$ 是 sigmoid 激活函数</span><br><span class="line">- $\mathcal&#123;L&#125;(a^&#123;(i)&#125;, y^&#123;(i)&#125;)$ 是逻辑回归的交叉熵损失：</span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">\mathcal&#123;L&#125;(a^&#123;(i)&#125;, y^&#123;(i)&#125;) = -\left[y^&#123;(i)&#125; \log a^&#123;(i)&#125; + (<span class="number">1</span> - y^&#123;(i)&#125;) \log (<span class="number">1</span> - a^&#123;(i)&#125;)\right]</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="comment">#### 2. 目标函数的梯度计算</span></span><br><span class="line"></span><br><span class="line">为了使用梯度下降法更新参数 $w$ 和 $b$，我们需要计算成本函数对每个参数的偏导数。</span><br><span class="line"></span><br><span class="line"><span class="comment">##### 2.1 对 $w_j$ 的偏导</span></span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">\frac&#123;\partial&#125;&#123;\partial w_j&#125; J(w, b) = \frac&#123;<span class="number">1</span>&#125;&#123;m&#125; \sum_&#123;i=<span class="number">1</span>&#125;^m \frac&#123;\partial&#125;&#123;\partial w_j&#125; \mathcal&#123;L&#125;(a^&#123;(i)&#125;, y^&#123;(i)&#125;)</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line">将损失函数代入并链式求导，得到：</span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">\frac&#123;\partial&#125;&#123;\partial w_j&#125; \mathcal&#123;L&#125; = (a^&#123;(i)&#125; - y^&#123;(i)&#125;) x_j^&#123;(i)&#125;</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line">因此：</span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">\frac&#123;\partial J&#125;&#123;\partial w_j&#125; = \frac&#123;<span class="number">1</span>&#125;&#123;m&#125; \sum_&#123;i=<span class="number">1</span>&#125;^m (a^&#123;(i)&#125; - y^&#123;(i)&#125;) x_j^&#123;(i)&#125;</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line"><span class="comment">##### 2.2 对 $b$ 的偏导</span></span><br><span class="line"></span><br><span class="line">$$</span><br><span class="line">\frac&#123;\partial J&#125;&#123;\partial b&#125; = \frac&#123;<span class="number">1</span>&#125;&#123;m&#125; \sum_&#123;i=<span class="number">1</span>&#125;^m (a^&#123;(i)&#125; - y^&#123;(i)&#125;)</span><br><span class="line">$$</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="comment">#### 3. 梯度下降算法实现（带循环）</span></span><br><span class="line"></span><br><span class="line">初始化参数：</span><br><span class="line"></span><br><span class="line">```python</span><br><span class="line">J = <span class="number">0</span></span><br><span class="line">dw1 = <span class="number">0</span></span><br><span class="line">dw2 = <span class="number">0</span></span><br><span class="line">db = <span class="number">0</span></span><br></pre></td></tr></table></figure></div></li>
+</ol>
+<p>对于每个样本 $(x^{(i)}, y^{(i)})$：</p>
+<h5 id="3-1-前向传播"><a href="#3-1-前向传播" class="headerlink" title="3.1 前向传播"></a>3.1 前向传播</h5><p>$$<br>z^{(i)} &#x3D; w^T x^{(i)} + b \ a^{(i)} &#x3D; \sigma(z^{(i)})<br>$$</p>
+<h5 id="3-2-损失和梯度计算"><a href="#3-2-损失和梯度计算" class="headerlink" title="3.2 损失和梯度计算"></a>3.2 损失和梯度计算</h5><p>$$<br>{Jt} &#x3D; -\left[y^{(i)} \log a^{(i)} + (1 - y^{(i)}) \log (1 - a^{(i)})\right]<br>$$</p>
+<p>误差项：<br>$$<br>dz(i)&#x3D;a(i)−y(i)dz^{(i)} &#x3D; a^{(i)} - y^{(i)}<br>$$<br>累加梯度：<br>$$<br>dw_1 +&#x3D; x_1^{(i)} \cdot dz^{(i)} \ dw_2 +&#x3D; x_2^{(i)} \cdot dz^{(i)} \ db +&#x3D; dz^{(i)}<br>$$</p>
+<h5 id="3-3-最终平均值"><a href="#3-3-最终平均值" class="headerlink" title="3.3 最终平均值"></a>3.3 最终平均值</h5><p>$$<br>J &#x2F;&#x3D; m \ dw_1 &#x2F;&#x3D; m, \quad dw_2 &#x2F;&#x3D; m, \quad db &#x2F;&#x3D; m<br>$$</p>
+<hr>
+<h4 id="4-参数更新（梯度下降）"><a href="#4-参数更新（梯度下降）" class="headerlink" title="4. 参数更新（梯度下降）"></a>4. 参数更新（梯度下降）</h4><p>给定学习率 $\alpha$，使用以下规则更新参数：<br>$$<br>w_1 :&#x3D; w_1 - \alpha \cdot dw_1 \ w_2 :&#x3D; w_2 - \alpha \cdot dw_2 \ b :&#x3D; b - \alpha \cdot db<br>$$</p>
+<hr>
+<h4 id="5-向量化（Vectorization）"><a href="#5-向量化（Vectorization）" class="headerlink" title="5. 向量化（Vectorization）"></a>5. 向量化（Vectorization）</h4><p>后续步骤中将使用向量化方法消除循环，提高训练效率。</p>
+<h3 id="向量化"><a href="#向量化" class="headerlink" title="向量化"></a>向量化</h3>
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 深度学习笔记</li>
+        <li><strong>作者:</strong> Serendy</li>
+        <li><strong>创建于
+                :</strong> 2025-03-26 22:27:45</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2025-03-26 22:27:56
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://mapleqian.github.io/2025/03/26/深度学习笔记/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Deep-Learning/">#Deep Learning</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/2024/10/21/配电脑心路历程/" title="配电脑心路历程" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/p9/wallhaven-p9e25j.jpg" alt="配电脑心路历程" class="!max-w-none">
+  <span class="title">配电脑心路历程</span>
+</a><a class="recommended-article-item" href="/2024/09/25/小声讨论2/" title="小声讨论2" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="小声讨论2" class="!max-w-none">
+  <span class="title">小声讨论2</span>
+</a><a class="recommended-article-item" href="/2024/03/16/《亲密关系》读书笔记/" title="《亲密关系》读书笔记" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/l8/wallhaven-l8vp7y.jpg" alt="《亲密关系》读书笔记" class="!max-w-none">
+  <span class="title">《亲密关系》读书笔记</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/2024/10/21/配电脑心路历程/" title="配电脑心路历程" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/p9/wallhaven-p9e25j.jpg" alt="配电脑心路历程" class="!max-w-none">
+  <span class="title">配电脑心路历程</span>
+</a><a class="recommended-article-item" href="/2024/09/25/小声讨论2/" title="小声讨论2" rel="bookmark">
+  <img src="/images/wallhaven-wqery6-light.webp" alt="小声讨论2" class="!max-w-none">
+  <span class="title">小声讨论2</span>
+</a></div>
+   </div>
+  </div>
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2025/03/19/%E5%B0%8F%E5%A3%B0%E8%AE%A8%E8%AE%BA3/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">小声讨论3</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://serendylin-blogcomment.hf.space',
+                });
+            }
+
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
+
+
+        
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">深度学习笔记</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-text">深度学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="nav-text">监督学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE"><span class="nav-text">数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%85%B4%E8%B5%B7"><span class="nav-text">深度学习兴起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-text">梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E5%88%86%E7%B1%BB"><span class="nav-text">二分分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E7%AC%A6%E5%8F%B7"><span class="nav-text">一些符号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic%E5%9B%9E%E5%BD%92"><span class="nav-text">Logistic回归</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Sigmoid%E5%87%BD%E6%95%B0"><span class="nav-text">Sigmoid函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic%E6%88%90%E6%9C%AC%E5%87%BD%E6%95%B0"><span class="nav-text">Logistic成本函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E6%88%90%E6%9C%AC%E5%87%BD%E6%95%B0"><span class="nav-text">逻辑回归成本函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%EF%BC%88%E8%AF%AF%E5%B7%AE%EF%BC%89%E5%87%BD%E6%95%B0%EF%BC%88%E5%8D%95%E4%B8%AA%E6%A0%B7%E6%9C%AC%EF%BC%89"><span class="nav-text">损失（误差）函数（单个样本）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E5%87%BD%E6%95%B0%EF%BC%88%E6%89%80%E6%9C%89%E6%A0%B7%E6%9C%AC%EF%BC%89"><span class="nav-text">成本函数（所有样本）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95"><span class="nav-text">梯度下降法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%BF%87%E7%A8%8B"><span class="nav-text">梯度下降过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Logistic-Regression-%E5%AF%BC%E6%95%B0%E6%8E%A8%E5%AF%BC"><span class="nav-text">Logistic Regression 导数推导</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-text">前向传播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E8%A1%A8%E7%A4%BA"><span class="nav-text">计算图表示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E5%AF%BC%E6%95%B0"><span class="nav-text">反向传播导数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%A2%AF%E5%BA%A6"><span class="nav-text">参数梯度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%E8%A7%84%E5%88%99"><span class="nav-text">参数更新规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="nav-text">实例演示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%90%86%E8%A7%A3"><span class="nav-text">关键理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%EF%BC%88%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%EF%BC%89"><span class="nav-text">4. 参数更新（梯度下降）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%90%91%E9%87%8F%E5%8C%96%EF%BC%88Vectorization%EF%BC%89"><span class="nav-text">5. 向量化（Vectorization）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E5%8C%96"><span class="nav-text">向量化</span></a></li></ol></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 18 篇文章
+                    </span>
+                    
+                        <span>
+                            共 31.9k 字
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.2</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+		<li class="right-bottom-tools rss flex justify-center items-center">
+			<a class="flex justify-center items-center" href="/atom.xml" target="_blank">
+				<i class="fa-regular fa-rss"></i>
+			</a>
+		</li>
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/build/plugins/masonry.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+    
+<script src="/js/build/layouts/bookmarkNav.js" type="module"></script>
+
+
+	
+	<div id="aplayer"></div>
+
+<script src="/js/build/libs/APlayer.min.js"></script>
+
+
+<script src="/js/build/plugins/aplayer.js"></script>
+
+
+	
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-haruto"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
