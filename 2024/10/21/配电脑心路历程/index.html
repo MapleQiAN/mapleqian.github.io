@@ -1003,7 +1003,7 @@
      <i aria-hidden="true"></i><span>推荐阅读</span>
     </div>
     <div class="recommended-article-group"><a class="recommended-article-item" href="/2025/03/26/深度学习笔记/" title="深度学习笔记" rel="bookmark">
-  <img src="/images/wallhaven-wqery6-light.webp" alt="深度学习笔记" class="!max-w-none">
+  <img src="https://w.wallhaven.cc/full/ex/wallhaven-exdyjk.jpg" alt="深度学习笔记" class="!max-w-none">
   <span class="title">深度学习笔记</span>
 </a><a class="recommended-article-item" href="/2024/09/22/深夜杂记2/" title="深夜杂记 2" rel="bookmark">
   <img src="/images/wallhaven-wqery6-light.webp" alt="深夜杂记 2" class="!max-w-none">
@@ -1018,7 +1018,7 @@
      <i aria-hidden="true"></i><span>推荐阅读</span>
    </div>
    <div class="recommended-article-group"><a class="recommended-article-item" href="/2025/03/26/深度学习笔记/" title="深度学习笔记" rel="bookmark">
-  <img src="/images/wallhaven-wqery6-light.webp" alt="深度学习笔记" class="!max-w-none">
+  <img src="https://w.wallhaven.cc/full/ex/wallhaven-exdyjk.jpg" alt="深度学习笔记" class="!max-w-none">
   <span class="title">深度学习笔记</span>
 </a><a class="recommended-article-item" href="/2024/09/22/深夜杂记2/" title="深夜杂记 2" rel="bookmark">
   <img src="/images/wallhaven-wqery6-light.webp" alt="深夜杂记 2" class="!max-w-none">
@@ -1070,33 +1070,32 @@
 
         
             
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
+    <div class="twikoo-container">
+        <script data-swup-reload-script
+                src='https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.39/twikoo.all.min.js'
+        ></script>
+        <div id="twikoo-comment"></div>
+        <script data-swup-reload-script>
+            function loadTwikoo() {
+                twikoo.init({
+                    el: '#twikoo-comment',
+                    envId: 'https://twikoo.negroni.top',
+                });
+            }
 
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://comment.negroni.top/',
-          lang: 'zh-CN',
-          dark: 'body[class~="dark-mode"]',
-          reaction: true,
-          requiredMeta: ['nick', 'mail'],
-          emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo'],
-          
-          
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
-    </script>
-
+            if ('true') {
+                const loadTwikooTimeout = setTimeout(() => {
+                    loadTwikoo();
+                    clearTimeout(loadTwikooTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadTwikoo);
+            }
+        </script>
+    </div>
 
 
+        
         
     
 </div>
