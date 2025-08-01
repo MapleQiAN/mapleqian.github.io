@@ -667,21 +667,26 @@
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
 			<p>今晚在部署博客的时突然出现了这样的错误：</p>
-<img lazyload src="/images/loading.svg" data-src="/57369/image-20230909102159001.png" class title="image-20230909102159001">
+<img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/57369/image-20230909102159001.png"
+                      class="" title="image-20230909102159001"
+                >
 
 <p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
 <div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
 
 <p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
 <p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
-<p><a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/chendeqiang/p/12861744.html" >https://www.cnblogs.com/chendeqiang/p/12861744.html<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
 <p>然后我重启电脑，问题解决了….</p>
 <p>大无语……😅</p>
 <p>2023.9.13</p>
 <p>又遇到了这个问题，一周后的今天解决了</p>
 <p>这次重启没用了，不是线程占用的问题</p>
 <p>重新设置SSH Key好像也不行</p>
-<p>然后找到一个教程要我删代理：<a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>然后找到一个教程要我删代理：<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/Duan2baka/p/17271142.html" >https://www.cnblogs.com/Duan2baka/p/17271142.html<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
 <p>然后就…行了？！而且网站同步速度快了很多！</p>
 <p>神奇！</p>
 <p>2024.9.4</p>
