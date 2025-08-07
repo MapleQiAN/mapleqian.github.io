@@ -6,7 +6,7 @@
   <link href="http://www.z2z4.com/atom.xml" rel="self"/>
   
   <link href="http://www.z2z4.com/"/>
-  <updated>2025-08-07T02:26:03.417Z</updated>
+  <updated>2025-08-07T03:37:07.102Z</updated>
   <id>http://www.z2z4.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://www.z2z4.com/12093.html"/>
     <id>http://www.z2z4.com/12093.html</id>
     <published>2025-08-07T02:17:01.000Z</published>
-    <updated>2025-08-07T02:26:03.417Z</updated>
+    <updated>2025-08-07T03:37:07.102Z</updated>
     
-    <content type="html"><![CDATA[<p>先贴个项目地址：</p><a class="button regular" href='https://github.com/MapleQiAN/MoodStack' title='MapleQiAN/MoodStack'><i class='fa-solid fa-brands fa-github'></i> MapleQiAN/MoodStack</a>]]></content>
+    <content type="html"><![CDATA[<p>先贴个项目地址：</p><a class="button " href='https://github.com/MapleQiAN/MoodStack' title='MapleQiAN/MoodStack'><i class='fa-solid fa-brands fa-github'></i> MapleQiAN/MoodStack</a>]]></content>
     
     
     <summary type="html">前两天突然想到如果有个软件能智能化地记录自己的日记并提供成长记录和总结多好</summary>
