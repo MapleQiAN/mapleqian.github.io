@@ -6,7 +6,7 @@
   <link href="http://www.z2z4.com/atom.xml" rel="self"/>
   
   <link href="http://www.z2z4.com/"/>
-  <updated>2025-08-07T03:50:27.044Z</updated>
+  <updated>2025-08-19T07:48:37.906Z</updated>
   <id>http://www.z2z4.com/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>可能只有我自己感兴趣的情感专题</title>
+    <link href="http://www.z2z4.com/62727.html"/>
+    <id>http://www.z2z4.com/62727.html</id>
+    <published>2025-08-19T07:21:07.000Z</published>
+    <updated>2025-08-19T07:48:37.906Z</updated>
+    
+    
+    <summary type="html">一掷惊鸿影 归来作晚风</summary>
+    
+    
+    
+    <category term="夏日柠心灵休养间" scheme="http://www.z2z4.com/categories/%E5%A4%8F%E6%97%A5%E6%9F%A0%E5%BF%83%E7%81%B5%E4%BC%91%E5%85%BB%E9%97%B4/"/>
+    
+    
+    <category term="感悟" scheme="http://www.z2z4.com/tags/%E6%84%9F%E6%82%9F/"/>
+    
+  </entry>
   
   <entry>
     <title>第一个开源项目记录</title>
@@ -424,27 +443,6 @@
     
     
     <category term="Note" scheme="http://www.z2z4.com/tags/Note/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>深夜杂记 1</title>
-    <link href="http://www.z2z4.com/30288.html"/>
-    <id>http://www.z2z4.com/30288.html</id>
-    <published>2023-07-13T16:23:45.000Z</published>
-    <updated>2025-08-07T05:48:17.301Z</updated>
-    
-    <content type="html"><![CDATA[<p>最近教务排名更新了，看看自己的成绩单，还算比较满意吧，毕竟跟自己之前比已经进步很大了，咱也不跟别人比</p><img                       lazyload                     src="/images/loading.svg"                     data-src="/30288/image-20230714002943563.png"                      class="" title="image-20230714002943563"                ><p>现在是20.54%，保研估计是稳了，或许大三可以稍微摆一点？但是一看大三，课好多…还是希望能尽量做的好一点吧，毕竟多拿2000块奖学金也是挺爽的😂</p><p>（挺搞笑的，自己的成绩还真是等差数列式变化，大一结束的时候是30%，大二上结束是25%，现在是20%</p><p>虽然上个学期很累，糟心事也不少，但是其实也有不少收获，而且从最后成绩来看结果也是不错的</p><p>不过我作为一名大心脏选手，上学期的一些事情其实看起来也不算太糟，感觉其实也…没关系</p><p>虽然上学期没有深交的新朋友，但是还是新认识了不少有趣的同学的，而且感觉和身边的同学关系也更好了一些，和老朋友的联系也更多了，这样看来其实也很不错呢😊</p><p>心理老师给我下的任务还没完成（doge，希望我大三可以完成，哈哈哈哈</p><p>不过上学期让我认识到<strong>做自己</strong>才是最重要的，要成为自己的光，带领自己前进，保持独立思考，不要太过在意他人的想法。同时要永远保持爱的动力，It’s LOVE that makes every day fascinating.</p><p>这学期点播最多的歌是 <strong>轨迹</strong>（鬼姬）(现在是左下角播放器的第一首)，希望自己下学期可以不要点这首歌哈哈哈</p><p>希望我的大三可以收获更多的惊喜~</p><style>.timeline {  position: relative;  margin: 2em auto;  padding-left: 30px;  border-left: 3px solid #4caf50;  font-family: sans-serif;  max-width: 500px;}.timeline-entry {  margin: 1em 0;  position: relative;}.timeline-entry::before {  content: "";  position: absolute;  left: -9px;  top: 0.3em;  width: 14px;  height: 14px;  background-color: #4caf50;  border-radius: 50%;  border: 2px solid #fff;  box-shadow: 0 0 0 2px #4caf50;}.timeline-date {  font-weight: bold;  color: #388e3c;  margin-bottom: 0.2em;}.timeline-content {  color: #444;}</style><div class="timeline">  <div class="timeline-entry">    <div class="timeline-date">2023-02-16</div>    <div class="timeline-content">去学校</div>  </div>  <div class="timeline-entry">    <div class="timeline-date">2023-02-26</div>    <div class="timeline-content">成功搭建博客</div>  </div>  <div class="timeline-entry">    <div class="timeline-date">2023-04-29</div>    <div class="timeline-content">去天津</div>  </div>  <div class="timeline-entry">    <div class="timeline-date">2023-02-16</div>    <div class="timeline-content">第一个北京市级奖项</div>  </div>  <div class="timeline-entry">    <div class="timeline-date">2023-06-21</div>    <div class="timeline-content">期末周结束</div>  </div>  <div class="timeline-entry">    <div class="timeline-date">2023-07-01</div>    <div class="timeline-content">学期结束！回家！</div>  </div></div>]]></content>
-    
-    
-    <summary type="html">一些关于大二下学期的小声BB</summary>
-    
-    
-    
-    <category term="非著名生活档案馆" scheme="http://www.z2z4.com/categories/%E9%9D%9E%E8%91%97%E5%90%8D%E7%94%9F%E6%B4%BB%E6%A1%A3%E6%A1%88%E9%A6%86/"/>
-    
-    
-    <category term="杂记" scheme="http://www.z2z4.com/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
