@@ -140,7 +140,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://www.z2z4.com/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-10-31T12:07:56.000Z">
-<meta property="article:modified_time" content="2025-10-31T14:18:25.356Z">
+<meta property="article:modified_time" content="2025-10-31T16:22:11.909Z">
 <meta property="article:author" content="Serendy">
 <meta property="article:tag" content="感悟">
 <meta name="twitter:card" content="summary">
@@ -623,8 +623,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-10-31 22:18:25</span>
-            <span class="mobile">2025-10-31 22:18:25</span>
+            <span class="desktop">2025-11-01 00:22:11</span>
+            <span class="mobile">2025-11-01 00:22:11</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -646,12 +646,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>2.5k 字</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.2k 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>11 分钟</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>4 分钟</span>
         </span>
     
     
@@ -670,234 +670,12 @@
 
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-			<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>愚人的国度 · 孙燕姿 | 单曲播放器</title>
-  <meta name="color-scheme" content="light dark">
-  <style>
-    :root{
-      --bg: #0b1220;
-      --fg: #e8eefc;
-      --muted: #9fb3d1;
-      --accent: #5aa9ff;
-      --card: rgba(255,255,255,.06);
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      color:var(--fg); background: radial-gradient(1200px 600px at 20% -10%, #20324f 0%, #0b1220 60%);
-      display:flex; align-items:center; justify-content:center; padding:24px;
-    }
-    .player{
-      width:min(680px, 92vw);
-      background:var(--card); border:1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(8px); border-radius:24px; box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .cover{
-      position:relative; aspect-ratio:16/9; background:#111;
-      background-size:cover; background-position:center;
-    }
-    .badge{
-      position:absolute; top:12px; left:12px;
-      background:rgba(0,0,0,.45); padding:6px 10px; border-radius:999px; font-size:12px; color:#e5f0ff;
-      border:1px solid rgba(255,255,255,.12)
-    }
-    .body{padding:18px 18px 8px}
-    .title{font-size:20px; font-weight:700; letter-spacing:.2px}
-    .meta{margin-top:4px; color:var(--muted); font-size:14px}
-    .bar{margin:14px 0 6px; display:flex; align-items:center; gap:10px}
-    .time{font-variant-numeric: tabular-nums; font-size:12px; color:var(--muted); width:42px; text-align:center}
-    input[type="range"]{
-      appearance:none; -webkit-appearance:none; height:6px; background:rgba(255,255,255,.15); border-radius:999px; width:100%;
-      outline:none;
-    }
-    input[type="range"]::-webkit-slider-thumb{
-      -webkit-appearance:none; appearance:none; width:14px; height:14px; border-radius:50%;
-      background:var(--accent); border:2px solid white; box-shadow:0 1px 4px rgba(0,0,0,.25)
-    }
-    .controls{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:6px}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06); color:var(--fg); cursor:pointer; user-select:none;
-    }
-    .btn:hover{background:rgba(255,255,255,.1)}
-    .btn.primary{background:linear-gradient(135deg,#6bb5ff, #3e8bff); border:none; color:#081428; font-weight:700}
-    .right{display:flex; gap:8px; align-items:center}
-    .vol{width:120px}
-    .note{
-      margin:10px 18px 18px; color:#b7c7e6; font-size:12px; opacity:.9
-    }
-    .tip{
-      display:none; margin-top:8px; color:#ffdcae; font-size:12px
-    }
-    .tip.show{display:block}
-    a{color:#b4d5ff; text-decoration: none}
-    a:hover{text-decoration: underline}
-  </style>
-</head>
-<body>
-  <div class="player" role="region" aria-label="单曲播放器">
-    <!-- 封面图：请替换为你自己的图片直链 -->
-    <div class="cover" id="cover"
-         style="background-image:url('https://cdn.jsdelivr.net/gh/placeholder/album-art/stefanie-sun.jpg')">
-      <div class="badge">🎧 单曲循环</div>
-    </div>
+			<audio controls autoplay loop style="width:100%;outline:none;border:none;">
+  <source src="https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/愚人的国度-孙燕姿.mp3" type="audio/mpeg">
+  您的浏览器不支持 audio 标签。
+</audio>
 
-<pre><code>&lt;div class=&quot;body&quot;&gt;
-  &lt;div class=&quot;title&quot;&gt;愚人的国度&lt;/div&gt;
-  &lt;div class=&quot;meta&quot;&gt;演唱：孙燕姿 · 格式：MP3 · 320kbps（示例）&lt;/div&gt;
-
-  &lt;div class=&quot;bar&quot;&gt;
-    &lt;div class=&quot;time&quot; id=&quot;tcur&quot;&gt;0:00&lt;/div&gt;
-    &lt;input id=&quot;seek&quot; type=&quot;range&quot; value=&quot;0&quot; min=&quot;0&quot; max=&quot;100&quot; step=&quot;0.1&quot; aria-label=&quot;播放进度&quot;&gt;
-    &lt;div class=&quot;time&quot; id=&quot;tmax&quot;&gt;0:00&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;div class=&quot;controls&quot;&gt;
-    &lt;button class=&quot;btn primary&quot; id=&quot;toggle&quot; aria-label=&quot;播放/暂停&quot;&gt;▶︎ 播放&lt;/button&gt;
-    &lt;div class=&quot;right&quot;&gt;
-      &lt;button class=&quot;btn&quot; id=&quot;loop&quot; aria-pressed=&quot;true&quot;&gt;🔁 循环&lt;/button&gt;
-      &lt;div class=&quot;btn&quot; style=&quot;gap:6px&quot;&gt;
-        🔊 音量
-        &lt;input id=&quot;vol&quot; class=&quot;vol&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;1&quot; step=&quot;0.01&quot; value=&quot;0.9&quot; aria-label=&quot;音量&quot;&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;autoplayTip&quot; class=&quot;tip&quot;&gt;浏览器阻止了自动播放。请点击“播放”开始收听。&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class=&quot;note&quot;&gt;
-  使用提示：把 &lt;code&gt;audio.src&lt;/code&gt; 换成你的 GitHub+jsDelivr 直链，例如：
-  &lt;code&gt;https://cdn.jsdelivr.net/gh/&amp;lt;你&amp;gt;/&amp;lt;repo&amp;gt;/music/yuren-zhiguo.mp3&lt;/code&gt;。
-  若是博客框架（Hexo、Hugo），可直接将本文件作为组件/短代码引用。
-&lt;/div&gt;
-</code></pre>
-  </div>
-
-<p>  <audio id="audio" preload="metadata" crossorigin="anonymous"></audio></p>
-  <script>
-    // === 1) 基础绑定 ===
-    const audio = document.getElementById('audio');
-    const toggle = document.getElementById('toggle');
-    const loopBtn = document.getElementById('loop');
-    const seek = document.getElementById('seek');
-    const vol = document.getElementById('vol');
-    const tcur = document.getElementById('tcur');
-    const tmax = document.getElementById('tmax');
-    const tip = document.getElementById('autoplayTip');
-
-    // === 2) 配置你的音频直链和封面 ===
-    // ✅ 请把下面的 src 改成你的 jsDelivr 直链
-    audio.src = "https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/愚人的国度-孙燕姿.mp3";
-    // 可选：用 querystring 注入：/player.html?src=xxx
-    const u = new URL(location.href);
-    if (u.searchParams.get('src')) audio.src = u.searchParams.get('src');
-    
-    // === 3) UI工具 ===
-    const fmt = s => {
-      s = Math.max(0, Math.floor(s || 0));
-      const m = Math.floor(s/60), n = s%60;
-      return `${m}:${String(n).padStart(2,'0')}`;
-    };
-    const setBtnPlaying = playing => toggle.textContent = playing ? "⏸ 暂停" : "▶︎ 播放";
-    
-    // === 4) 事件 ===
-    audio.addEventListener('loadedmetadata', () => {
-      tmax.textContent = fmt(audio.duration);
-    });
-    audio.addEventListener('timeupdate', () => {
-      tcur.textContent = fmt(audio.currentTime);
-      if (audio.duration) {
-        seek.value = (audio.currentTime / audio.duration) * 100;
-      }
-    });
-    audio.addEventListener('ended', () => {
-      if (!audio.loop) setBtnPlaying(false);
-    });
-    
-    seek.addEventListener('input', () => {
-      if (audio.duration) {
-        audio.currentTime = (seek.value / 100) * audio.duration;
-      }
-    });
-    vol.addEventListener('input', () => {
-      audio.volume = vol.valueAsNumber;
-    });
-    
-    toggle.addEventListener('click', async () => {
-      if (audio.paused) {
-        try { await audio.play(); tip.classList.remove('show'); setBtnPlaying(true); }
-        catch { tip.classList.add('show'); }
-      } else {
-        audio.pause();
-        setBtnPlaying(false);
-      }
-    });
-    
-    loopBtn.addEventListener('click', () => {
-      audio.loop = !audio.loop;
-      loopBtn.setAttribute('aria-pressed', String(audio.loop));
-      loopBtn.textContent = audio.loop ? "🔁 循环" : "➡️ 单次";
-    });
-    
-    // === 5) 自动播放尝试（符合浏览器策略）===
-    // 绝大多数浏览器禁止“有声自动播放”。我们先静音尝试播放，然后恢复音量。
-    (async () => {
-      const lastVol = vol.valueAsNumber;
-      audio.volume = 0.0; // 静音尝试
-      try {
-        await audio.play();
-        setBtnPlaying(true);
-        // 平滑恢复到设定音量
-        const target = lastVol;
-        const step = () => {
-          const cur = audio.volume;
-          if (cur + 0.05 < target) {
-            audio.volume = cur + 0.05;
-            requestAnimationFrame(step);
-          } else {
-            audio.volume = target;
-          }
-        };
-        requestAnimationFrame(step);
-      } catch (e) {
-        // 被拦截：提示用户手动点击播放
-        tip.classList.add('show');
-        setBtnPlaying(false);
-        audio.volume = lastVol;
-      }
-    })();
-    
-    // === 6) Media Session（锁屏卡片/系统控件）===
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: "愚人的国度",
-        artist: "孙燕姿",
-        album: "Single",
-        artwork: [
-          { src: "https://cdn.jsdelivr.net/gh/MapleQiAN/album-art/stefanie-sun.jpg", sizes: "1024x1024", type: "image/jpeg" }
-        ]
-      });
-      navigator.mediaSession.setActionHandler('play', () => audio.play());
-      navigator.mediaSession.setActionHandler('pause', () => audio.pause());
-      navigator.mediaSession.setActionHandler('seekto', d => { if (d.seekTime!=null) audio.currentTime = d.seekTime; });
-      navigator.mediaSession.setActionHandler('previoustrack', null);
-      navigator.mediaSession.setActionHandler('nexttrack', null);
-    }
-  </script>
-</body>
-</html>
-
-
-
-<style>.nclwiangcsgy{zoom:50%;}</style>
+<style>.uqpzhrueijwh{zoom:50%;}</style>
 
 <p>AL今年的征程结束了，我看到了他们一整年的努力，从无人问津，到超越自我，到挑战神明，他们就像努力拼搏的你我啊。故事走到这里，看起来就像电影里的一样，未来，无论是受到命运眷顾，还是厚积薄发终成传奇，好像都应该是他们的奖赏，是吧？但是，“那句努力终究会有回报”，还是败在了现实面前啊。他们命途多舛，瑞士轮抽到的全是强队，可是他们硬生生将对手全部斩于马下，以3-0的傲岸雄姿走进八强。可是，在单败的八强赛中，又抽到传奇T1… 赛前他们依然无人问津，到了现场，却依然是T1粉丝压倒性地欢呼。甚至落败之后，都有人在弹幕上刷“舒服了”。他们只有立场，他们唯结果论，可是他们却看不到你们付出啊。难道你们真的从头到尾都不值得一句“辛苦了”吗？</p>
 <p>又是一场2 : 3，又是一场2 : 1领先被连追2局… 但是其实今天AL赢下来的局也都很艰难，我们真的很难去苛责他们。第三局的永恩，潇洒地扭转战局，可是双剑可以带你们走过一段辉煌，却不能带你们走完整场比赛啊。毕竟，面对一座翻不过的山，谁又能有把握自己一定能书写历史呢？</p>
@@ -926,7 +704,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2025-10-31 22:18:25
+                    :</strong> 2025-11-01 00:22:11
             </li>
         
         <li>
@@ -964,27 +742,27 @@
     <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
      <i aria-hidden="true"></i><span>推荐阅读</span>
     </div>
-    <div class="recommended-article-group"><a class="recommended-article-item" href="/4060.html" title="关于我自认为有点摆烂的本科" rel="bookmark">
-  <img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="!max-w-none">
-  <span class="title">关于我自认为有点摆烂的本科</span>
-</a><a class="recommended-article-item" href="/30288.html" title="深夜杂记 1" rel="bookmark">
-  <img src="/images/wallhaven-wqery6-light.webp" alt="深夜杂记 1" class="!max-w-none">
-  <span class="title">深夜杂记 1</span>
-</a><a class="recommended-article-item" href="/36153.html" title="选择困难症？怎么破？" rel="bookmark">
-  <img src="https://w.wallhaven.cc/full/ml/wallhaven-mldl19.jpg" alt="选择困难症？怎么破？" class="!max-w-none">
-  <span class="title">选择困难症？怎么破？</span>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/41913.html" title="心灵树洞活动记录" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/yq/wallhaven-yq75ml.jpg" alt="心灵树洞活动记录" class="!max-w-none">
+  <span class="title">心灵树洞活动记录</span>
+</a><a class="recommended-article-item" href="/730.html" title="《也许你该找个人聊聊》书评" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/gp/wallhaven-gp1yx7.jpg" alt="《也许你该找个人聊聊》书评" class="!max-w-none">
+  <span class="title">《也许你该找个人聊聊》书评</span>
+</a><a class="recommended-article-item" href="/48764.html" title="所以究竟想要一个什么样的生活状态呢？" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/3q/wallhaven-3qowx3.png" alt="所以究竟想要一个什么样的生活状态呢？" class="!max-w-none">
+  <span class="title">所以究竟想要一个什么样的生活状态呢？</span>
 </a></div>
    </div>
    <div class="recommended-mobile">
    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
      <i aria-hidden="true"></i><span>推荐阅读</span>
    </div>
-   <div class="recommended-article-group"><a class="recommended-article-item" href="/4060.html" title="关于我自认为有点摆烂的本科" rel="bookmark">
-  <img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="!max-w-none">
-  <span class="title">关于我自认为有点摆烂的本科</span>
-</a><a class="recommended-article-item" href="/30288.html" title="深夜杂记 1" rel="bookmark">
-  <img src="/images/wallhaven-wqery6-light.webp" alt="深夜杂记 1" class="!max-w-none">
-  <span class="title">深夜杂记 1</span>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/41913.html" title="心灵树洞活动记录" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/yq/wallhaven-yq75ml.jpg" alt="心灵树洞活动记录" class="!max-w-none">
+  <span class="title">心灵树洞活动记录</span>
+</a><a class="recommended-article-item" href="/730.html" title="《也许你该找个人聊聊》书评" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/gp/wallhaven-gp1yx7.jpg" alt="《也许你该找个人聊聊》书评" class="!max-w-none">
+  <span class="title">《也许你该找个人聊聊》书评</span>
 </a></div>
    </div>
   </div>
@@ -1092,7 +870,7 @@
                     </span>
                     
                         <span>
-                            共 78.8k 字
+                            共 77.6k 字
                         </span>
                     
                 </p>
