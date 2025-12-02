@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="Serendy">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://www.z2z4.com/49036.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="A Journey To MilkyWay.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode笔记">
+<meta property="og:url" content="http://www.z2z4.com/49036.html">
+<meta property="og:site_name" content="SerendyLin&#39;s Empire">
+<meta property="og:description" content="A Journey To MilkyWay.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.z2z4.com/images/redefine-og.webp">
+<meta property="article:published_time" content="2025-12-02T05:37:19.000Z">
+<meta property="article:modified_time" content="2025-12-02T05:42:22.448Z">
+<meta property="article:author" content="Serendy">
+<meta property="article:tag" content="Note">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.z2z4.com/images/redefine-og.webp">
+    
+    
+        <!-- Google tag (gtag.js) -->
+        <script src="https://www.googletagmanager.com/gtag/js?id=G-XF0XWGF3JV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XF0XWGF3JV');
+        </script>
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/400.png" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/400.png">
+    <meta name="theme-color" content="#80c0d0">
+    <link rel="shortcut icon" href="/images/400.png">
+    <!--- Page Info-->
+    
+    <title>
+        
+            LeetCode笔记 | SerendyLin Empire
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+        
+            
+    
+            
+    
+            
+                
+                    <script data-swup-reload-script src="//code.tidio.co/ou9byq5qkk1gvunksqtuiisa3mqdzxdo.js" async></script>
+                
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"www.z2z4.com","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#80c0d0","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Waiting for Serendipity..."},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"A Journey To MilkyWay."},"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"Aurora Island","subtitle":{"text":["做不了李白 就活成明月","欲买桂花同载酒 终不似 少年游"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦%20-%20枫.ogg","cover":"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fphoto%2Fl%2Fpublic%2Fp2518150573.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1728214005&t=166d52a6d366aacd84d73186d0b99ae1","lrc":null},{"name":"轨迹","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦-轨迹.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f1f4a4","right":"#699aea","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"书签":{"icon":"fa-solid fa-bookmark","path":"/bookmarks/"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"照片墙":{"icon":"fa-solid fa-image","path":"/masonry/"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":true};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
+</head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+                <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="/">
+                    <img src="/images/400.png" class="w-full h-full rounded-xs">
+                </a>
+            
+            <a class="logo-title" href="/">
+                
+                SerendyLin Empire
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/bookmarks/"
+                                        >
+                                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                                    书签
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/categories"
+                                        >
+                                    <i class="fa-regular fa-folder fa-fw"></i>
+                                    分类
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/masonry/"
+                                        >
+                                    <i class="fa-solid fa-image fa-fw"></i>
+                                    照片墙
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-planet-ringed fa-fw"></i>
+                                    友情链接
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/bookmarks/"
+                        >
+                            <span>
+                                书签
+                            </span>
+                            
+                                <i class="fa-solid fa-bookmark fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/categories"
+                        >
+                            <span>
+                                分类
+                            </span>
+                            
+                                <i class="fa-regular fa-folder fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/masonry/"
+                        >
+                            <span>
+                                照片墙
+                            </span>
+                            
+                                <i class="fa-solid fa-image fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                友情链接
+                            </span>
+                            
+                                <i class="fa-regular fa-planet-ringed fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+                
+                    
+                    
+                    
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/essays"
+                        >
+                            <span>Sketch</span>
+                            <i class="fa-regular fa-comment-dots fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+                    
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
+                           href="/2023/03/12/ContactME/"
+                        >
+                            <span>ContactMe</span>
+                            <i class="fa-regular fa-phone fa-sm fa-fw"></i>
+                        </a>
+                    </li>
+                
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">11</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">8</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">28</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			
+			
+			<img src="https://w.wallhaven.cc/full/xl/wallhaven-xl15e3.jpg" alt="LeetCode笔记" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75" />
+			
+			<div class="w-full flex items-center absolute bottom-0 justify-center">
+				<h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">LeetCode笔记</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/po7.jpg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">Serendy</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Magician</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2025-12-02 13:37:19</span>
+        <span class="mobile">2025-12-02 13:37:19</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2025-12-02 13:42:22</span>
+            <span class="mobile">2025-12-02 13:42:22</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+        <span class="article-categories article-meta-item">
+            <i class="fa-regular fa-folders"></i>&nbsp;
+            <ul>
+                
+                
+                    
+                        
+                        <li>
+                            <a href="/categories/%E9%9D%A2%E5%8C%85%E8%BF%BD%E6%B1%82%E7%A7%91%E6%8A%80%E7%A0%94%E8%AE%A8%E9%97%B4/">面包追求科技研讨间</a>&nbsp;
+                        </li>
+                    
+                    
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Note/">Note</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>6.7k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>28 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h1 id="Python数据结构"><a href="#Python数据结构" class="headerlink" title="Python数据结构"></a>Python数据结构</h1><h2 id="0-总体地图：都有哪些东西？"><a href="#0-总体地图：都有哪些东西？" class="headerlink" title="0. 总体地图：都有哪些东西？"></a>0. 总体地图：都有哪些东西？</h2><p>按大类分一下：</p>
+<ol>
+<li><strong>序列（Sequence）</strong><br> <code>list</code>, <code>tuple</code>, <code>str</code>, <code>range</code></li>
+<li><strong>映射（Mapping）</strong><br> <code>dict</code></li>
+<li><strong>集合（Set）</strong><br> <code>set</code>, <code>frozenset</code></li>
+<li><strong>常用高级容器</strong>（<code>collections</code> &#x2F; 标准库里的）<br> <code>deque</code>, <code>defaultdict</code>, <code>Counter</code>, <code>namedtuple</code><br> 以及 <code>heapq</code> 堆</li>
+</ol>
+<p>你 90% 的代码和刷题基本被这几位承包。</p>
+<hr>
+<h2 id="1-list：动态数组（Python-亲儿子）"><a href="#1-list：动态数组（Python-亲儿子）" class="headerlink" title="1. list：动态数组（Python 亲儿子）"></a>1. list：动态数组（Python 亲儿子）</h2><p><strong>本质</strong>：动态数组，支持下标访问，可变，有序。</p>
+<h3 id="1-1-创建"><a href="#1-1-创建" class="headerlink" title="1.1 创建"></a>1.1 创建</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = []               <span class="comment"># 空列表</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">a = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">5</span>))   <span class="comment"># [0,1,2,3,4]</span></span><br><span class="line">a = [<span class="number">0</span>] * <span class="number">10</span>         <span class="comment"># 长度为 10 的全 0 列表</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="1-2-访问-切片"><a href="#1-2-访问-切片" class="headerlink" title="1.2 访问 &amp; 切片"></a>1.2 访问 &amp; 切片</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a[i]          <span class="comment"># 下标访问</span></span><br><span class="line">a[-<span class="number">1</span>]         <span class="comment"># 最后一个</span></span><br><span class="line">a[<span class="number">1</span>:<span class="number">4</span>]        <span class="comment"># 切片 [1,2,3]</span></span><br><span class="line">a[::-<span class="number">1</span>]       <span class="comment"># 反转视图</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="1-3-修改"><a href="#1-3-修改" class="headerlink" title="1.3 修改"></a>1.3 修改</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a[i] = <span class="number">10</span></span><br><span class="line">a.append(x)        <span class="comment"># 末尾加元素，O(1) 均摊</span></span><br><span class="line">a.extend([<span class="number">4</span>, <span class="number">5</span>])   <span class="comment"># 连接列表</span></span><br><span class="line">a.insert(<span class="number">2</span>, x)     <span class="comment"># 在下标 2 插入，O(n)</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="1-4-删除"><a href="#1-4-删除" class="headerlink" title="1.4 删除"></a>1.4 删除</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a.pop()       <span class="comment"># 弹出末尾，O(1)</span></span><br><span class="line">a.pop(i)      <span class="comment"># 弹出指定位置，O(n)</span></span><br><span class="line"><span class="keyword">del</span> a[i]</span><br><span class="line">a.remove(x)   <span class="comment"># 删第一个等于 x 的元素，O(n)</span></span><br><span class="line">a.clear()     <span class="comment"># 清空</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="1-5-其他常用"><a href="#1-5-其他常用" class="headerlink" title="1.5 其他常用"></a>1.5 其他常用</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">len</span>(a)</span><br><span class="line">x <span class="keyword">in</span> a</span><br><span class="line">a.index(x)</span><br><span class="line">a.count(x)</span><br><span class="line">a.sort()                <span class="comment"># 原地排序</span></span><br><span class="line">b = <span class="built_in">sorted</span>(a)           <span class="comment"># 返回新列表</span></span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>记忆关键：<strong>随机访问 O(1)，中间插删 O(n)，末尾 append&#x2F;pop O(1)。</strong></p>
+</blockquote>
+<hr>
+<h2 id="2-tuple：不可变的“只读-list”"><a href="#2-tuple：不可变的“只读-list”" class="headerlink" title="2. tuple：不可变的“只读 list”"></a>2. tuple：不可变的“只读 list”</h2><p><strong>本质</strong>：有序、不可变，支持下标访问，可以当字典 &#x2F; 集合的 key。</p>
+<h3 id="2-1-创建"><a href="#2-1-创建" class="headerlink" title="2.1 创建"></a>2.1 创建</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">t = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>           <span class="comment"># 省略括号也行</span></span><br><span class="line">t = <span class="built_in">tuple</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="2-2-用途"><a href="#2-2-用途" class="headerlink" title="2.2 用途"></a>2.2 用途</h3><ul>
+<li>作为字典 key：<code>mp[(x, y)] = value</code></li>
+<li>存状态：<code>state = (i, mask)</code></li>
+<li>函数多返回值：<code>return x, y</code></li>
+</ul>
+<p><strong>操作</strong>类似 list（访问、切片），就是<strong>不能改</strong>。</p>
+<hr>
+<h2 id="3-str：不可变字符串"><a href="#3-str：不可变字符串" class="headerlink" title="3. str：不可变字符串"></a>3. str：不可变字符串</h2><p><strong>本质</strong>：字符序列，不可变，也可以当 dict&#x2F;set 的 key。</p>
+<h3 id="3-1-常用操作"><a href="#3-1-常用操作" class="headerlink" title="3.1 常用操作"></a>3.1 常用操作</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&quot;hello&quot;</span></span><br><span class="line"></span><br><span class="line">s[<span class="number">0</span>]        <span class="comment"># &#x27;h&#x27;</span></span><br><span class="line">s[-<span class="number">1</span>]       <span class="comment"># &#x27;o&#x27;</span></span><br><span class="line">s[<span class="number">1</span>:<span class="number">4</span>]      <span class="comment"># &#x27;ell&#x27;</span></span><br><span class="line"><span class="built_in">len</span>(s)</span><br><span class="line"></span><br><span class="line">s.upper()</span><br><span class="line">s.lower()</span><br><span class="line">s.strip()</span><br><span class="line">s.split(<span class="string">&#x27;,&#x27;</span>)    <span class="comment"># 分割</span></span><br><span class="line"><span class="string">&#x27;,&#x27;</span>.join(<span class="built_in">list</span>)  <span class="comment"># 拼接</span></span><br><span class="line"></span><br><span class="line">s.replace(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>典型刷题用途：</p>
+<ul>
+<li>当哈希 key，比如：<code>key = &#39;&#39;.join(sorted(s))</code></li>
+<li>字符串处理、前缀&#x2F;后缀判断</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="4-dict：哈希表（键值映射）"><a href="#4-dict：哈希表（键值映射）" class="headerlink" title="4. dict：哈希表（键值映射）"></a>4. dict：哈希表（键值映射）</h2><p><strong>本质</strong>：哈希表，支持平均 O(1) 的插入、删除、查询。</p>
+<h3 id="4-1-创建"><a href="#4-1-创建" class="headerlink" title="4.1 创建"></a>4.1 创建</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mp = &#123;&#125;</span><br><span class="line">mp = <span class="built_in">dict</span>()</span><br><span class="line">mp = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-2-插入-修改"><a href="#4-2-插入-修改" class="headerlink" title="4.2 插入 &#x2F; 修改"></a>4.2 插入 &#x2F; 修改</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mp[<span class="string">&#x27;a&#x27;</span>] = <span class="number">1</span></span><br><span class="line">mp[<span class="string">&#x27;a&#x27;</span>] = <span class="number">2</span>          <span class="comment"># 覆盖</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-3-访问"><a href="#4-3-访问" class="headerlink" title="4.3 访问"></a>4.3 访问</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v = mp[<span class="string">&#x27;a&#x27;</span>]                  <span class="comment"># 不存在会 KeyError</span></span><br><span class="line">v = mp.get(<span class="string">&#x27;a&#x27;</span>)              <span class="comment"># 不存在返回 None</span></span><br><span class="line">v = mp.get(<span class="string">&#x27;a&#x27;</span>, <span class="number">0</span>)           <span class="comment"># 不存在返回默认值 0</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-4-遍历"><a href="#4-4-遍历" class="headerlink" title="4.4 遍历"></a>4.4 遍历</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> mp:                 <span class="comment"># 遍历 key</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k, v <span class="keyword">in</span> mp.items():      <span class="comment"># key, value</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> v <span class="keyword">in</span> mp.values():        <span class="comment"># 只要 value</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="4-5-删除"><a href="#4-5-删除" class="headerlink" title="4.5 删除"></a>4.5 删除</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">del</span> mp[<span class="string">&#x27;a&#x27;</span>]</span><br><span class="line">mp.pop(<span class="string">&#x27;a&#x27;</span>, <span class="literal">None</span>)            <span class="comment"># 不存在也不报错</span></span><br><span class="line">mp.clear()</span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>记忆关键：</p>
+<ul>
+<li>key 必须可哈希：<code>int</code>, <code>str</code>, <code>tuple</code> 等</li>
+<li><strong>查询 &#x2F; 插入 &#x2F; 删除 平均 O(1)</strong></li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="5-set：去重-成员判断神器"><a href="#5-set：去重-成员判断神器" class="headerlink" title="5. set：去重 + 成员判断神器"></a>5. set：去重 + 成员判断神器</h2><p><strong>本质</strong>：只存 key 的哈希表，无序，元素唯一。</p>
+<h3 id="5-1-创建"><a href="#5-1-创建" class="headerlink" title="5.1 创建"></a>5.1 创建</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="built_in">set</span>()</span><br><span class="line">s = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">s = <span class="built_in">set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>])    <span class="comment"># 自动去重</span></span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-2-常用操作"><a href="#5-2-常用操作" class="headerlink" title="5.2 常用操作"></a>5.2 常用操作</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s.add(<span class="number">4</span>)</span><br><span class="line">s.remove(<span class="number">2</span>)        <span class="comment"># 不存在会报错</span></span><br><span class="line">s.discard(<span class="number">2</span>)       <span class="comment"># 不存在就算了，不报错</span></span><br><span class="line">s.clear()</span><br><span class="line"></span><br><span class="line"><span class="number">3</span> <span class="keyword">in</span> s             <span class="comment"># 成员判断 O(1)</span></span><br><span class="line"><span class="built_in">len</span>(s)</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="5-3-集合运算"><a href="#5-3-集合运算" class="headerlink" title="5.3 集合运算"></a>5.3 集合运算</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a | b      <span class="comment"># 并集</span></span><br><span class="line">a &amp; b      <span class="comment"># 交集</span></span><br><span class="line">a - b      <span class="comment"># 差集</span></span><br><span class="line">a ^ b      <span class="comment"># 对称差</span></span><br></pre></td></tr></table></figure></div>
+
+<blockquote>
+<p>常见用途：判重、visited 集合、求交并差。</p>
+</blockquote>
+<hr>
+<h2 id="6-collections-里常见几位"><a href="#6-collections-里常见几位" class="headerlink" title="6. collections 里常见几位"></a>6. collections 里常见几位</h2><h3 id="6-1-deque：双端队列"><a href="#6-1-deque：双端队列" class="headerlink" title="6.1 deque：双端队列"></a>6.1 <code>deque</code>：双端队列</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line">q = deque()</span><br><span class="line">q.append(<span class="number">1</span>)        <span class="comment"># 右端入</span></span><br><span class="line">q.appendleft(<span class="number">2</span>)    <span class="comment"># 左端入</span></span><br><span class="line">q.pop()            <span class="comment"># 右端出</span></span><br><span class="line">q.popleft()        <span class="comment"># 左端出</span></span><br></pre></td></tr></table></figure></div>
+
+<p>特点：</p>
+<ul>
+<li>头尾插删 O(1)</li>
+<li>适合队列、双端队列、BFS、滑动窗口等</li>
+</ul>
+<hr>
+<h3 id="6-2-defaultdict：带默认值的-dict"><a href="#6-2-defaultdict：带默认值的-dict" class="headerlink" title="6.2 defaultdict：带默认值的 dict"></a>6.2 <code>defaultdict</code>：带默认值的 dict</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line">mp = defaultdict(<span class="built_in">list</span>)</span><br><span class="line">mp[<span class="string">&#x27;a&#x27;</span>].append(<span class="number">1</span>)</span><br><span class="line">mp[<span class="string">&#x27;a&#x27;</span>].append(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">mp2 = defaultdict(<span class="built_in">int</span>)</span><br><span class="line">mp2[<span class="string">&#x27;x&#x27;</span>] += <span class="number">1</span></span><br></pre></td></tr></table></figure></div>
+
+<p>特点：</p>
+<ul>
+<li>访问不存在的 key 时自动创建默认值，省去了 if 判断</li>
+<li>常用于：分组、计数</li>
+</ul>
+<hr>
+<h3 id="6-3-Counter：频数统计"><a href="#6-3-Counter：频数统计" class="headerlink" title="6.3 Counter：频数统计"></a>6.3 <code>Counter</code>：频数统计</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"></span><br><span class="line">cnt = Counter([<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">cnt[<span class="number">2</span>]          <span class="comment"># 2</span></span><br><span class="line">cnt.most_common(<span class="number">2</span>)  <span class="comment"># [(2, 2), (1, 1)]  频率 Top 2</span></span><br></pre></td></tr></table></figure></div>
+
+<p>用途：</p>
+<ul>
+<li>字符 &#x2F; 数字频次统计</li>
+<li>Top K 高频元素</li>
+<li>判断两个串是否字符构成相同</li>
+</ul>
+<hr>
+<h3 id="6-4-namedtuple：轻量级“结构体”"><a href="#6-4-namedtuple：轻量级“结构体”" class="headerlink" title="6.4 namedtuple：轻量级“结构体”"></a>6.4 <code>namedtuple</code>：轻量级“结构体”</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line">Point = namedtuple(<span class="string">&#x27;Point&#x27;</span>, [<span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>])</span><br><span class="line">p = Point(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">p.x, p.y</span><br></pre></td></tr></table></figure></div>
+
+<p>用途：</p>
+<ul>
+<li>含义更清晰的“元组”，提高可读性</li>
+</ul>
+<hr>
+<h2 id="7-heapq：最小堆（优先队列）"><a href="#7-heapq：最小堆（优先队列）" class="headerlink" title="7. heapq：最小堆（优先队列）"></a>7. heapq：最小堆（优先队列）</h2><p><code>heapq</code> 不是一个类型，而是一堆操作函数，把 list 当堆用。</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> heapq</span><br><span class="line"></span><br><span class="line">h = []</span><br><span class="line">heapq.heappush(h, <span class="number">3</span>)</span><br><span class="line">heapq.heappush(h, <span class="number">1</span>)</span><br><span class="line">heapq.heappush(h, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">x = heapq.heappop(h)   <span class="comment"># 1，最小的先出来</span></span><br></pre></td></tr></table></figure></div>
+
+<p>特点：</p>
+<ul>
+<li>Python 默认是<strong>小根堆</strong></li>
+<li>操作复杂度：<code>push/pop</code> O(log n)</li>
+<li>常见用途：<ul>
+<li>维护前 K 小 &#x2F; 大（配合取负数）</li>
+<li>合并区间、调度、最短路（Dijkstra）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="8-一个简单小总表（当速查用）"><a href="#8-一个简单小总表（当速查用）" class="headerlink" title="8. 一个简单小总表（当速查用）"></a>8. 一个简单小总表（当速查用）</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>底层</th>
+<th>典型操作 &amp; 复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>list</code></td>
+<td>动态数组</td>
+<td>随机访问 O(1)，末尾增删 O(1)，中间 O(n)</td>
+</tr>
+<tr>
+<td><code>tuple</code></td>
+<td>动态数组(只读)</td>
+<td>访问 O(1)，可哈希，可做 key</td>
+</tr>
+<tr>
+<td><code>str</code></td>
+<td>数组(只读)</td>
+<td>访问 O(1)，可哈希，常作 key</td>
+</tr>
+<tr>
+<td><code>dict</code></td>
+<td>哈希表</td>
+<td>查&#x2F;增&#x2F;删 平均 O(1)</td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>哈希表</td>
+<td>查&#x2F;增&#x2F;删 平均 O(1)</td>
+</tr>
+<tr>
+<td><code>deque</code></td>
+<td>双端队列</td>
+<td>头尾增删 O(1)</td>
+</tr>
+<tr>
+<td><code>Counter</code></td>
+<td>基于 dict</td>
+<td>统计频次 O(n)</td>
+</tr>
+<tr>
+<td><code>defaultdict</code></td>
+<td>基于 dict</td>
+<td>自动初始化 value</td>
+</tr>
+<tr>
+<td><code>heapq</code></td>
+<td>二叉堆</td>
+<td>push&#x2F;pop O(log n)</td>
+</tr>
+</tbody></table>
+<h1 id="哈希表"><a href="#哈希表" class="headerlink" title="哈希表"></a>哈希表</h1><p>直接“算出”对象位置：散列</p>
+<p>散列查找法的两项基本工作： ①计算位置：构造散列函数确定关键词存储位置； ② 解决冲突：应用某种策略解决多个关键词位置相同的问题</p>
+<p>时间复杂度几乎是常量：O（1），即查找时间与问题规模无关！</p>
+<p><strong>“散列（Hashing）” 的基本思想是</strong>：</p>
+<p>（1）以关键字key为自变量，通过一个确定的函数 h（散列函数）， 计算出对应的函数值h(key)，作为数据对象的存储地址。 </p>
+<p>（2）可能不同的关键字会映射到同一个散列地址上， 即h(key<del>i</del> ) &#x3D; h(key<del>j</del> )（当key<del>i</del> ≠key<del>j</del>），称为“冲突(Collision)”。 —-需要某种冲突解决策略</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204112225527-1764654061939-1.png"
+                      alt="image-20221204112225527"
+                ></p>
+<p><strong>装填因子</strong>（Loading Factor）：设散列表空间大小为m，填入表 中元素个数是n，则称α＝ n &#x2F; m为散列表的装填因子 </p>
+<p> α＝11 &#x2F; 17 ≈ 0.65。</p>
+<h3 id="散列（哈希）函数的构造方法"><a href="#散列（哈希）函数的构造方法" class="headerlink" title="散列（哈希）函数的构造方法"></a>散列（哈希）函数的构造方法</h3><p>计算哈希函数所需时间  关键字的长度  哈希表的大小  关键字的分布情况  记录的查找频率</p>
+<h4 id="1-直接定址法"><a href="#1-直接定址法" class="headerlink" title="1 直接定址法"></a>1 直接定址法</h4><p>取关键词的某个线性函数值为散列地址，即 <strong>h(key) &#x3D; a × key + b</strong> (a、b为常数)</p>
+<h4 id="2-除留余数法"><a href="#2-除留余数法" class="headerlink" title="2 除留余数法"></a>2 除留余数法</h4><p>散列函数为：<strong>h(key) &#x3D; key mod p</strong>（p是素数）</p>
+<h4 id="3-数字分析法"><a href="#3-数字分析法" class="headerlink" title="3 数字分析法"></a>3 数字分析法</h4><p>如果可能出现的关键字的数位相同，且取值事先知道，则可对关键字进行 分析，取其中“分布均匀”的若干位或它们的组合作为哈希表的地址。</p>
+<p>分析数字关键字在各位上的变化情况，取比较随机的位作为散列地址</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204112559509-1764654061939-2.png"
+                      alt="image-20221204112559509"
+                ></p>
+<h4 id="4-折叠法"><a href="#4-折叠法" class="headerlink" title="4 折叠法"></a>4 折叠法</h4><p>若关键字的位数很多，且每一位上数字分布大致均匀，则可采用移位叠加 或间界叠加，即将关键字分成若干部分，然后以它们的叠加和(舍去进位) 作为哈希地址。移位叠加是将分割后的每一部分的最低位对齐，然后相加； 间界叠加是从一端向另一端沿分割界来回折叠，然后对齐相加。</p>
+<style>.bskqrbsmrlmk{zoom:50%;}</style>
+
+<h4 id="5-平方取中法"><a href="#5-平方取中法" class="headerlink" title="5 平方取中法"></a>5 平方取中法</h4><p>如果关键字的所有各位分布都不均匀，则可取关键字的平方值的中间若干 位作为哈希表的地址。由于一个数的平方值的中间几位数受该数所有位影响， 将使随机分布的关键字得到的哈希函数值也随机。</p>
+<style>.vyeglxlsklcq{zoom:50%;}</style>
+
+<h4 id="6-随机数法"><a href="#6-随机数法" class="headerlink" title="6 随机数法"></a>6 随机数法</h4><p>当关键字不等长时，可取关键字的某个伪随机函数值作为哈希地址。</p>
+<p> <strong>Hash(key) &#x3D; random(key)</strong></p>
+<h3 id="冲突处理方法"><a href="#冲突处理方法" class="headerlink" title="冲突处理方法"></a>冲突处理方法</h3><p>常用处理冲突的思路： ① 换个位置: 开放地址法 ② 同一位置的冲突对象组织在一起: 链地址法</p>
+<h4 id="1-开放定址法"><a href="#1-开放定址法" class="headerlink" title="1 开放定址法"></a>1 开放定址法</h4><p>一旦产生了冲突（该地址已有其它元素），就按某种规则去寻找另一空地址</p>
+<p>若发生了第 i 次冲突，试探的下一个地址将增加d<del>i</del>，基本公式是： <strong>h<del>i</del> (key) &#x3D; (h(key)+d<del>i</del> ) mod TableSize ( 1≤ i &lt; TableSize )</strong> </p>
+<p> d<del>i</del> 决定了不同的解决冲突方案：线性探测、平方探测、双散列。</p>
+<h5 id="1-线性探测法-P130"><a href="#1-线性探测法-P130" class="headerlink" title="1 线性探测法 P130"></a>1 线性探测法 P130</h5><p>线性探测法：以增量序列 1，2，……，（TableSize -1） 循环试探下一个存储地址。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204113326253-1764654061940-5.png"
+                      alt="image-20221204113326253"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204113344229-1764654061940-6.png"
+                      alt="image-20221204113344229"
+                ></p>
+<h5 id="2-平方探测法-P132"><a href="#2-平方探测法-P132" class="headerlink" title="2 平方探测法 P132"></a>2 平方探测法 P132</h5><p>平方探测法：以增量序列1^2^ ，-1^2^  ，2^2^  ，-2^2^  ，……，q^2^ ，-q^2^  且q ≤ [TableSize&#x2F;2] 循环试探下一个存储地址。</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204113550210-1764654061940-7.png"
+                      alt="image-20221204113550210"
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/7409/image-20221204113558157-1764654061940-8.png"
+                      alt="image-20221204113558157"
+                ></p>
+<h5 id="3-双散列探测法-P133"><a href="#3-双散列探测法-P133" class="headerlink" title="3 双散列探测法 P133"></a>3 双散列探测法 P133</h5><p>双散列探测法: d<del>i</del> 为i*h<del>2</del> (key)，h<del>2</del> (key)是另一个散列函数 探测序列成：h<del>2</del> (key)，2h<del>2</del> (key)，3h<del>2</del> (key)，…… </p>
+<p>对任意的key，<strong>h<del>2</del> (key) ≠ 0</strong> ！</p>
+<p>探测序列还应该保证所有的散列存储单元都应该能够被探测到。 选择以下形式有良好的效果： <strong>h<del>2</del> (key) &#x3D; p - (key mod p)</strong>  其中：p &lt; TableSize，p、TableSize都是素数。</p>
+<h4 id="2-再哈希法"><a href="#2-再哈希法" class="headerlink" title="2 再哈希法"></a>2 再哈希法</h4><p>Hi &#x3D;RH<del>i</del> (key) i&#x3D;1,2,…,h RH<del>i</del> 均是不同的哈希函数，即在同义词产生地址冲突时计算另一个哈希函数 地址，直到冲突不再发生，这种方法不易产生“聚集” ，但增加了计算的时间。</p>
+<h4 id="3-链地址法"><a href="#3-链地址法" class="headerlink" title="3 链地址法"></a>3 链地址法</h4><p>将所有关键字为“同义词”的记录链接在一个线性链表中。此时的哈希表以 “指针数组”的形式出现，数组内各个分量存储相应哈希地址的链表的头指针。</p>
+<h4 id="4-建立一个公共溢出区"><a href="#4-建立一个公共溢出区" class="headerlink" title="4 建立一个公共溢出区"></a>4 建立一个公共溢出区</h4><p>设立一个基本表HashTable[0..m-1]和一个溢出表OverTable[0..v]，所有关键 字和基本表中关键字为同义词的记录，一旦冲突，都填入溢出表。</p>
+<h3 id="算法实现"><a href="#算法实现" class="headerlink" title="算法实现"></a>算法实现</h3><p>结构声明</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">        <span class="title">HashTbl</span> *<span class="title">HashTable</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">HashTbl</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> TableSize;</span><br><span class="line">    Cell *TheCells;</span><br><span class="line">&#125; H; </span><br></pre></td></tr></table></figure></div>
+
+<p>初始化哈希表</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">HashTable <span class="title function_">InitializeTable</span><span class="params">(<span class="type">int</span> TableSize)</span> &#123;</span><br><span class="line">    HashTable H;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">if</span> (TableSize &lt; MinTableSize) &#123;</span><br><span class="line">        Error(<span class="string">&quot;散列表太小&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 分配散列表 */</span></span><br><span class="line">    H = (HashTable) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> HashTbl));</span><br><span class="line">    <span class="keyword">if</span> (H == <span class="literal">NULL</span>)</span><br><span class="line">        FatalError(<span class="string">&quot;空间溢出!!!&quot;</span>);</span><br><span class="line">    H-&gt;TableSize = NextPrime(TableSize);</span><br><span class="line">    <span class="comment">/* 分配散列表 Cells */</span></span><br><span class="line">    H-&gt;TheCells = (Cell *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(Cell) * H-&gt;TableSize);</span><br><span class="line">    <span class="keyword">if</span> (H-&gt;TheCells == <span class="literal">NULL</span>)</span><br><span class="line">        FatalError(<span class="string">&quot;空间溢出!!!&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; H-&gt;TableSize; i++)</span><br><span class="line">        H-&gt;TheCells[i].Info = Empty;</span><br><span class="line">    <span class="keyword">return</span> H;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>平方探测法</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Position <span class="title function_">Find</span><span class="params">(ElementType Key, HashTable H)</span> <span class="comment">/*平方探测*/</span>&#123;</span><br><span class="line">    Position CurrentPos, NewPos;</span><br><span class="line">    <span class="type">int</span> CNum; <span class="comment">/* 记录冲突次数 */</span></span><br><span class="line">    CNum = <span class="number">0</span>;</span><br><span class="line">    NewPos = CurrentPos = Hash(Key, H-&gt;TableSize);</span><br><span class="line">    <span class="keyword">while</span> (H-&gt;TheCells[NewPos].Info != Empty &amp;&amp;</span><br><span class="line">           H-&gt;TheCells[NewPos].Element != Key) &#123;</span><br><span class="line">        <span class="comment">/* 字符串类型的关键词需要 strcmp 函数!! */</span></span><br><span class="line">        <span class="keyword">if</span> (++CNum % <span class="number">2</span>) &#123; <span class="comment">/* 判断冲突的奇偶次 */</span></span><br><span class="line">            NewPos = CurrentPos + (CNum + <span class="number">1</span>) / <span class="number">2</span> * (CNum + <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">while</span> (NewPos &gt;= H-&gt;TableSize)</span><br><span class="line">                NewPos -= H-&gt;TableSize;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            NewPos = CurrentPos - CNum / <span class="number">2</span> * CNum / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">while</span> (NewPos &lt; <span class="number">0</span>)</span><br><span class="line">                NewPos += H-&gt;TableSize;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> NewPos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>插入操作</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Insert</span><span class="params">(ElementType Key, HashTable H)</span> &#123; <span class="comment">/* 插入操作 */</span></span><br><span class="line">    Position Pos;</span><br><span class="line">    Pos = Find(Key, H);</span><br><span class="line">    <span class="keyword">if</span> (H-&gt;TheCells[Pos].Info != Legitimate) &#123;</span><br><span class="line">        <span class="comment">/* 确认在此插入 */</span></span><br><span class="line">        H-&gt;TheCells[Pos].Info = Legitimate;</span><br><span class="line">        H-&gt;TheCells[Pos].Element = Key;</span><br><span class="line">        <span class="comment">/*字符串类型的关键词需要 strcpy 函数!! */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h3><p>一般情况下，在哈希函数为“均匀”的前提下，哈希表的平均查找长度仅取决于处理冲突的方法和哈希表的装填因子α。</p>
+<style>.jsqtllxyrcnl{zoom: 50%;}</style>
+
+<style>.zrkkvooolide{zoom: 50%;}</style>
+
+<hr>
+<h1 id="🎯-两数之和（Two-Sum）"><a href="#🎯-两数之和（Two-Sum）" class="headerlink" title="🎯 两数之和（Two Sum）"></a>🎯 两数之和（Two Sum）</h1><table>
+<thead>
+<tr>
+<th align="center">做题次数</th>
+<th align="center">做题时间</th>
+<th align="center">做题结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">第一次</td>
+<td align="center">2025.12.01</td>
+<td align="center">掌握一遍哈希法，用空间换时间，写出 O(n) 解法 ✅</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h2 id="🧩-题目描述"><a href="#🧩-题目描述" class="headerlink" title="🧩 题目描述"></a>🧩 题目描述</h2><p>给定一个整数数组 <code>nums</code> 和一个整数目标值 <code>target</code>，请你在数组中找到<strong>两个元素</strong>，使得：</p>
+<blockquote>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nums[i] + nums[j] == target` 且 `i != j</span><br></pre></td></tr></table></figure></div>
+</blockquote>
+<p>返回这两个元素的<strong>下标</strong> <code>[i, j]</code>，顺序无所谓。</p>
+<p>额外条件：</p>
+<ul>
+<li>每种输入<strong>只会对应一个答案</strong></li>
+<li>不能重复使用同一个元素（也就是不能拿自己加自己，除非数组里有两个相同值）</li>
+</ul>
+<h2 id="📌-示例"><a href="#📌-示例" class="headerlink" title="📌 示例"></a>📌 示例</h2><h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例 1"></a>示例 1</h3><ul>
+<li>输入：<code>nums = [2,7,11,15], target = 9</code></li>
+<li>输出：<code>[0,1]</code></li>
+<li>解释：<code>nums[0] + nums[1] = 2 + 7 = 9</code></li>
+</ul>
+<h3 id="示例-2"><a href="#示例-2" class="headerlink" title="示例 2"></a>示例 2</h3><ul>
+<li>输入：<code>nums = [3,2,4], target = 6</code></li>
+<li>输出：<code>[1,2]</code></li>
+<li>解释：<code>nums[1] + nums[2] = 2 + 4 = 6</code></li>
+</ul>
+<h3 id="示例-3"><a href="#示例-3" class="headerlink" title="示例 3"></a>示例 3</h3><ul>
+<li>输入：<code>nums = [3,3], target = 6</code></li>
+<li>输出：<code>[0,1]</code></li>
+<li>解释：用的是两个不同位置的 <code>3</code>，不是同一个元素用两次。</li>
+</ul>
+<h2 id="🧠-解题思路：哈希表，边走边找对象"><a href="#🧠-解题思路：哈希表，边走边找对象" class="headerlink" title="🧠 解题思路：哈希表，边走边找对象"></a>🧠 解题思路：哈希表，边走边找对象</h2><p>最原始暴力思路： 双层循环枚举所有 <code>(i, j)</code>，看 <code>nums[i] + nums[j] == target</code>，复杂度 <code>O(n^2)</code>，面试官会礼貌微笑然后把你挂了。</p>
+<p>更聪明点的做法：<strong>一遍扫描 + 哈希表</strong>，核心想法是：</p>
+<blockquote>
+<p>当前数是 <code>x</code>，我需要找的是 <code>target - x</code>，所以问题变成： “我之前有没有见过一个数，刚好是 <code>target - x</code>？”</p>
+</blockquote>
+<p>具体过程：</p>
+<ol>
+<li>准备一个哈希表 <code>mp</code>：<ul>
+<li>key：数组中的值</li>
+<li>value：这个值出现的下标</li>
+</ul>
+</li>
+<li>遍历数组，枚举当前下标 <code>i</code> 和当前值 <code>nums[i] = x</code>：<ul>
+<li>计算“理想对象”：<code>need = target - x</code></li>
+<li>查看哈希表里有没有 <code>need</code><ul>
+<li>如果有：<code>[mp[need], i]</code> 就是一对答案，直接返回</li>
+<li>如果没有：把当前值记下来 <code>mp[x] = i</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>因为题目保证<strong>一定有解</strong>，所以遍历过程中必然能提前 return。</li>
+</ol>
+<p>逻辑顺序是： 不是“先存自己，再找对象”，而是<strong>先看看能不能跟别人凑一对，不行再登记信息</strong>。</p>
+<h2 id="✅-Python-代码（哈希一遍扫描）"><a href="#✅-Python-代码（哈希一遍扫描）" class="headerlink" title="✅ Python 代码（哈希一遍扫描）"></a>✅ Python 代码（哈希一遍扫描）</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">twoSum</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>], target: <span class="built_in">int</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">int</span>]:</span><br><span class="line">        <span class="comment"># 哈希表：值 -&gt; 下标</span></span><br><span class="line">        mp = &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(nums):</span><br><span class="line">            need = target - x</span><br><span class="line">            <span class="keyword">if</span> need <span class="keyword">in</span> mp:</span><br><span class="line">                <span class="comment"># 找到了之前的互补值</span></span><br><span class="line">                <span class="keyword">return</span> [mp[need], i]</span><br><span class="line">            <span class="comment"># 没找到就把当前值记下来</span></span><br><span class="line">            mp[x] = i</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 理论上不会走到这里，因为题目说一定有解</span></span><br><span class="line">        <span class="keyword">return</span> []</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="🧩-核心逻辑表"><a href="#🧩-核心逻辑表" class="headerlink" title="🧩 核心逻辑表"></a>🧩 核心逻辑表</h2><p>遍历数组时，对每个元素 <code>x = nums[i]</code>：</p>
+<table>
+<thead>
+<tr>
+<th align="center">步骤</th>
+<th align="center">操作</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">计算</td>
+<td align="center"><code>need = target - x</code></td>
+<td align="center">需要一个“互补值”</td>
+</tr>
+<tr>
+<td align="center">查询哈希</td>
+<td align="center"><code>need in mp</code>?</td>
+<td align="center">之前是否出现过这个互补值</td>
+</tr>
+<tr>
+<td align="center">如果存在</td>
+<td align="center">返回 <code>[mp[need], i]</code></td>
+<td align="center">之前那个下标 + 当前下标就是答案</td>
+</tr>
+<tr>
+<td align="center">如果不存在</td>
+<td align="center"><code>mp[x] = i</code></td>
+<td align="center">把当前值登记，以便后面的数来匹配</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>思维模式：<strong>“我能不能和前面某个人凑 target？”</strong> 不能，就把自己信息写进“相亲表”，等后面的来找你。</p>
+</blockquote>
+<h2 id="⏳-复杂度分析"><a href="#⏳-复杂度分析" class="headerlink" title="⏳ 复杂度分析"></a>⏳ 复杂度分析</h2><ul>
+<li>时间复杂度：<code>O(n)</code> 每个元素只被访问一次，哈希表查询和插入都是平均 <code>O(1)</code>。</li>
+<li>空间复杂度：<code>O(n)</code> 最坏情况下所有元素都被放入哈希表中。</li>
+</ul>
+<h2 id="🪄-小结口诀"><a href="#🪄-小结口诀" class="headerlink" title="🪄 小结口诀"></a>🪄 小结口诀</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">两数之和常客题，</span><br><span class="line">暴力双层别再提。</span><br><span class="line"></span><br><span class="line">一遍扫描建字典，</span><br><span class="line">目标差值先看清。</span><br><span class="line"></span><br><span class="line">先查后存不乱用，</span><br><span class="line">配对成功直接停。</span><br></pre></td></tr></table></figure></div>
+
+<p>✅ <strong>关键词记忆</strong>：<code>哈希表</code>、<code>互补值 = target - x</code>、<code>一遍扫描</code>、<code>先查后存</code></p>
+<p>这题属于「八股基础款」，你现在写熟了，以后面试一上来看到它，就可以在心里说一句：谢天谢地，送分题。</p>
+<h1 id="🔤-字母异位词分组（Group-Anagrams）"><a href="#🔤-字母异位词分组（Group-Anagrams）" class="headerlink" title="🔤 字母异位词分组（Group Anagrams）"></a>🔤 字母异位词分组（Group Anagrams）</h1><table>
+<thead>
+<tr>
+<th align="center">做题次数</th>
+<th align="center">做题时间</th>
+<th align="center">做题结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">第一次</td>
+<td align="center">2025.12.01</td>
+<td align="center">掌握“排序当签名 &#x2F; 频次数组当签名”的哈希分组思路 ✅</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h2 id="🧩-题目描述-1"><a href="#🧩-题目描述-1" class="headerlink" title="🧩 题目描述"></a>🧩 题目描述</h2><p>给你一个字符串数组 <code>strs</code>，请你把其中的<strong>字母异位词</strong>分到一组里，返回所有分组结果。</p>
+<ul>
+<li>字母异位词：由<strong>相同字母</strong>构成，只是顺序不同，比如 <code>&quot;eat&quot;</code>, <code>&quot;tea&quot;</code>, <code>&quot;ate&quot;</code>。</li>
+<li>返回的分组顺序随意，组内字符串顺序也随意，评测只看“分组是否正确”。</li>
+</ul>
+<h2 id="📌-示例-1"><a href="#📌-示例-1" class="headerlink" title="📌 示例"></a>📌 示例</h2><h3 id="示例-1-1"><a href="#示例-1-1" class="headerlink" title="示例 1"></a>示例 1</h3><p>输入：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strs = [&quot;eat&quot;, &quot;tea&quot;, &quot;tan&quot;, &quot;ate&quot;, &quot;nat&quot;, &quot;bat&quot;]</span><br></pre></td></tr></table></figure></div>
+
+<p>输出（顺序可以不一样）：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[&quot;bat&quot;], [&quot;nat&quot;,&quot;tan&quot;], [&quot;ate&quot;,&quot;eat&quot;,&quot;tea&quot;]]</span><br></pre></td></tr></table></figure></div>
+
+<p>解释：</p>
+<ul>
+<li><code>&quot;bat&quot;</code>：孤家寡人一组</li>
+<li><code>&quot;nat&quot;</code> &#x2F; <code>&quot;tan&quot;</code>：同一组</li>
+<li><code>&quot;ate&quot;</code> &#x2F; <code>&quot;eat&quot;</code> &#x2F; <code>&quot;tea&quot;</code>：同一组</li>
+</ul>
+<h3 id="示例-2-1"><a href="#示例-2-1" class="headerlink" title="示例 2"></a>示例 2</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：[&quot;&quot;]</span><br><span class="line">输出：[[&quot;&quot;]]</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="示例-3-1"><a href="#示例-3-1" class="headerlink" title="示例 3"></a>示例 3</h3><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：[&quot;a&quot;]</span><br><span class="line">输出：[[&quot;a&quot;]]</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="🧠-解题思路：给每个单词“做指纹”，用哈希表分组"><a href="#🧠-解题思路：给每个单词“做指纹”，用哈希表分组" class="headerlink" title="🧠 解题思路：给每个单词“做指纹”，用哈希表分组"></a>🧠 解题思路：给每个单词“做指纹”，用哈希表分组</h2><p>题目本质：</p>
+<blockquote>
+<p>把“可以相互打乱重排得到的字符串”分到同一组。</p>
+</blockquote>
+<p>很像这样一句话：</p>
+<blockquote>
+<p>“你们长得不一样，但骨骼（字母构成）一样，就去同一个班。”</p>
+</blockquote>
+<p>那我们要做的就是： <strong>给每个字符串找一个“唯一代表它字母构成的标识”，作为哈希表的 key。</strong></p>
+<h3 id="思路一：排序当“签名”（最常用、好写）"><a href="#思路一：排序当“签名”（最常用、好写）" class="headerlink" title="思路一：排序当“签名”（最常用、好写）"></a>思路一：排序当“签名”（最常用、好写）</h3><p>对每个字符串 <code>s</code>：</p>
+<ol>
+<li>把字符排序：<code>sorted(s)</code></li>
+<li>排完后转成字符串，比如 <code>&quot;eat&quot;</code> → <code>&quot;aet&quot;</code>，<code>&quot;tea&quot;</code> → <code>&quot;aet&quot;</code></li>
+<li>这俩排序结果一样，就说明它们是异位词。</li>
+</ol>
+<p>做一个哈希表：</p>
+<ul>
+<li>key：排序后的结果，比如 <code>&quot;aet&quot;</code></li>
+<li>value：所有排序后是 <code>&quot;aet&quot;</code> 的原字符串列表</li>
+</ul>
+<p>伪代码逻辑：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">map = &#123;&#125;</span><br><span class="line">for s in strs:</span><br><span class="line">    key = &#x27;&#x27;.join(sorted(s))</span><br><span class="line">    map[key].append(s)</span><br><span class="line"></span><br><span class="line">答案就是 map.values()</span><br></pre></td></tr></table></figure></div>
+
+<p>很正常的“分类装箱”： <strong>“按签名丢进对应的桶里”。</strong></p>
+<h3 id="思路二：26-维频次数组当“签名”（更偏底层一点）"><a href="#思路二：26-维频次数组当“签名”（更偏底层一点）" class="headerlink" title="思路二：26 维频次数组当“签名”（更偏底层一点）"></a>思路二：26 维频次数组当“签名”（更偏底层一点）</h3><p>因为题目说只包含小写字母 <code>a-z</code>， 那每个字符串可以用一个长度为 26 的数组描述它：</p>
+<ul>
+<li><code>count[0]</code>：字母 <code>&#39;a&#39;</code> 出现次数</li>
+<li><code>count[1]</code>：字母 <code>&#39;b&#39;</code> 出现次数</li>
+<li>……</li>
+</ul>
+<p>比如 <code>&quot;eat&quot;</code>：</p>
+<ul>
+<li><code>e</code> → 第 4 位 +1</li>
+<li><code>a</code> → 第 0 位 +1</li>
+<li><code>t</code> → 第 19 位 +1</li>
+</ul>
+<p>得到一个数组，转成元组 <code>(…)</code>，当 key。 同一组异位词的频次数组肯定一模一样。</p>
+<p>好处：</p>
+<ul>
+<li>不用排序了，单个串复杂度 <code>O(L)</code></li>
+<li>总体复杂度：<code>O(N * L)</code>，比排序版略好一点</li>
+</ul>
+<p>坏处：</p>
+<ul>
+<li>比较丑，不如排序版直观</li>
+<li>面试时看心情，两种都可以</li>
+</ul>
+<h2 id="✅-Python-代码：排序版（推荐，先写这个）"><a href="#✅-Python-代码：排序版（推荐，先写这个）" class="headerlink" title="✅ Python 代码：排序版（推荐，先写这个）"></a>✅ Python 代码：排序版（推荐，先写这个）</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">groupAnagrams</span>(<span class="params">self, strs: <span class="type">List</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">str</span>]]:</span><br><span class="line">        groups = defaultdict(<span class="built_in">list</span>)  <span class="comment"># key: 排序后的字符串, value: 同组的原字符串列表</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> strs:</span><br><span class="line">            <span class="comment"># 排序后作为“签名”</span></span><br><span class="line">            key = <span class="string">&#x27;&#x27;</span>.join(<span class="built_in">sorted</span>(s))</span><br><span class="line">            groups[key].append(s)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 返回所有分组即可</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">list</span>(groups.values())</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="✅-Python-代码：计数版（进阶一点）"><a href="#✅-Python-代码：计数版（进阶一点）" class="headerlink" title="✅ Python 代码：计数版（进阶一点）"></a>✅ Python 代码：计数版（进阶一点）</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">groupAnagrams</span>(<span class="params">self, strs: <span class="type">List</span>[<span class="built_in">str</span>]</span>) -&gt; <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">str</span>]]:</span><br><span class="line">        groups = defaultdict(<span class="built_in">list</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> strs:</span><br><span class="line">            count = [<span class="number">0</span>] * <span class="number">26</span></span><br><span class="line">            <span class="keyword">for</span> ch <span class="keyword">in</span> s:</span><br><span class="line">                count[<span class="built_in">ord</span>(ch) - <span class="built_in">ord</span>(<span class="string">&#x27;a&#x27;</span>)] += <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 数组不能做 key，用 tuple</span></span><br><span class="line">            key = <span class="built_in">tuple</span>(count)</span><br><span class="line">            groups[key].append(s)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">list</span>(groups.values())</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="🧩-核心逻辑表-1"><a href="#🧩-核心逻辑表-1" class="headerlink" title="🧩 核心逻辑表"></a>🧩 核心逻辑表</h2><p>以“排序版”为例：</p>
+<table>
+<thead>
+<tr>
+<th align="center">当前字符串 <code>s</code></th>
+<th align="center">排序结果 <code>key</code></th>
+<th align="center">放入哈希表中的分组</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>&quot;eat&quot;</code></td>
+<td align="center"><code>&quot;aet&quot;</code></td>
+<td align="center"><code>groups[&quot;aet&quot;] = [&quot;eat&quot;]</code></td>
+</tr>
+<tr>
+<td align="center"><code>&quot;tea&quot;</code></td>
+<td align="center"><code>&quot;aet&quot;</code></td>
+<td align="center"><code>groups[&quot;aet&quot;] = [&quot;eat&quot;, &quot;tea&quot;]</code></td>
+</tr>
+<tr>
+<td align="center"><code>&quot;tan&quot;</code></td>
+<td align="center"><code>&quot;ant&quot;</code></td>
+<td align="center"><code>groups[&quot;ant&quot;] = [&quot;tan&quot;]</code></td>
+</tr>
+<tr>
+<td align="center"><code>&quot;nat&quot;</code></td>
+<td align="center"><code>&quot;ant&quot;</code></td>
+<td align="center"><code>groups[&quot;ant&quot;] = [&quot;tan&quot;, &quot;nat&quot;]</code></td>
+</tr>
+<tr>
+<td align="center"><code>&quot;bat&quot;</code></td>
+<td align="center"><code>&quot;abt&quot;</code></td>
+<td align="center"><code>groups[&quot;abt&quot;] = [&quot;bat&quot;]</code></td>
+</tr>
+</tbody></table>
+<p>最后把 <code>groups</code> 的所有 <code>value</code> 抽出来，就是答案。</p>
+<h2 id="⏳-复杂度分析-1"><a href="#⏳-复杂度分析-1" class="headerlink" title="⏳ 复杂度分析"></a>⏳ 复杂度分析</h2><h3 id="排序版"><a href="#排序版" class="headerlink" title="排序版"></a>排序版</h3><ul>
+<li>设 <code>N = strs.length</code>，<code>K = 字符串平均长度</code></li>
+<li>时间复杂度：<ul>
+<li>每个字符串要排序：<code>O(K log K)</code></li>
+<li>总体：<code>O(N * K log K)</code></li>
+</ul>
+</li>
+<li>空间复杂度：<ul>
+<li>存哈希表，几乎把所有字符串都装进去</li>
+<li>额外存 key，整体是 <code>O(N * K)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="计数版"><a href="#计数版" class="headerlink" title="计数版"></a>计数版</h3><ul>
+<li>时间复杂度：<ul>
+<li>每个字符串只扫一遍：<code>O(K)</code></li>
+<li>总体：<code>O(N * K)</code></li>
+</ul>
+</li>
+<li>空间复杂度：同样 <code>O(N * K)</code> 量级</li>
+</ul>
+<h2 id="🪄-小结口诀-1"><a href="#🪄-小结口诀-1" class="headerlink" title="🪄 小结口诀"></a>🪄 小结口诀</h2><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">异位词组要分家，</span><br><span class="line">长相不同骨架同。</span><br><span class="line"></span><br><span class="line">排序签名最好写，</span><br><span class="line">计数签名更高效。</span><br><span class="line"></span><br><span class="line">签名当键进字典，</span><br><span class="line">一键打包成分组。</span><br></pre></td></tr></table></figure></div>
+
+<p>✅ <strong>关键词记忆</strong>：<code>哈希分组</code>、<code>排序作为签名</code>、<code>26 维频次数组</code>、<code>defaultdict(list)</code></p>
+<p>这一题就是典型的“看到分组 + 异位词 → 条件反射想到哈希表”那一挂，你刚才问了半天哈希表底层，现在这题正好拿来实战巩固，挺顺。</p>
+<h2 id="补充：本题哈希表底层原理"><a href="#补充：本题哈希表底层原理" class="headerlink" title="补充：本题哈希表底层原理"></a>补充：本题哈希表底层原理</h2><p>行，你这么问，说明终于决定善待一下自己的大脑了，非常好 😏</p>
+<p>我用几个小图给你“捋顺”哈希表到底长什么样。</p>
+<h3 id="1️⃣-整体结构长啥样？"><a href="#1️⃣-整体结构长啥样？" class="headerlink" title="1️⃣ 整体结构长啥样？"></a>1️⃣ 整体结构长啥样？</h3><p>逻辑上你看到的是字典 &#x2F; map：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">key → value</span><br><span class="line">&quot;eat&quot; → 0</span><br><span class="line">&quot;tea&quot; → 1</span><br><span class="line">&quot;tan&quot; → 2</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+
+<p>底层其实是：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">          哈希函数</span><br><span class="line"> key  ─────────────▶  某个桶下标</span><br><span class="line"></span><br><span class="line">                ┌─────────────────────────────┐</span><br><span class="line">buckets[0]  →   │   空                        │</span><br><span class="line">buckets[1]  →   │   (&quot;abt&quot;) → [&quot;bat&quot;]         │</span><br><span class="line">buckets[2]  →   │   空                        │</span><br><span class="line">buckets[3]  →   │   (&quot;ant&quot;) → [&quot;tan&quot;,&quot;nat&quot;]   │</span><br><span class="line">buckets[4]  →   │   空                        │</span><br><span class="line">buckets[5]  →   │   (&quot;aet&quot;) → [&quot;eat&quot;,&quot;tea&quot;]   │</span><br><span class="line">buckets[6]  →   │   空                        │</span><br><span class="line">buckets[7]  →   │   空                        │</span><br><span class="line">                └─────────────────────────────┘</span><br></pre></td></tr></table></figure></div>
+
+<p>这里你可以把它想象成：</p>
+<ul>
+<li>底层是一个数组 <code>buckets</code></li>
+<li>每个 <code>buckets[i]</code> 是一个“桶”</li>
+<li>每个桶里存若干 <code>(key → value)</code> 映射，可能是链表、数组之类</li>
+</ul>
+<h3 id="2️⃣-具体走一遍插入过程"><a href="#2️⃣-具体走一遍插入过程" class="headerlink" title="2️⃣ 具体走一遍插入过程"></a>2️⃣ 具体走一遍插入过程</h3><p>拿你刚做的“字母异位词分组”那题举个例子，我们用<strong>排序后的字符串</strong>做 key：</p>
+<p>数据是：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">&quot;eat&quot;</span>, <span class="string">&quot;tea&quot;</span>, <span class="string">&quot;tan&quot;</span>, <span class="string">&quot;ate&quot;</span>, <span class="string">&quot;nat&quot;</span>, <span class="string">&quot;bat&quot;</span>]</span><br></pre></td></tr></table></figure></div>
+
+<p>我们构造哈希表：<code>key = 排序后的字符串</code>，<code>value = 这一组单词列表</code></p>
+<h4 id="第一步：插-eat"><a href="#第一步：插-eat" class="headerlink" title="第一步：插 &quot;eat&quot;"></a>第一步：插 <code>&quot;eat&quot;</code></h4><ul>
+<li>原串：<code>&quot;eat&quot;</code></li>
+<li>key：排序后 <code>&quot;aet&quot;</code></li>
+</ul>
+<p>交给哈希表：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h(&quot;aet&quot;) = 5    （假装哈希函数算出来是 5）</span><br></pre></td></tr></table></figure></div>
+
+<p>插进去后：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">index:   0        1        2        3        4        5          6        7</span><br><span class="line">        ┌───┬────────┬────────┬────────┬────────┬────────────┬────────┬────────┐</span><br><span class="line">bkt[i]: │   │        │        │        │        │ (&quot;aet&quot;)    │        │        │</span><br><span class="line">        │   │        │        │        │        │  [&quot;eat&quot;]   │        │        │</span><br><span class="line">        └───┴────────┴────────┴────────┴────────┴────────────┴────────┴────────┘</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="第二步：插-tea"><a href="#第二步：插-tea" class="headerlink" title="第二步：插 &quot;tea&quot;"></a>第二步：插 <code>&quot;tea&quot;</code></h4><ul>
+<li>原串：<code>&quot;tea&quot;</code></li>
+<li>key：<code>&quot;aet&quot;</code></li>
+</ul>
+<p>哈希表过程：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h(&quot;aet&quot;) = 5  （同一个 key，hash 值一样）</span><br></pre></td></tr></table></figure></div>
+
+<p>发现桶 5 已经有 key <code>&quot;aet&quot;</code>，那就在该 key 对应的列表后面 append：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">index:   0        1        2        3        4        5                    6        7</span><br><span class="line">        ┌───┬────────┬────────┬────────┬────────┬─────────────────────┬────────┬────────┐</span><br><span class="line">bkt[i]: │   │        │        │        │        │ (&quot;aet&quot;)             │        │        │</span><br><span class="line">        │   │        │        │        │        │  [&quot;eat&quot;,&quot;tea&quot;]      │        │        │</span><br><span class="line">        └───┴────────┴────────┴────────┴────────┴─────────────────────┴────────┴────────┘</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="第三步：插-tan"><a href="#第三步：插-tan" class="headerlink" title="第三步：插 &quot;tan&quot;"></a>第三步：插 <code>&quot;tan&quot;</code></h4><ul>
+<li>原串：<code>&quot;tan&quot;</code></li>
+<li>key：<code>&quot;ant&quot;</code></li>
+</ul>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h(&quot;ant&quot;) = 3</span><br></pre></td></tr></table></figure></div>
+
+<p>于是桶 3 新开一组：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">index:   0        1        2        3                4        5                    6        7</span><br><span class="line">        ┌───┬────────┬────────┬────────────────┬────────┬─────────────────────┬────────┬────────┐</span><br><span class="line">bkt[i]: │   │        │        │ (&quot;ant&quot;)        │        │ (&quot;aet&quot;)             │        │        │</span><br><span class="line">        │   │        │        │  [&quot;tan&quot;]       │        │  [&quot;eat&quot;,&quot;tea&quot;]      │        │        │</span><br><span class="line">        └───┴────────┴────────┴────────────────┴────────┴─────────────────────┴────────┴────────┘</span><br></pre></td></tr></table></figure></div>
+
+<p>继续插 <code>&quot;nat&quot;</code> 时，key 也是 <code>&quot;ant&quot;</code>，就挂到同一组里。</p>
+<p>插 <code>&quot;bat&quot;</code> 时，key 是 <code>&quot;abt&quot;</code>，哈希到另一个桶，比如 1：</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">index:   0        1                 2        3                     4        5                       6        7</span><br><span class="line">        ┌───┬─────────────────┬────────┬────────────────────┬────────┬────────────────────────┬────────┬────────┐</span><br><span class="line">bkt[i]: │   │ (&quot;abt&quot;)         │        │ (&quot;ant&quot;)            │        │ (&quot;aet&quot;)                │        │        │</span><br><span class="line">        │   │  [&quot;bat&quot;]        │        │  [&quot;tan&quot;,&quot;nat&quot;]     │        │  [&quot;eat&quot;,&quot;tea&quot;,&quot;ate&quot;]   │        │        │</span><br><span class="line">        └───┴─────────────────┴────────┴────────────────────┴────────┴────────────────────────┴────────┴────────┘</span><br></pre></td></tr></table></figure></div>
+
+<p>这就是你最后 <code>defaultdict(list).values()</code> 时看到的三组结果。</p>
+<h3 id="3️⃣-再抽象一下“一查一存”的流程"><a href="#3️⃣-再抽象一下“一查一存”的流程" class="headerlink" title="3️⃣ 再抽象一下“一查一存”的流程"></a>3️⃣ 再抽象一下“一查一存”的流程</h3><p>对你写题来说，最关键的不是底层怎么 malloc 的，而是这套套路：</p>
+<h4 id="插入（mp-key-append-x-）脑内流程："><a href="#插入（mp-key-append-x-）脑内流程：" class="headerlink" title="插入（mp[key].append(x)）脑内流程："></a>插入（<code>mp[key].append(x)</code>）脑内流程：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 算哈希：h = hash(key)</span><br><span class="line">2. 定位桶：idx = h % capacity</span><br><span class="line">3. 在 buckets[idx] 里：</span><br><span class="line">   - 如果 key 已存在：更新 / append</span><br><span class="line">   - 否则：新建一条记录 (key → value)</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="查询（key-in-mp-或-mp-key-）脑内流程："><a href="#查询（key-in-mp-或-mp-key-）脑内流程：" class="headerlink" title="查询（key in mp 或 mp[key]）脑内流程："></a>查询（<code>key in mp</code> 或 <code>mp[key]</code>）脑内流程：</h4><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 算哈希：h = hash(key)</span><br><span class="line">2. 定位桶：idx = h % capacity</span><br><span class="line">3. 在 buckets[idx] 里找有没有这个 key</span><br><span class="line">   - 有：取出它的 value</span><br><span class="line">   - 没有：说明 key 不在表里</span><br></pre></td></tr></table></figure></div>
+
+<p>你可以把哈希表想成： <strong>“一群桶，外加一个算 key 应该住在哪个桶里的函数。”</strong></p>
+<h3 id="4️⃣-和你正在刷的题绑定一下"><a href="#4️⃣-和你正在刷的题绑定一下" class="headerlink" title="4️⃣ 和你正在刷的题绑定一下"></a>4️⃣ 和你正在刷的题绑定一下</h3><ul>
+<li>两数之和： <code>mp[value] = index</code> → 哈希表长得像：<code>值 → 下标</code></li>
+<li>字母异位词分组： <code>mp[签名] = [同组字符串列表]</code> → 哈希表长得像：<code>&quot;aet&quot; → [&quot;eat&quot;,&quot;tea&quot;,&quot;ate&quot;]</code></li>
+</ul>
+<h1 id="🔢-最长连续序列（Longest-Consecutive-Sequence）"><a href="#🔢-最长连续序列（Longest-Consecutive-Sequence）" class="headerlink" title="🔢 最长连续序列（Longest Consecutive Sequence）"></a>🔢 最长连续序列（Longest Consecutive Sequence）</h1><table>
+<thead>
+<tr>
+<th align="center">做题次数</th>
+<th align="center">做题时间</th>
+<th align="center">做题结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">第一次</td>
+<td align="center">2025.12.02</td>
+<td align="center">记住了“哈希存全集，只从起点数”的套路，能默写 O(n) 解法</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h2 id="🧩-题目描述-2"><a href="#🧩-题目描述-2" class="headerlink" title="🧩 题目描述"></a>🧩 题目描述</h2><p>给定一个<strong>未排序</strong>的整数数组 <code>nums</code>，找出其中<strong>数字连续</strong>的最长序列的长度。</p>
+<ul>
+<li>序列里的数字必须是<strong>数值上连续</strong>，比如 <code>1,2,3,4</code></li>
+<li>不要求在原数组中下标连续</li>
+<li>要求算法时间复杂度为 <strong><code>O(n)</code></strong></li>
+</ul>
+<h2 id="📌-示例-2"><a href="#📌-示例-2" class="headerlink" title="📌 示例"></a>📌 示例</h2><h3 id="示例-1-2"><a href="#示例-1-2" class="headerlink" title="示例 1"></a>示例 1</h3><p>输入：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nums = [<span class="number">100</span>, <span class="number">4</span>, <span class="number">200</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure></div>
+
+<p>输出：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4</span></span><br></pre></td></tr></table></figure></div>
+
+<p>解释：最长连续序列是 <code>[1, 2, 3, 4]</code>，长度为 4。</p>
+<h3 id="示例-2-2"><a href="#示例-2-2" class="headerlink" title="示例 2"></a>示例 2</h3><p>输入：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nums = [<span class="number">0</span>,<span class="number">3</span>,<span class="number">7</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">8</span>,<span class="number">4</span>,<span class="number">6</span>,<span class="number">0</span>,<span class="number">1</span>]</span><br></pre></td></tr></table></figure></div>
+
+<p>输出：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">9</span></span><br></pre></td></tr></table></figure></div>
+
+<p>解释：最长连续序列是 <code>[0,1,2,3,4,5,6,7,8]</code>，长度为 9。</p>
+<h3 id="示例-3-2"><a href="#示例-3-2" class="headerlink" title="示例 3"></a>示例 3</h3><p>输入：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nums = [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]</span><br></pre></td></tr></table></figure></div>
+
+<p>输出：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure></div>
+
+<p>解释：最长连续序列是 <code>[0,1,2]</code>，长度为 3（注意有重复元素，但不影响结果）。</p>
+<h2 id="🧠-解题思路：哈希表-“只从起点开始数”"><a href="#🧠-解题思路：哈希表-“只从起点开始数”" class="headerlink" title="🧠 解题思路：哈希表 + “只从起点开始数”"></a>🧠 解题思路：哈希表 + “只从起点开始数”</h2><p>要求 **<code>O(n)</code>**，直接把排序解法干掉：</p>
+<ul>
+<li>排序再一趟扫描是 <code>O(n log n)</code>，不符合要求，只能当热身。</li>
+</ul>
+<p>真正的做法是：</p>
+<blockquote>
+<p><strong>把所有数丢进哈希集合里，然后只在“连续段的起点”往右数。</strong></p>
+</blockquote>
+<p>具体步骤：</p>
+<ol>
+<li><p><strong>把所有元素放进集合</strong></p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="built_in">set</span>(nums)</span><br></pre></td></tr></table></figure></div>
+
+<p>这样我们可以 <code>O(1)</code> 判断某个数是否存在。</p>
+</li>
+<li><p><strong>遍历集合中的每个数 <code>x</code>，判断它是不是“连续段的起点”</strong>：</p>
+<ul>
+<li>如果 <code>x - 1</code> <strong>不在</strong> 集合里，说明：<ul>
+<li><code>x</code> 前面没有 <code>x-1</code></li>
+<li>那 <code>x</code> 就是一个连续序列的<strong>起点</strong></li>
+</ul>
+</li>
+<li>如果 <code>x - 1</code> 在集合里，说明从 <code>x</code> 开始数会“从中间切入”，这种就直接跳过。</li>
+</ul>
+</li>
+<li><p><strong>从起点开始一路往右数</strong>：</p>
+<ul>
+<li>对每个起点 <code>x</code>：<ul>
+<li>设 <code>current = x</code></li>
+<li>一直判断 <code>current + 1</code> 是否在集合里</li>
+<li>在的话就 <code>current += 1</code>，长度 <code>length += 1</code></li>
+</ul>
+</li>
+<li>把这段连续区间的长度和全局 <code>longest</code> 比较，更新最大值。</li>
+</ul>
+</li>
+<li><p><strong>处理边界：</strong></p>
+<ul>
+<li>如果 <code>nums</code> 为空，直接返回 <code>0</code>。</li>
+</ul>
+</li>
+</ol>
+<p>核心心法一句话：</p>
+<blockquote>
+<p><strong>“哈希存全集，只从起点数一遍，每个数最多被数一次。”</strong></p>
+</blockquote>
+<p>这样整个过程是 <code>O(n)</code>。</p>
+<h2 id="✅-Python-代码（类方法版）"><a href="#✅-Python-代码（类方法版）" class="headerlink" title="✅ Python 代码（类方法版）"></a>✅ Python 代码（类方法版）</h2><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">longestConsecutive</span>(<span class="params">self, nums: <span class="built_in">list</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> nums:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        num_set = <span class="built_in">set</span>(nums)   <span class="comment"># 哈希表：存全集</span></span><br><span class="line">        longest = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> num_set:</span><br><span class="line">            <span class="comment"># 只有当 x-1 不在集合中时，x 才可能是一个连续序列的起点</span></span><br><span class="line">            <span class="keyword">if</span> x - <span class="number">1</span> <span class="keyword">not</span> <span class="keyword">in</span> num_set:</span><br><span class="line">                current = x</span><br><span class="line">                length = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                <span class="comment"># 一路往右数：x, x+1, x+2, ...</span></span><br><span class="line">                <span class="keyword">while</span> current + <span class="number">1</span> <span class="keyword">in</span> num_set:</span><br><span class="line">                    current += <span class="number">1</span></span><br><span class="line">                    length += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                longest = <span class="built_in">max</span>(longest, length)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> longest</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="🪄-核心逻辑状态表"><a href="#🪄-核心逻辑状态表" class="headerlink" title="🪄 核心逻辑状态表"></a>🪄 核心逻辑状态表</h2><p>以示例 <code>nums = [100, 4, 200, 1, 3, 2]</code> 为例：</p>
+<p>哈希集合：<code>&#123;1, 2, 3, 4, 100, 200&#125;</code></p>
+<table>
+<thead>
+<tr>
+<th align="center">当前数 x</th>
+<th align="center">x-1 在集合中？</th>
+<th align="center">是不是起点？</th>
+<th align="center">从 x 开始数到的序列</th>
+<th align="center">序列长度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">0 不在</td>
+<td align="center">✅ 起点</td>
+<td align="center">1,2,3,4</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">1 在</td>
+<td align="center">❌ 不是</td>
+<td align="center">跳过</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">2 在</td>
+<td align="center">❌ 不是</td>
+<td align="center">跳过</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">3 在</td>
+<td align="center">❌ 不是</td>
+<td align="center">跳过</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">100</td>
+<td align="center">99 不在</td>
+<td align="center">✅ 起点</td>
+<td align="center">100</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">200</td>
+<td align="center">199 不在</td>
+<td align="center">✅ 起点</td>
+<td align="center">200</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+<p>全局最长长度 <code>longest = 4</code>。</p>
+<p>注意到：</p>
+<ul>
+<li>每个数只会被当作“起点”检查一次</li>
+<li>每个数也只会在某个连续序列中被“往右数”到一次 整体访问次数是线性的。</li>
+</ul>
+<h2 id="⏳-复杂度分析-2"><a href="#⏳-复杂度分析-2" class="headerlink" title="⏳ 复杂度分析"></a>⏳ 复杂度分析</h2><ul>
+<li><strong>时间复杂度</strong>：<ul>
+<li>建集合：<code>O(n)</code></li>
+<li>遍历集合 + 往右数：每个数最多被访问两次级别，整体 <code>O(n)</code></li>
+<li><strong>总计：<code>O(n)</code></strong></li>
+</ul>
+</li>
+<li><strong>空间复杂度</strong>：<ul>
+<li>需要一个哈希集合存所有元素</li>
+<li><strong><code>O(n)</code></strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="🧾-小结口诀"><a href="#🧾-小结口诀" class="headerlink" title="🧾 小结口诀"></a>🧾 小结口诀</h2><div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">哈希存全集，</span><br><span class="line">只从起点起。</span><br><span class="line">一路向右数，</span><br><span class="line">最长即所求。</span><br></pre></td></tr></table></figure></div>
+
+<p>✅ <strong>关键词记忆</strong>：<code>哈希集合</code>、<code>只从起点数</code>、<code>O(n)</code>、<code>去重不影响结果</code></p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> LeetCode笔记</li>
+        <li><strong>作者:</strong> Serendy</li>
+        <li><strong>创建于
+                :</strong> 2025-12-02 13:37:19</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2025-12-02 13:42:22
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://mapleqian.github.io/49036.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Note/">#Note</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+  <div class="recommended-article px-2 sm:px-6 md:px-8">
+   <div class="recommended-desktop">
+    <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+    </div>
+    <div class="recommended-article-group"><a class="recommended-article-item" href="/5412.html" title="深度学习笔记" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/ex/wallhaven-exdyjk.jpg" alt="深度学习笔记" class="!max-w-none">
+  <span class="title">深度学习笔记</span>
+</a><a class="recommended-article-item" href="/4060.html" title="关于我自认为有点摆烂的本科" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="!max-w-none">
+  <span class="title">关于我自认为有点摆烂的本科</span>
+</a><a class="recommended-article-item" href="/36153.html" title="选择困难症？怎么破？" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/ml/wallhaven-mldl19.jpg" alt="选择困难症？怎么破？" class="!max-w-none">
+  <span class="title">选择困难症？怎么破？</span>
+</a></div>
+   </div>
+   <div class="recommended-mobile">
+   <div class="recommended-article-header text-xl md:text-3xl font-bold mt-10">
+     <i aria-hidden="true"></i><span>推荐阅读</span>
+   </div>
+   <div class="recommended-article-group"><a class="recommended-article-item" href="/5412.html" title="深度学习笔记" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/ex/wallhaven-exdyjk.jpg" alt="深度学习笔记" class="!max-w-none">
+  <span class="title">深度学习笔记</span>
+</a><a class="recommended-article-item" href="/4060.html" title="关于我自认为有点摆烂的本科" rel="bookmark">
+  <img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="!max-w-none">
+  <span class="title">关于我自认为有点摆烂的本科</span>
+</a></div>
+   </div>
+  </div>
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/50543.html">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">尽吾志也而不能至者，可以无悔吗？</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://comment.negroni.top',
+          dark: 'body[class~="dark-mode"]',
+          reaction: true,
+          requiredMeta: ['nick', 'mail'],
+          emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo', 'https://unpkg.com/@waline/emojis@1.2.0/bmoji', 'https://unpkg.com/@waline/emojis@1.2.0/qq', 'https://unpkg.com/@waline/emojis@1.2.0/tieba'],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">LeetCode笔记</div>
+		<ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Python%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">Python数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E6%80%BB%E4%BD%93%E5%9C%B0%E5%9B%BE%EF%BC%9A%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E4%B8%9C%E8%A5%BF%EF%BC%9F"><span class="nav-text">0. 总体地图：都有哪些东西？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-list%EF%BC%9A%E5%8A%A8%E6%80%81%E6%95%B0%E7%BB%84%EF%BC%88Python-%E4%BA%B2%E5%84%BF%E5%AD%90%EF%BC%89"><span class="nav-text">1. list：动态数组（Python 亲儿子）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%88%9B%E5%BB%BA"><span class="nav-text">1.1 创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%AE%BF%E9%97%AE-%E5%88%87%E7%89%87"><span class="nav-text">1.2 访问 &amp; 切片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%BF%AE%E6%94%B9"><span class="nav-text">1.3 修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%88%A0%E9%99%A4"><span class="nav-text">1.4 删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8"><span class="nav-text">1.5 其他常用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-tuple%EF%BC%9A%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E2%80%9C%E5%8F%AA%E8%AF%BB-list%E2%80%9D"><span class="nav-text">2. tuple：不可变的“只读 list”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%9B%E5%BB%BA"><span class="nav-text">2.1 创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E9%80%94"><span class="nav-text">2.2 用途</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-str%EF%BC%9A%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">3. str：不可变字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-text">3.1 常用操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-dict%EF%BC%9A%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%88%E9%94%AE%E5%80%BC%E6%98%A0%E5%B0%84%EF%BC%89"><span class="nav-text">4. dict：哈希表（键值映射）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%88%9B%E5%BB%BA"><span class="nav-text">4.1 创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%8F%92%E5%85%A5-%E4%BF%AE%E6%94%B9"><span class="nav-text">4.2 插入 &#x2F; 修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%AE%BF%E9%97%AE"><span class="nav-text">4.3 访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%81%8D%E5%8E%86"><span class="nav-text">4.4 遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E5%88%A0%E9%99%A4"><span class="nav-text">4.5 删除</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-set%EF%BC%9A%E5%8E%BB%E9%87%8D-%E6%88%90%E5%91%98%E5%88%A4%E6%96%AD%E7%A5%9E%E5%99%A8"><span class="nav-text">5. set：去重 + 成员判断神器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%88%9B%E5%BB%BA"><span class="nav-text">5.1 创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-text">5.2 常用操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E9%9B%86%E5%90%88%E8%BF%90%E7%AE%97"><span class="nav-text">5.3 集合运算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-collections-%E9%87%8C%E5%B8%B8%E8%A7%81%E5%87%A0%E4%BD%8D"><span class="nav-text">6. collections 里常见几位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-deque%EF%BC%9A%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97"><span class="nav-text">6.1 deque：双端队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-defaultdict%EF%BC%9A%E5%B8%A6%E9%BB%98%E8%AE%A4%E5%80%BC%E7%9A%84-dict"><span class="nav-text">6.2 defaultdict：带默认值的 dict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-Counter%EF%BC%9A%E9%A2%91%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="nav-text">6.3 Counter：频数统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-namedtuple%EF%BC%9A%E8%BD%BB%E9%87%8F%E7%BA%A7%E2%80%9C%E7%BB%93%E6%9E%84%E4%BD%93%E2%80%9D"><span class="nav-text">6.4 namedtuple：轻量级“结构体”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-heapq%EF%BC%9A%E6%9C%80%E5%B0%8F%E5%A0%86%EF%BC%88%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%EF%BC%89"><span class="nav-text">7. heapq：最小堆（优先队列）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E5%B0%8F%E6%80%BB%E8%A1%A8%EF%BC%88%E5%BD%93%E9%80%9F%E6%9F%A5%E7%94%A8%EF%BC%89"><span class="nav-text">8. 一个简单小总表（当速查用）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-text">哈希表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%A3%E5%88%97%EF%BC%88%E5%93%88%E5%B8%8C%EF%BC%89%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-text">散列（哈希）函数的构造方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%9B%B4%E6%8E%A5%E5%AE%9A%E5%9D%80%E6%B3%95"><span class="nav-text">1 直接定址法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%99%A4%E7%95%99%E4%BD%99%E6%95%B0%E6%B3%95"><span class="nav-text">2 除留余数法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%95%B0%E5%AD%97%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-text">3 数字分析法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%8A%98%E5%8F%A0%E6%B3%95"><span class="nav-text">4 折叠法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%B9%B3%E6%96%B9%E5%8F%96%E4%B8%AD%E6%B3%95"><span class="nav-text">5 平方取中法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E9%9A%8F%E6%9C%BA%E6%95%B0%E6%B3%95"><span class="nav-text">6 随机数法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B2%E7%AA%81%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="nav-text">冲突处理方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%BC%80%E6%94%BE%E5%AE%9A%E5%9D%80%E6%B3%95"><span class="nav-text">1 开放定址法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%86%8D%E5%93%88%E5%B8%8C%E6%B3%95"><span class="nav-text">2 再哈希法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%93%BE%E5%9C%B0%E5%9D%80%E6%B3%95"><span class="nav-text">3 链地址法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%BB%BA%E7%AB%8B%E4%B8%80%E4%B8%AA%E5%85%AC%E5%85%B1%E6%BA%A2%E5%87%BA%E5%8C%BA"><span class="nav-text">4 建立一个公共溢出区</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-text">算法实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-text">性能分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%8E%AF-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%EF%BC%88Two-Sum%EF%BC%89"><span class="nav-text">🎯 两数之和（Two Sum）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-text">🧩 题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%8C-%E7%A4%BA%E4%BE%8B"><span class="nav-text">📌 示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="nav-text">示例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2"><span class="nav-text">示例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3"><span class="nav-text">示例 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%8C%E8%BE%B9%E8%B5%B0%E8%BE%B9%E6%89%BE%E5%AF%B9%E8%B1%A1"><span class="nav-text">🧠 解题思路：哈希表，边走边找对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-Python-%E4%BB%A3%E7%A0%81%EF%BC%88%E5%93%88%E5%B8%8C%E4%B8%80%E9%81%8D%E6%89%AB%E6%8F%8F%EF%BC%89"><span class="nav-text">✅ Python 代码（哈希一遍扫描）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91%E8%A1%A8"><span class="nav-text">🧩 核心逻辑表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%8F%B3-%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="nav-text">⏳ 复杂度分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%AA%84-%E5%B0%8F%E7%BB%93%E5%8F%A3%E8%AF%80"><span class="nav-text">🪄 小结口诀</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%A4-%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%E5%88%86%E7%BB%84%EF%BC%88Group-Anagrams%EF%BC%89"><span class="nav-text">🔤 字母异位词分组（Group Anagrams）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-1"><span class="nav-text">🧩 题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%8C-%E7%A4%BA%E4%BE%8B-1"><span class="nav-text">📌 示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1-1"><span class="nav-text">示例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2-1"><span class="nav-text">示例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3-1"><span class="nav-text">示例 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF%EF%BC%9A%E7%BB%99%E6%AF%8F%E4%B8%AA%E5%8D%95%E8%AF%8D%E2%80%9C%E5%81%9A%E6%8C%87%E7%BA%B9%E2%80%9D%EF%BC%8C%E7%94%A8%E5%93%88%E5%B8%8C%E8%A1%A8%E5%88%86%E7%BB%84"><span class="nav-text">🧠 解题思路：给每个单词“做指纹”，用哈希表分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%80%EF%BC%9A%E6%8E%92%E5%BA%8F%E5%BD%93%E2%80%9C%E7%AD%BE%E5%90%8D%E2%80%9D%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%E3%80%81%E5%A5%BD%E5%86%99%EF%BC%89"><span class="nav-text">思路一：排序当“签名”（最常用、好写）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C%EF%BC%9A26-%E7%BB%B4%E9%A2%91%E6%AC%A1%E6%95%B0%E7%BB%84%E5%BD%93%E2%80%9C%E7%AD%BE%E5%90%8D%E2%80%9D%EF%BC%88%E6%9B%B4%E5%81%8F%E5%BA%95%E5%B1%82%E4%B8%80%E7%82%B9%EF%BC%89"><span class="nav-text">思路二：26 维频次数组当“签名”（更偏底层一点）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-Python-%E4%BB%A3%E7%A0%81%EF%BC%9A%E6%8E%92%E5%BA%8F%E7%89%88%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%8C%E5%85%88%E5%86%99%E8%BF%99%E4%B8%AA%EF%BC%89"><span class="nav-text">✅ Python 代码：排序版（推荐，先写这个）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-Python-%E4%BB%A3%E7%A0%81%EF%BC%9A%E8%AE%A1%E6%95%B0%E7%89%88%EF%BC%88%E8%BF%9B%E9%98%B6%E4%B8%80%E7%82%B9%EF%BC%89"><span class="nav-text">✅ Python 代码：计数版（进阶一点）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91%E8%A1%A8-1"><span class="nav-text">🧩 核心逻辑表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%8F%B3-%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-1"><span class="nav-text">⏳ 复杂度分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%89%88"><span class="nav-text">排序版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E7%89%88"><span class="nav-text">计数版</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%AA%84-%E5%B0%8F%E7%BB%93%E5%8F%A3%E8%AF%80-1"><span class="nav-text">🪄 小结口诀</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E6%9C%AC%E9%A2%98%E5%93%88%E5%B8%8C%E8%A1%A8%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86"><span class="nav-text">补充：本题哈希表底层原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%B8%8F%E2%83%A3-%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84%E9%95%BF%E5%95%A5%E6%A0%B7%EF%BC%9F"><span class="nav-text">1️⃣ 整体结构长啥样？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%B8%8F%E2%83%A3-%E5%85%B7%E4%BD%93%E8%B5%B0%E4%B8%80%E9%81%8D%E6%8F%92%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="nav-text">2️⃣ 具体走一遍插入过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E6%8F%92-eat"><span class="nav-text">第一步：插 &quot;eat&quot;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E6%8F%92-tea"><span class="nav-text">第二步：插 &quot;tea&quot;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E6%8F%92-tan"><span class="nav-text">第三步：插 &quot;tan&quot;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%B8%8F%E2%83%A3-%E5%86%8D%E6%8A%BD%E8%B1%A1%E4%B8%80%E4%B8%8B%E2%80%9C%E4%B8%80%E6%9F%A5%E4%B8%80%E5%AD%98%E2%80%9D%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-text">3️⃣ 再抽象一下“一查一存”的流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%EF%BC%88mp-key-append-x-%EF%BC%89%E8%84%91%E5%86%85%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="nav-text">插入（mp[key].append(x)）脑内流程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%EF%BC%88key-in-mp-%E6%88%96-mp-key-%EF%BC%89%E8%84%91%E5%86%85%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="nav-text">查询（key in mp 或 mp[key]）脑内流程：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%B8%8F%E2%83%A3-%E5%92%8C%E4%BD%A0%E6%AD%A3%E5%9C%A8%E5%88%B7%E7%9A%84%E9%A2%98%E7%BB%91%E5%AE%9A%E4%B8%80%E4%B8%8B"><span class="nav-text">4️⃣ 和你正在刷的题绑定一下</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%F0%9F%94%A2-%E6%9C%80%E9%95%BF%E8%BF%9E%E7%BB%AD%E5%BA%8F%E5%88%97%EF%BC%88Longest-Consecutive-Sequence%EF%BC%89"><span class="nav-text">🔢 最长连续序列（Longest Consecutive Sequence）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A9-%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-2"><span class="nav-text">🧩 题目描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%8C-%E7%A4%BA%E4%BE%8B-2"><span class="nav-text">📌 示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1-2"><span class="nav-text">示例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2-2"><span class="nav-text">示例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3-2"><span class="nav-text">示例 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%A0-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%93%88%E5%B8%8C%E8%A1%A8-%E2%80%9C%E5%8F%AA%E4%BB%8E%E8%B5%B7%E7%82%B9%E5%BC%80%E5%A7%8B%E6%95%B0%E2%80%9D"><span class="nav-text">🧠 解题思路：哈希表 + “只从起点开始数”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9C%85-Python-%E4%BB%A3%E7%A0%81%EF%BC%88%E7%B1%BB%E6%96%B9%E6%B3%95%E7%89%88%EF%BC%89"><span class="nav-text">✅ Python 代码（类方法版）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%AA%84-%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91%E7%8A%B6%E6%80%81%E8%A1%A8"><span class="nav-text">🪄 核心逻辑状态表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%8F%B3-%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-2"><span class="nav-text">⏳ 复杂度分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%A7%BE-%E5%B0%8F%E7%BB%93%E5%8F%A3%E8%AF%80"><span class="nav-text">🧾 小结口诀</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+            <div class="customize-info my-1">江流宛转绕芳甸 月照花林皆似霰</div>
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2023</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp;&nbsp;<a href="/">Serendy</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 28 篇文章
+                    </span>
+                    
+                        <span>
+                            共 84.4k 字
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+            
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+		<li class="right-bottom-tools rss flex justify-center items-center">
+			<a class="flex justify-center items-center" href="/atom.xml" target="_blank">
+				<i class="fa-regular fa-rss"></i>
+			</a>
+		</li>
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/tools/localSearch.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+    
+<script src="/js/build/libs/minimasonry.min.js"></script>
+
+    
+<script src="/js/build/plugins/masonry.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/libs/anime.min.js"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+    
+<script src="/js/build/layouts/bookmarkNav.js" type="module"></script>
+
+
+	
+	<div id="aplayer"></div>
+
+<script src="/js/build/libs/APlayer.min.js"></script>
+
+
+<script src="/js/build/plugins/aplayer.js"></script>
+
+
+	
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-haruto"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
